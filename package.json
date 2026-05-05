@@ -1,0 +1,29 @@
+{
+  "name": "humai-workspace",
+  "version": "1.0.0",
+  "description": "Humai Workspace – minimal Express API sandbox",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "jest",
+    "prepare": "husky"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.0",
+    "express": "^4.21.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.3.0",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.6.0",
+    "husky": "^9.1.7",
+    "jest": "^30.3.0",
+    "prettier": "^3.8.3",
+    "supertest": "^7.2.2"
+  }
+}
