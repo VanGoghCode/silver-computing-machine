@@ -1,4 +1,4 @@
-# Humai-Workspace
+# Silver-Computing-Machine
 
 Sandboxed container for AI coding agents.
 
@@ -6,11 +6,11 @@ Sandboxed container for AI coding agents.
 
 ```bash
 # Build
-cd D:\Code\Humai-Workspace
-docker build -t humai-workspace -f .devcontainer/Dockerfile .
+cd D:\Code\Silver-Computing-Machine
+docker build -t silver-computing-machine -f .devcontainer/Dockerfile .
 
 # Run
-docker run -it --rm -p 3000:3000 -v D:\Code\Humai-Workspace:/workspace humai-workspace
+docker run -it --rm -p 4000:4000 -v D:\Code\Silver-Computing-Machine:/workspace silver-computing-machine
 
 # Add a project
 mkdir Projects\Project-X
@@ -26,7 +26,7 @@ mkdir Projects\Project-X
 ## Structure
 
 ```
-Humai-Workspace/
+Silver-Computing-Machine/
 ├── .devcontainer/Dockerfile
 ├── Projects/          ← agents work here
 ├── server.js

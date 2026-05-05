@@ -19,8 +19,8 @@ npm run format:check    # Prettier check
 
 ```bash
 # Docker (primary usage)
-docker build -t humai-workspace -f .devcontainer/Dockerfile .
-docker run -it --rm -p 4000:4000 -v $(pwd):/workspace humai-workspace
+docker build -t silver-computing-machine -f .devcontainer/Dockerfile .
+docker run -it --rm -p 4000:4000 -v $(pwd):/workspace silver-computing-machine
 ```
 
 **Pre-push hook** (Husky): runs `lint` + `format:check` + `test` automatically on `git push`.
@@ -47,6 +47,6 @@ docker run -it --rm -p 4000:4000 -v $(pwd):/workspace humai-workspace
 
 ## Key Constraints
 
-- The `Dockerfile` still exposes port `3000` — update it when changing the default port.
+- Default port is `4000` — ensure Dockerfile, docker run, and `PORT` env all align.
 - `Projects/` is gitignored (sandbox content, tracked per-project).
 - No authentication on the API — relies on container network isolation.

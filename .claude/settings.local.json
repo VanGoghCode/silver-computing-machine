@@ -3,7 +3,8 @@
     "allow": [
       "Bash(npx husky:*)",
       "Bash(npm run:*)",
-      "Bash(npm test:*)"
+      "Bash(npm test:*)",
+      "Bash(gh repo:*)"
     ]
   }
 }
