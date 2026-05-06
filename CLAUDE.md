@@ -1,10 +1,34 @@
-# CLAUDE.md
-
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
 ## What This Is
 
-Sandboxed Express API for AI coding agents. Single `server.js` serves a file CRUD API over a containerized workspace. Agents read/write project files via REST — never direct filesystem access in production.
+This repo is the **sandbox orchestrator** for AI coding agents. It provides the outer security layer — agents live inside `Projects/` subdirectories and can only interact with files within this container. Nothing outside this workspace is accessible to them.
+
+### The Vision
+
+A fully managed, hierarchy-driven **AI Swarm** where autonomous agents collaborate, write code, and manage tasks like a human engineering team.
+
+### The Mission
+
+A secure, strictly controlled sandbox that grants agents maximum coding autonomy within bounded project folders, while physically preventing access to the host machine or unauthorized data.
+
+### The Goal
+
+This repo is the outer layer. Projects inside `Projects/` are the inner layer. Everything built here orchestrates and secures the inner layer — agents get only the access we explicitly allow, nothing more.
+
+### Agents
+
+Agents are headless AI coding workers (built on the Crispy-Adventure framework, a fork of `pi`). Each agent:
+- Runs as a worker node polling for tasks from a Gatekeeper API
+- Operates autonomously — no human-in-the-loop during execution
+- Has a **specific role** (e.g. lead, reviewer, tester) with **role-based permissions**
+- Cannot perform actions outside its assigned role's permission set
+- Communicates with other agents via the Gatekeeper (inter-agent messaging, subtasks, Kanban updates)
+
+### Planned Capabilities (beyond current file CRUD)
+
+- **Task management** — agents pick up, create subtasks, and complete work items
+- **Inter-agent messaging** — agents communicate across roles via the Gatekeeper
+- **Git operations** — agents commit, branch, and create PRs within their project
+- **RBAC** — every capability is gated by role-specific permissions; agents cannot exceed their assigned scope
 
 ## Commands
 
