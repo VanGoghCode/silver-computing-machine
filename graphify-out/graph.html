@@ -1,125 +1,2408 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>graphify - graphify-out/graph.html</title>
-<script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
-<style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: #0f0f1a; color: #e0e0e0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; display: flex; height: 100vh; overflow: hidden; }
-  #graph { flex: 1; }
-  #sidebar { width: 280px; background: #1a1a2e; border-left: 1px solid #2a2a4e; display: flex; flex-direction: column; overflow: hidden; }
-  #search-wrap { padding: 12px; border-bottom: 1px solid #2a2a4e; }
-  #search { width: 100%; background: #0f0f1a; border: 1px solid #3a3a5e; color: #e0e0e0; padding: 7px 10px; border-radius: 6px; font-size: 13px; outline: none; }
-  #search:focus { border-color: #4E79A7; }
-  #search-results { max-height: 140px; overflow-y: auto; padding: 4px 12px; border-bottom: 1px solid #2a2a4e; display: none; }
-  .search-item { padding: 4px 6px; cursor: pointer; border-radius: 4px; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .search-item:hover { background: #2a2a4e; }
-  #info-panel { padding: 14px; border-bottom: 1px solid #2a2a4e; min-height: 140px; }
-  #info-panel h3 { font-size: 13px; color: #aaa; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
-  #info-content { font-size: 13px; color: #ccc; line-height: 1.6; }
-  #info-content .field { margin-bottom: 5px; }
-  #info-content .field b { color: #e0e0e0; }
-  #info-content .empty { color: #555; font-style: italic; }
-  .neighbor-link { display: block; padding: 2px 6px; margin: 2px 0; border-radius: 3px; cursor: pointer; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-left: 3px solid #333; }
-  .neighbor-link:hover { background: #2a2a4e; }
-  #neighbors-list { max-height: 160px; overflow-y: auto; margin-top: 4px; }
-  #legend-wrap { flex: 1; overflow-y: auto; padding: 12px; }
-  #legend-wrap h3 { font-size: 13px; color: #aaa; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.05em; }
-  .legend-item { display: flex; align-items: center; gap: 8px; padding: 4px 0; cursor: pointer; border-radius: 4px; font-size: 12px; }
-  .legend-item:hover { background: #2a2a4e; padding-left: 4px; }
-  .legend-item.dimmed { opacity: 0.35; }
-  .legend-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
-  .legend-label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .legend-count { color: #666; font-size: 11px; }
-  #stats { padding: 10px 14px; border-top: 1px solid #2a2a4e; font-size: 11px; color: #555; }
-</style>
-</head>
-<body>
-<div id="graph"></div>
-<div id="sidebar">
-  <div id="search-wrap">
-    <input id="search" type="text" placeholder="Search nodes..." autocomplete="off">
-    <div id="search-results"></div>
-  </div>
-  <div id="info-panel">
-    <h3>Node Info</h3>
-    <div id="info-content"><span class="empty">Click a node to inspect it</span></div>
-  </div>
-  <div id="legend-wrap">
-    <h3>Communities</h3>
-    <div id="legend"></div>
-  </div>
-  <div id="stats">61 nodes &middot; 108 edges &middot; 10 communities</div>
-</div>
-<script>
-const RAW_NODES = [{"id": "jest_config_js", "label": "jest.config.js", "color": {"background": "#BAB0AC", "border": "#BAB0AC", "highlight": {"background": "#ffffff", "border": "#BAB0AC"}}, "size": 10.0, "font": {"size": 0, "color": "#ffffff"}, "title": "jest.config.js", "community": 9, "community_name": "Test Configuration", "source_file": "jest.config.js", "file_type": "code", "degree": 0}, {"id": "server_js", "label": "server.js", "color": {"background": "#FF9DA7", "border": "#FF9DA7", "highlight": {"background": "#ffffff", "border": "#FF9DA7"}}, "size": 11.3, "font": {"size": 0, "color": "#ffffff"}, "title": "server.js", "community": 7, "community_name": "Server Core", "source_file": "server.js", "file_type": "code", "degree": 1}, {"id": "server_safepath", "label": "safePath()", "color": {"background": "#FF9DA7", "border": "#FF9DA7", "highlight": {"background": "#ffffff", "border": "#FF9DA7"}}, "size": 11.3, "font": {"size": 0, "color": "#ffffff"}, "title": "safePath()", "community": 7, "community_name": "Server Core", "source_file": "server.js", "file_type": "code", "degree": 1}, {"id": "tests_server_test_js", "label": "server.test.js", "color": {"background": "#9C755F", "border": "#9C755F", "highlight": {"background": "#ffffff", "border": "#9C755F"}}, "size": 11.3, "font": {"size": 0, "color": "#ffffff"}, "title": "server.test.js", "community": 8, "community_name": "Test Suite", "source_file": "tests\\server.test.js", "file_type": "code", "degree": 1}, {"id": "server_test_createapp", "label": "createApp()", "color": {"background": "#9C755F", "border": "#9C755F", "highlight": {"background": "#ffffff", "border": "#9C755F"}}, "size": 11.3, "font": {"size": 0, "color": "#ffffff"}, "title": "createApp()", "community": 8, "community_name": "Test Suite", "source_file": "tests\\server.test.js", "file_type": "code", "degree": 1}, {"id": "claude_silver_computing_machine", "label": "Silver-Computing-Machine (Gatekeeper)", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 40.0, "font": {"size": 12, "color": "#ffffff"}, "title": "Silver-Computing-Machine (Gatekeeper)", "community": 0, "community_name": "Security & Isolation", "source_file": "CLAUDE.md", "file_type": "document", "degree": 23}, {"id": "claude_crispy_adventure", "label": "Crispy Adventure (Worker Runtime)", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 13.9, "font": {"size": 0, "color": "#ffffff"}, "title": "Crispy Adventure (Worker Runtime)", "community": 0, "community_name": "Security & Isolation", "source_file": "CLAUDE.md", "file_type": "document", "degree": 3}, {"id": "claude_zero_trust_security", "label": "Zero-Trust Security Model", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 16.5, "font": {"size": 12, "color": "#ffffff"}, "title": "Zero-Trust Security Model", "community": 0, "community_name": "Security & Isolation", "source_file": "CLAUDE.md", "file_type": "document", "degree": 5}, {"id": "claude_rbac", "label": "RBAC (Role-Based Access Control)", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 16.5, "font": {"size": 12, "color": "#ffffff"}, "title": "RBAC (Role-Based Access Control)", "community": 0, "community_name": "Security & Isolation", "source_file": "CLAUDE.md", "file_type": "document", "degree": 5}, {"id": "claude_bearer_auth", "label": "Bearer Token Authentication", "color": {"background": "#E15759", "border": "#E15759", "highlight": {"background": "#ffffff", "border": "#E15759"}}, "size": 15.2, "font": {"size": 12, "color": "#ffffff"}, "title": "Bearer Token Authentication", "community": 2, "community_name": "Backend Stack", "source_file": "CLAUDE.md", "file_type": "document", "degree": 4}, {"id": "claude_project_isolation", "label": "Project Isolation (Docker)", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 16.5, "font": {"size": 12, "color": "#ffffff"}, "title": "Project Isolation (Docker)", "community": 0, "community_name": "Security & Isolation", "source_file": "CLAUDE.md", "file_type": "document", "degree": 5}, {"id": "claude_sqlite_wal", "label": "SQLite with WAL Mode", "color": {"background": "#E15759", "border": "#E15759", "highlight": {"background": "#ffffff", "border": "#E15759"}}, "size": 15.2, "font": {"size": 12, "color": "#ffffff"}, "title": "SQLite with WAL Mode", "community": 2, "community_name": "Backend Stack", "source_file": "CLAUDE.md", "file_type": "document", "degree": 4}, {"id": "claude_node_express", "label": "Node.js + Express Backend", "color": {"background": "#E15759", "border": "#E15759", "highlight": {"background": "#ffffff", "border": "#E15759"}}, "size": 13.9, "font": {"size": 0, "color": "#ffffff"}, "title": "Node.js + Express Backend", "community": 2, "community_name": "Backend Stack", "source_file": "CLAUDE.md", "file_type": "document", "degree": 3}, {"id": "claude_react_vite", "label": "React + Vite Frontend", "color": {"background": "#59A14F", "border": "#59A14F", "highlight": {"background": "#ffffff", "border": "#59A14F"}}, "size": 12.6, "font": {"size": 0, "color": "#ffffff"}, "title": "React + Vite Frontend", "community": 4, "community_name": "Dashboard & Audit", "source_file": "CLAUDE.md", "file_type": "document", "degree": 2}, {"id": "claude_docker", "label": "Docker Containerization", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 13.9, "font": {"size": 0, "color": "#ffffff"}, "title": "Docker Containerization", "community": 0, "community_name": "Security & Isolation", "source_file": "CLAUDE.md", "file_type": "document", "degree": 3}, {"id": "claude_department_frontend", "label": "Frontend Department", "color": {"background": "#EDC948", "border": "#EDC948", "highlight": {"background": "#ffffff", "border": "#EDC948"}}, "size": 13.9, "font": {"size": 0, "color": "#ffffff"}, "title": "Frontend Department", "community": 5, "community_name": "Departments", "source_file": "CLAUDE.md", "file_type": "document", "degree": 3}, {"id": "claude_department_backend", "label": "Backend Department", "color": {"background": "#EDC948", "border": "#EDC948", "highlight": {"background": "#ffffff", "border": "#EDC948"}}, "size": 13.9, "font": {"size": 0, "color": "#ffffff"}, "title": "Backend Department", "community": 5, "community_name": "Departments", "source_file": "CLAUDE.md", "file_type": "document", "degree": 3}, {"id": "claude_department_infra", "label": "Infra Department", "color": {"background": "#EDC948", "border": "#EDC948", "highlight": {"background": "#ffffff", "border": "#EDC948"}}, "size": 13.9, "font": {"size": 0, "color": "#ffffff"}, "title": "Infra Department", "community": 5, "community_name": "Departments", "source_file": "CLAUDE.md", "file_type": "document", "degree": 3}, {"id": "claude_department_deployment", "label": "Deployment Department", "color": {"background": "#EDC948", "border": "#EDC948", "highlight": {"background": "#ffffff", "border": "#EDC948"}}, "size": 13.9, "font": {"size": 0, "color": "#ffffff"}, "title": "Deployment Department", "community": 5, "community_name": "Departments", "source_file": "CLAUDE.md", "file_type": "document", "degree": 3}, {"id": "claude_role_ceo", "label": "Department CEO", "color": {"background": "#76B7B2", "border": "#76B7B2", "highlight": {"background": "#ffffff", "border": "#76B7B2"}}, "size": 15.2, "font": {"size": 12, "color": "#ffffff"}, "title": "Department CEO", "community": 3, "community_name": "Leadership & Strategy", "source_file": "CLAUDE.md", "file_type": "document", "degree": 4}, {"id": "claude_role_cto", "label": "Department CTO", "color": {"background": "#76B7B2", "border": "#76B7B2", "highlight": {"background": "#ffffff", "border": "#76B7B2"}}, "size": 17.8, "font": {"size": 12, "color": "#ffffff"}, "title": "Department CTO", "community": 3, "community_name": "Leadership & Strategy", "source_file": "CLAUDE.md", "file_type": "document", "degree": 6}, {"id": "claude_role_pm", "label": "Product Manager", "color": {"background": "#76B7B2", "border": "#76B7B2", "highlight": {"background": "#ffffff", "border": "#76B7B2"}}, "size": 16.5, "font": {"size": 12, "color": "#ffffff"}, "title": "Product Manager", "community": 3, "community_name": "Leadership & Strategy", "source_file": "CLAUDE.md", "file_type": "document", "degree": 5}, {"id": "claude_role_projmgr", "label": "Project Manager", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 16.5, "font": {"size": 12, "color": "#ffffff"}, "title": "Project Manager", "community": 1, "community_name": "Engineering Workflow", "source_file": "CLAUDE.md", "file_type": "document", "degree": 5}, {"id": "claude_role_architect", "label": "Architect", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 13.9, "font": {"size": 0, "color": "#ffffff"}, "title": "Architect", "community": 1, "community_name": "Engineering Workflow", "source_file": "CLAUDE.md", "file_type": "document", "degree": 3}, {"id": "claude_role_techlead", "label": "Tech Lead", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 21.7, "font": {"size": 12, "color": "#ffffff"}, "title": "Tech Lead", "community": 1, "community_name": "Engineering Workflow", "source_file": "CLAUDE.md", "file_type": "document", "degree": 9}, {"id": "claude_role_engineer", "label": "Engineer", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 15.2, "font": {"size": 12, "color": "#ffffff"}, "title": "Engineer", "community": 1, "community_name": "Engineering Workflow", "source_file": "CLAUDE.md", "file_type": "document", "degree": 4}, {"id": "claude_role_reviewer", "label": "Reviewer", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 15.2, "font": {"size": 12, "color": "#ffffff"}, "title": "Reviewer", "community": 1, "community_name": "Engineering Workflow", "source_file": "CLAUDE.md", "file_type": "document", "degree": 4}, {"id": "claude_role_tester", "label": "Tester", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 15.2, "font": {"size": 12, "color": "#ffffff"}, "title": "Tester", "community": 1, "community_name": "Engineering Workflow", "source_file": "CLAUDE.md", "file_type": "document", "degree": 4}, {"id": "claude_role_gitmgr", "label": "Git Manager", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 15.2, "font": {"size": 12, "color": "#ffffff"}, "title": "Git Manager", "community": 1, "community_name": "Engineering Workflow", "source_file": "CLAUDE.md", "file_type": "document", "degree": 4}, {"id": "claude_role_audit_agent", "label": "Weekly Audit Agent", "color": {"background": "#59A14F", "border": "#59A14F", "highlight": {"background": "#ffffff", "border": "#59A14F"}}, "size": 12.6, "font": {"size": 0, "color": "#ffffff"}, "title": "Weekly Audit Agent", "community": 4, "community_name": "Dashboard & Audit", "source_file": "CLAUDE.md", "file_type": "document", "degree": 2}, {"id": "claude_human_customer", "label": "Human Customer", "color": {"background": "#76B7B2", "border": "#76B7B2", "highlight": {"background": "#ffffff", "border": "#76B7B2"}}, "size": 13.9, "font": {"size": 0, "color": "#ffffff"}, "title": "Human Customer", "community": 3, "community_name": "Leadership & Strategy", "source_file": "CLAUDE.md", "file_type": "document", "degree": 3}, {"id": "claude_task_lifecycle", "label": "Task Lifecycle (backlog -> done)", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 17.8, "font": {"size": 12, "color": "#ffffff"}, "title": "Task Lifecycle (backlog -&gt; done)", "community": 1, "community_name": "Engineering Workflow", "source_file": "CLAUDE.md", "file_type": "document", "degree": 6}, {"id": "claude_local_pr_workflow", "label": "Local PR Workflow", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 23.0, "font": {"size": 12, "color": "#ffffff"}, "title": "Local PR Workflow", "community": 1, "community_name": "Engineering Workflow", "source_file": "CLAUDE.md", "file_type": "document", "degree": 10}, {"id": "claude_context_artifact_model", "label": "Typed Versioned Context Artifacts", "color": {"background": "#76B7B2", "border": "#76B7B2", "highlight": {"background": "#ffffff", "border": "#76B7B2"}}, "size": 20.4, "font": {"size": 12, "color": "#ffffff"}, "title": "Typed Versioned Context Artifacts", "community": 3, "community_name": "Leadership & Strategy", "source_file": "CLAUDE.md", "file_type": "document", "degree": 8}, {"id": "claude_prompt_assembly", "label": "Prompt Assembly Pipeline", "color": {"background": "#B07AA1", "border": "#B07AA1", "highlight": {"background": "#ffffff", "border": "#B07AA1"}}, "size": 15.2, "font": {"size": 12, "color": "#ffffff"}, "title": "Prompt Assembly Pipeline", "community": 6, "community_name": "Prompt Assembly", "source_file": "CLAUDE.md", "file_type": "document", "degree": 4}, {"id": "claude_dopamine", "label": "Dopamine Ledger (Motivational Feedback)", "color": {"background": "#B07AA1", "border": "#B07AA1", "highlight": {"background": "#ffffff", "border": "#B07AA1"}}, "size": 13.9, "font": {"size": 0, "color": "#ffffff"}, "title": "Dopamine Ledger (Motivational Feedback)", "community": 6, "community_name": "Prompt Assembly", "source_file": "CLAUDE.md", "file_type": "document", "degree": 3}, {"id": "claude_graphify", "label": "Graphify Integration", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 17.8, "font": {"size": 12, "color": "#ffffff"}, "title": "Graphify Integration", "community": 1, "community_name": "Engineering Workflow", "source_file": "CLAUDE.md", "file_type": "document", "degree": 6}, {"id": "claude_weekly_audit", "label": "Weekly Audit Process", "color": {"background": "#59A14F", "border": "#59A14F", "highlight": {"background": "#ffffff", "border": "#59A14F"}}, "size": 13.9, "font": {"size": 0, "color": "#ffffff"}, "title": "Weekly Audit Process", "community": 4, "community_name": "Dashboard & Audit", "source_file": "CLAUDE.md", "file_type": "document", "degree": 3}, {"id": "claude_messaging_hierarchy", "label": "Messaging Hierarchy Rules", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 16.5, "font": {"size": 12, "color": "#ffffff"}, "title": "Messaging Hierarchy Rules", "community": 0, "community_name": "Security & Isolation", "source_file": "CLAUDE.md", "file_type": "document", "degree": 5}, {"id": "claude_audit_trail", "label": "Audit Trail (Event Logging)", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 12.6, "font": {"size": 0, "color": "#ffffff"}, "title": "Audit Trail (Event Logging)", "community": 0, "community_name": "Security & Isolation", "source_file": "CLAUDE.md", "file_type": "document", "degree": 2}, {"id": "claude_ui_dashboard", "label": "V1 Dashboard UI", "color": {"background": "#59A14F", "border": "#59A14F", "highlight": {"background": "#ffffff", "border": "#59A14F"}}, "size": 19.1, "font": {"size": 12, "color": "#ffffff"}, "title": "V1 Dashboard UI", "community": 4, "community_name": "Dashboard & Audit", "source_file": "CLAUDE.md", "file_type": "document", "degree": 7}, {"id": "claude_server_js", "label": "server.js (Scaffolding)", "color": {"background": "#E15759", "border": "#E15759", "highlight": {"background": "#ffffff", "border": "#E15759"}}, "size": 12.6, "font": {"size": 0, "color": "#ffffff"}, "title": "server.js (Scaffolding)", "community": 2, "community_name": "Backend Stack", "source_file": "CLAUDE.md", "file_type": "document", "degree": 2}, {"id": "claude_structured_backend", "label": "Structured Backend (src/ target)", "color": {"background": "#E15759", "border": "#E15759", "highlight": {"background": "#ffffff", "border": "#E15759"}}, "size": 11.3, "font": {"size": 0, "color": "#ffffff"}, "title": "Structured Backend (src/ target)", "community": 2, "community_name": "Backend Stack", "source_file": "CLAUDE.md", "file_type": "document", "degree": 1}, {"id": "claude_worker_supervisor", "label": "Worker Supervisor and Heartbeats", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 12.6, "font": {"size": 0, "color": "#ffffff"}, "title": "Worker Supervisor and Heartbeats", "community": 0, "community_name": "Security & Isolation", "source_file": "CLAUDE.md", "file_type": "document", "degree": 2}, {"id": "claude_scheduler", "label": "Scheduler (Daily Reports, Weekly Audits)", "color": {"background": "#59A14F", "border": "#59A14F", "highlight": {"background": "#ffffff", "border": "#59A14F"}}, "size": 12.6, "font": {"size": 0, "color": "#ffffff"}, "title": "Scheduler (Daily Reports, Weekly Audits)", "community": 4, "community_name": "Dashboard & Audit", "source_file": "CLAUDE.md", "file_type": "document", "degree": 2}, {"id": "claude_loop_control", "label": "Loop Control (Max Correction Cycles)", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 15.2, "font": {"size": 12, "color": "#ffffff"}, "title": "Loop Control (Max Correction Cycles)", "community": 1, "community_name": "Engineering Workflow", "source_file": "CLAUDE.md", "file_type": "document", "degree": 4}, {"id": "claude_cross_dept_comm", "label": "Cross-Department Same-Role Communication", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 12.6, "font": {"size": 0, "color": "#ffffff"}, "title": "Cross-Department Same-Role Communication", "community": 0, "community_name": "Security & Isolation", "source_file": "CLAUDE.md", "file_type": "document", "degree": 2}, {"id": "claude_human_comm_rules", "label": "Human Communication Rules", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 12.6, "font": {"size": 0, "color": "#ffffff"}, "title": "Human Communication Rules", "community": 0, "community_name": "Security & Isolation", "source_file": "CLAUDE.md", "file_type": "document", "degree": 2}, {"id": "claude_idempotency", "label": "Idempotency Keys for State Changes", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 11.3, "font": {"size": 0, "color": "#ffffff"}, "title": "Idempotency Keys for State Changes", "community": 0, "community_name": "Security & Isolation", "source_file": "CLAUDE.md", "file_type": "document", "degree": 1}, {"id": "claude_command_policy", "label": "Command Safety Policy", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 13.9, "font": {"size": 0, "color": "#ffffff"}, "title": "Command Safety Policy", "community": 0, "community_name": "Security & Isolation", "source_file": "CLAUDE.md", "file_type": "document", "degree": 3}, {"id": "claude_rationale_no_k8s", "label": "Rationale: Keep V1 Simple (No K8s)", "color": {"background": "#E15759", "border": "#E15759", "highlight": {"background": "#ffffff", "border": "#E15759"}}, "size": 13.9, "font": {"size": 0, "color": "#ffffff"}, "title": "Rationale: Keep V1 Simple (No K8s)", "community": 2, "community_name": "Backend Stack", "source_file": "CLAUDE.md", "file_type": "document", "degree": 3}, {"id": "claude_rationale_no_blob", "label": "Rationale: No Giant Mutable Context Blob", "color": {"background": "#76B7B2", "border": "#76B7B2", "highlight": {"background": "#ffffff", "border": "#76B7B2"}}, "size": 11.3, "font": {"size": 0, "color": "#ffffff"}, "title": "Rationale: No Giant Mutable Context Blob", "community": 3, "community_name": "Leadership & Strategy", "source_file": "CLAUDE.md", "file_type": "document", "degree": 1}, {"id": "claude_rationale_no_engineer_merge", "label": "Rationale: Engineers Must Not Merge Main", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 11.3, "font": {"size": 0, "color": "#ffffff"}, "title": "Rationale: Engineers Must Not Merge Main", "community": 1, "community_name": "Engineering Workflow", "source_file": "CLAUDE.md", "file_type": "document", "degree": 1}, {"id": "claude_rationale_bearer_not_network", "label": "Rationale: Bearer Auth Over Container Networking", "color": {"background": "#E15759", "border": "#E15759", "highlight": {"background": "#ffffff", "border": "#E15759"}}, "size": 11.3, "font": {"size": 0, "color": "#ffffff"}, "title": "Rationale: Bearer Auth Over Container Networking", "community": 2, "community_name": "Backend Stack", "source_file": "CLAUDE.md", "file_type": "document", "degree": 1}, {"id": "claude_rationale_dopamine_prompt_only", "label": "Rationale: Dopamine Is Prompt-Only (Not Auth/RBAC)", "color": {"background": "#B07AA1", "border": "#B07AA1", "highlight": {"background": "#ffffff", "border": "#B07AA1"}}, "size": 11.3, "font": {"size": 0, "color": "#ffffff"}, "title": "Rationale: Dopamine Is Prompt-Only (Not Auth/RBAC)", "community": 6, "community_name": "Prompt Assembly", "source_file": "CLAUDE.md", "file_type": "document", "degree": 1}, {"id": "claude_rationale_graphify_context_not_replacement", "label": "Rationale: Graphify As Context Not Replacement", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 11.3, "font": {"size": 0, "color": "#ffffff"}, "title": "Rationale: Graphify As Context Not Replacement", "community": 1, "community_name": "Engineering Workflow", "source_file": "CLAUDE.md", "file_type": "document", "degree": 1}, {"id": "readme_api_health", "label": "GET /api/health Endpoint", "color": {"background": "#E15759", "border": "#E15759", "highlight": {"background": "#ffffff", "border": "#E15759"}}, "size": 11.3, "font": {"size": 0, "color": "#ffffff"}, "title": "GET /api/health Endpoint", "community": 2, "community_name": "Backend Stack", "source_file": "README.md", "file_type": "document", "degree": 1}, {"id": "readme_api_files", "label": "File CRUD API Endpoints", "color": {"background": "#E15759", "border": "#E15759", "highlight": {"background": "#ffffff", "border": "#E15759"}}, "size": 12.6, "font": {"size": 0, "color": "#ffffff"}, "title": "File CRUD API Endpoints", "community": 2, "community_name": "Backend Stack", "source_file": "README.md", "file_type": "document", "degree": 2}, {"id": "readme_projects_dir", "label": "Projects/ Directory (Agent Workspace)", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 11.3, "font": {"size": 0, "color": "#ffffff"}, "title": "Projects/ Directory (Agent Workspace)", "community": 0, "community_name": "Security & Isolation", "source_file": "README.md", "file_type": "document", "degree": 1}, {"id": "readme_server_js", "label": "server.js (Current Entry Point)", "color": {"background": "#E15759", "border": "#E15759", "highlight": {"background": "#ffffff", "border": "#E15759"}}, "size": 15.2, "font": {"size": 12, "color": "#ffffff"}, "title": "server.js (Current Entry Point)", "community": 2, "community_name": "Backend Stack", "source_file": "README.md", "file_type": "document", "degree": 4}, {"id": "readme_dockerfile", "label": ".devcontainer/Dockerfile", "color": {"background": "#E15759", "border": "#E15759", "highlight": {"background": "#ffffff", "border": "#E15759"}}, "size": 11.3, "font": {"size": 0, "color": "#ffffff"}, "title": ".devcontainer/Dockerfile", "community": 2, "community_name": "Backend Stack", "source_file": "README.md", "file_type": "document", "degree": 1}];
-const RAW_EDGES = [{"from": "server_js", "to": "server_safepath", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "tests_server_test_js", "to": "server_test_createapp", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_silver_computing_machine", "to": "claude_crispy_adventure", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_silver_computing_machine", "to": "claude_zero_trust_security", "label": "implements", "title": "implements [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_silver_computing_machine", "to": "claude_rbac", "label": "implements", "title": "implements [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_silver_computing_machine", "to": "claude_sqlite_wal", "label": "implements", "title": "implements [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_silver_computing_machine", "to": "claude_node_express", "label": "implements", "title": "implements [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_silver_computing_machine", "to": "claude_react_vite", "label": "implements", "title": "implements [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_silver_computing_machine", "to": "claude_docker", "label": "implements", "title": "implements [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_silver_computing_machine", "to": "claude_project_isolation", "label": "implements", "title": "implements [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_silver_computing_machine", "to": "claude_worker_supervisor", "label": "implements", "title": "implements [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_silver_computing_machine", "to": "claude_scheduler", "label": "implements", "title": "implements [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_silver_computing_machine", "to": "claude_ui_dashboard", "label": "implements", "title": "implements [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_silver_computing_machine", "to": "claude_graphify", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_silver_computing_machine", "to": "claude_audit_trail", "label": "implements", "title": "implements [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_silver_computing_machine", "to": "claude_context_artifact_model", "label": "implements", "title": "implements [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_silver_computing_machine", "to": "claude_prompt_assembly", "label": "implements", "title": "implements [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_silver_computing_machine", "to": "claude_dopamine", "label": "implements", "title": "implements [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_silver_computing_machine", "to": "claude_messaging_hierarchy", "label": "implements", "title": "implements [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_silver_computing_machine", "to": "claude_local_pr_workflow", "label": "implements", "title": "implements [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_silver_computing_machine", "to": "claude_task_lifecycle", "label": "implements", "title": "implements [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_silver_computing_machine", "to": "claude_human_comm_rules", "label": "implements", "title": "implements [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_silver_computing_machine", "to": "claude_cross_dept_comm", "label": "implements", "title": "implements [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_silver_computing_machine", "to": "claude_command_policy", "label": "implements", "title": "implements [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_silver_computing_machine", "to": "claude_idempotency", "label": "implements", "title": "implements [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_crispy_adventure", "to": "claude_project_isolation", "label": "references", "title": "references [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}, {"from": "claude_crispy_adventure", "to": "claude_worker_supervisor", "label": "references", "title": "references [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}, {"from": "claude_zero_trust_security", "to": "claude_rbac", "label": "conceptually_related_to", "title": "conceptually_related_to [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_zero_trust_security", "to": "claude_bearer_auth", "label": "conceptually_related_to", "title": "conceptually_related_to [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_zero_trust_security", "to": "claude_project_isolation", "label": "conceptually_related_to", "title": "conceptually_related_to [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_zero_trust_security", "to": "claude_audit_trail", "label": "conceptually_related_to", "title": "conceptually_related_to [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_rbac", "to": "claude_command_policy", "label": "conceptually_related_to", "title": "conceptually_related_to [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_rbac", "to": "claude_messaging_hierarchy", "label": "conceptually_related_to", "title": "conceptually_related_to [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}, {"from": "claude_rbac", "to": "claude_task_lifecycle", "label": "conceptually_related_to", "title": "conceptually_related_to [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}, {"from": "claude_bearer_auth", "to": "claude_sqlite_wal", "label": "shares_data_with", "title": "shares_data_with [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_bearer_auth", "to": "claude_rationale_bearer_not_network", "label": "rationale_for", "title": "rationale_for [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_bearer_auth", "to": "claude_command_policy", "label": "conceptually_related_to", "title": "conceptually_related_to [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}, {"from": "claude_project_isolation", "to": "claude_docker", "label": "implements", "title": "implements [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_project_isolation", "to": "readme_projects_dir", "label": "implements", "title": "implements [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}, {"from": "claude_sqlite_wal", "to": "claude_context_artifact_model", "label": "shares_data_with", "title": "shares_data_with [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}, {"from": "claude_sqlite_wal", "to": "claude_rationale_no_k8s", "label": "rationale_for", "title": "rationale_for [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_node_express", "to": "claude_rationale_no_k8s", "label": "rationale_for", "title": "rationale_for [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_node_express", "to": "readme_api_files", "label": "semantically_similar_to", "title": "semantically_similar_to [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}, {"from": "claude_react_vite", "to": "claude_ui_dashboard", "label": "implements", "title": "implements [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}, {"from": "claude_docker", "to": "claude_rationale_no_k8s", "label": "rationale_for", "title": "rationale_for [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_department_frontend", "to": "claude_department_backend", "label": "conceptually_related_to", "title": "conceptually_related_to [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}, {"from": "claude_department_frontend", "to": "claude_department_infra", "label": "conceptually_related_to", "title": "conceptually_related_to [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}, {"from": "claude_department_frontend", "to": "claude_department_deployment", "label": "conceptually_related_to", "title": "conceptually_related_to [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}, {"from": "claude_department_backend", "to": "claude_department_infra", "label": "conceptually_related_to", "title": "conceptually_related_to [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}, {"from": "claude_department_backend", "to": "claude_department_deployment", "label": "conceptually_related_to", "title": "conceptually_related_to [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}, {"from": "claude_department_infra", "to": "claude_department_deployment", "label": "conceptually_related_to", "title": "conceptually_related_to [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}, {"from": "claude_role_ceo", "to": "claude_human_customer", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_role_ceo", "to": "claude_role_cto", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_role_ceo", "to": "claude_role_pm", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_role_ceo", "to": "claude_context_artifact_model", "label": "references", "title": "references [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}, {"from": "claude_role_cto", "to": "claude_human_customer", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_role_cto", "to": "claude_role_pm", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_role_cto", "to": "claude_role_projmgr", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_role_cto", "to": "claude_role_architect", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_role_cto", "to": "claude_context_artifact_model", "label": "references", "title": "references [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}, {"from": "claude_role_pm", "to": "claude_human_customer", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_role_pm", "to": "claude_role_projmgr", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_role_pm", "to": "claude_context_artifact_model", "label": "references", "title": "references [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}, {"from": "claude_role_projmgr", "to": "claude_role_techlead", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_role_projmgr", "to": "claude_role_gitmgr", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_role_projmgr", "to": "claude_task_lifecycle", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_role_architect", "to": "claude_role_techlead", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_role_architect", "to": "claude_graphify", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_role_techlead", "to": "claude_role_engineer", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_role_techlead", "to": "claude_role_reviewer", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_role_techlead", "to": "claude_role_tester", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_role_techlead", "to": "claude_role_gitmgr", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_role_techlead", "to": "claude_role_audit_agent", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_role_techlead", "to": "claude_local_pr_workflow", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_role_techlead", "to": "claude_loop_control", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_role_engineer", "to": "claude_local_pr_workflow", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_role_engineer", "to": "claude_role_reviewer", "label": "conceptually_related_to", "title": "conceptually_related_to [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}, {"from": "claude_role_engineer", "to": "claude_role_tester", "label": "conceptually_related_to", "title": "conceptually_related_to [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}, {"from": "claude_role_reviewer", "to": "claude_local_pr_workflow", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_role_reviewer", "to": "claude_loop_control", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_role_tester", "to": "claude_local_pr_workflow", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_role_tester", "to": "claude_loop_control", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_role_gitmgr", "to": "claude_local_pr_workflow", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_role_gitmgr", "to": "claude_graphify", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_role_audit_agent", "to": "claude_weekly_audit", "label": "implements", "title": "implements [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_task_lifecycle", "to": "claude_local_pr_workflow", "label": "conceptually_related_to", "title": "conceptually_related_to [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}, {"from": "claude_task_lifecycle", "to": "claude_loop_control", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_task_lifecycle", "to": "claude_ui_dashboard", "label": "references", "title": "references [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}, {"from": "claude_local_pr_workflow", "to": "claude_graphify", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_local_pr_workflow", "to": "claude_rationale_no_engineer_merge", "label": "rationale_for", "title": "rationale_for [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_local_pr_workflow", "to": "claude_ui_dashboard", "label": "references", "title": "references [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}, {"from": "claude_context_artifact_model", "to": "claude_prompt_assembly", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_context_artifact_model", "to": "claude_rationale_no_blob", "label": "rationale_for", "title": "rationale_for [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_context_artifact_model", "to": "claude_ui_dashboard", "label": "references", "title": "references [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}, {"from": "claude_prompt_assembly", "to": "claude_dopamine", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_prompt_assembly", "to": "claude_graphify", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_dopamine", "to": "claude_rationale_dopamine_prompt_only", "label": "rationale_for", "title": "rationale_for [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_graphify", "to": "claude_rationale_graphify_context_not_replacement", "label": "rationale_for", "title": "rationale_for [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_weekly_audit", "to": "claude_scheduler", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_weekly_audit", "to": "claude_ui_dashboard", "label": "references", "title": "references [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}, {"from": "claude_messaging_hierarchy", "to": "claude_cross_dept_comm", "label": "conceptually_related_to", "title": "conceptually_related_to [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_messaging_hierarchy", "to": "claude_human_comm_rules", "label": "conceptually_related_to", "title": "conceptually_related_to [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_messaging_hierarchy", "to": "claude_ui_dashboard", "label": "references", "title": "references [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}, {"from": "claude_server_js", "to": "claude_structured_backend", "label": "conceptually_related_to", "title": "conceptually_related_to [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}, {"from": "claude_server_js", "to": "readme_server_js", "label": "semantically_similar_to", "title": "semantically_similar_to [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}, {"from": "readme_api_health", "to": "readme_server_js", "label": "implements", "title": "implements [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}, {"from": "readme_api_files", "to": "readme_server_js", "label": "implements", "title": "implements [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}, {"from": "readme_server_js", "to": "readme_dockerfile", "label": "references", "title": "references [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}];
-const LEGEND = [{"cid": 0, "color": "#4E79A7", "label": "Security &amp; Isolation", "count": 14}, {"cid": 1, "color": "#F28E2B", "label": "Engineering Workflow", "count": 13}, {"cid": 2, "color": "#E15759", "label": "Backend Stack", "count": 11}, {"cid": 3, "color": "#76B7B2", "label": "Leadership &amp; Strategy", "count": 6}, {"cid": 4, "color": "#59A14F", "label": "Dashboard &amp; Audit", "count": 5}, {"cid": 5, "color": "#EDC948", "label": "Departments", "count": 4}, {"cid": 6, "color": "#B07AA1", "label": "Prompt Assembly", "count": 3}, {"cid": 7, "color": "#FF9DA7", "label": "Server Core", "count": 2}, {"cid": 8, "color": "#9C755F", "label": "Test Suite", "count": 2}, {"cid": 9, "color": "#BAB0AC", "label": "Test Configuration", "count": 1}];
+  <head>
+    <meta charset="UTF-8" />
+    <title>graphify - graphify-out/graph.html</title>
+    <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: #0f0f1a;
+        color: #e0e0e0;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
+      }
+      #graph {
+        flex: 1;
+      }
+      #sidebar {
+        width: 280px;
+        background: #1a1a2e;
+        border-left: 1px solid #2a2a4e;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+      #search-wrap {
+        padding: 12px;
+        border-bottom: 1px solid #2a2a4e;
+      }
+      #search {
+        width: 100%;
+        background: #0f0f1a;
+        border: 1px solid #3a3a5e;
+        color: #e0e0e0;
+        padding: 7px 10px;
+        border-radius: 6px;
+        font-size: 13px;
+        outline: none;
+      }
+      #search:focus {
+        border-color: #4e79a7;
+      }
+      #search-results {
+        max-height: 140px;
+        overflow-y: auto;
+        padding: 4px 12px;
+        border-bottom: 1px solid #2a2a4e;
+        display: none;
+      }
+      .search-item {
+        padding: 4px 6px;
+        cursor: pointer;
+        border-radius: 4px;
+        font-size: 12px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .search-item:hover {
+        background: #2a2a4e;
+      }
+      #info-panel {
+        padding: 14px;
+        border-bottom: 1px solid #2a2a4e;
+        min-height: 140px;
+      }
+      #info-panel h3 {
+        font-size: 13px;
+        color: #aaa;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      #info-content {
+        font-size: 13px;
+        color: #ccc;
+        line-height: 1.6;
+      }
+      #info-content .field {
+        margin-bottom: 5px;
+      }
+      #info-content .field b {
+        color: #e0e0e0;
+      }
+      #info-content .empty {
+        color: #555;
+        font-style: italic;
+      }
+      .neighbor-link {
+        display: block;
+        padding: 2px 6px;
+        margin: 2px 0;
+        border-radius: 3px;
+        cursor: pointer;
+        font-size: 12px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        border-left: 3px solid #333;
+      }
+      .neighbor-link:hover {
+        background: #2a2a4e;
+      }
+      #neighbors-list {
+        max-height: 160px;
+        overflow-y: auto;
+        margin-top: 4px;
+      }
+      #legend-wrap {
+        flex: 1;
+        overflow-y: auto;
+        padding: 12px;
+      }
+      #legend-wrap h3 {
+        font-size: 13px;
+        color: #aaa;
+        margin-bottom: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 4px 0;
+        cursor: pointer;
+        border-radius: 4px;
+        font-size: 12px;
+      }
+      .legend-item:hover {
+        background: #2a2a4e;
+        padding-left: 4px;
+      }
+      .legend-item.dimmed {
+        opacity: 0.35;
+      }
+      .legend-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+      .legend-label {
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .legend-count {
+        color: #666;
+        font-size: 11px;
+      }
+      #stats {
+        padding: 10px 14px;
+        border-top: 1px solid #2a2a4e;
+        font-size: 11px;
+        color: #555;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="graph"></div>
+    <div id="sidebar">
+      <div id="search-wrap">
+        <input id="search" type="text" placeholder="Search nodes..." autocomplete="off" />
+        <div id="search-results"></div>
+      </div>
+      <div id="info-panel">
+        <h3>Node Info</h3>
+        <div id="info-content"><span class="empty">Click a node to inspect it</span></div>
+      </div>
+      <div id="legend-wrap">
+        <h3>Communities</h3>
+        <div id="legend"></div>
+      </div>
+      <div id="stats">61 nodes &middot; 108 edges &middot; 10 communities</div>
+    </div>
+    <script>
+      const RAW_NODES = [
+        {
+          id: 'jest_config_js',
+          label: 'jest.config.js',
+          color: {
+            background: '#BAB0AC',
+            border: '#BAB0AC',
+            highlight: { background: '#ffffff', border: '#BAB0AC' },
+          },
+          size: 10.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'jest.config.js',
+          community: 9,
+          community_name: 'Test Configuration',
+          source_file: 'jest.config.js',
+          file_type: 'code',
+          degree: 0,
+        },
+        {
+          id: 'server_js',
+          label: 'server.js',
+          color: {
+            background: '#FF9DA7',
+            border: '#FF9DA7',
+            highlight: { background: '#ffffff', border: '#FF9DA7' },
+          },
+          size: 11.3,
+          font: { size: 0, color: '#ffffff' },
+          title: 'server.js',
+          community: 7,
+          community_name: 'Server Core',
+          source_file: 'server.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: 'server_safepath',
+          label: 'safePath()',
+          color: {
+            background: '#FF9DA7',
+            border: '#FF9DA7',
+            highlight: { background: '#ffffff', border: '#FF9DA7' },
+          },
+          size: 11.3,
+          font: { size: 0, color: '#ffffff' },
+          title: 'safePath()',
+          community: 7,
+          community_name: 'Server Core',
+          source_file: 'server.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: 'tests_server_test_js',
+          label: 'server.test.js',
+          color: {
+            background: '#9C755F',
+            border: '#9C755F',
+            highlight: { background: '#ffffff', border: '#9C755F' },
+          },
+          size: 11.3,
+          font: { size: 0, color: '#ffffff' },
+          title: 'server.test.js',
+          community: 8,
+          community_name: 'Test Suite',
+          source_file: 'tests\\server.test.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: 'server_test_createapp',
+          label: 'createApp()',
+          color: {
+            background: '#9C755F',
+            border: '#9C755F',
+            highlight: { background: '#ffffff', border: '#9C755F' },
+          },
+          size: 11.3,
+          font: { size: 0, color: '#ffffff' },
+          title: 'createApp()',
+          community: 8,
+          community_name: 'Test Suite',
+          source_file: 'tests\\server.test.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: 'claude_silver_computing_machine',
+          label: 'Silver-Computing-Machine (Gatekeeper)',
+          color: {
+            background: '#4E79A7',
+            border: '#4E79A7',
+            highlight: { background: '#ffffff', border: '#4E79A7' },
+          },
+          size: 40.0,
+          font: { size: 12, color: '#ffffff' },
+          title: 'Silver-Computing-Machine (Gatekeeper)',
+          community: 0,
+          community_name: 'Security & Isolation',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 23,
+        },
+        {
+          id: 'claude_crispy_adventure',
+          label: 'Crispy Adventure (Worker Runtime)',
+          color: {
+            background: '#4E79A7',
+            border: '#4E79A7',
+            highlight: { background: '#ffffff', border: '#4E79A7' },
+          },
+          size: 13.9,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Crispy Adventure (Worker Runtime)',
+          community: 0,
+          community_name: 'Security & Isolation',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 3,
+        },
+        {
+          id: 'claude_zero_trust_security',
+          label: 'Zero-Trust Security Model',
+          color: {
+            background: '#4E79A7',
+            border: '#4E79A7',
+            highlight: { background: '#ffffff', border: '#4E79A7' },
+          },
+          size: 16.5,
+          font: { size: 12, color: '#ffffff' },
+          title: 'Zero-Trust Security Model',
+          community: 0,
+          community_name: 'Security & Isolation',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 5,
+        },
+        {
+          id: 'claude_rbac',
+          label: 'RBAC (Role-Based Access Control)',
+          color: {
+            background: '#4E79A7',
+            border: '#4E79A7',
+            highlight: { background: '#ffffff', border: '#4E79A7' },
+          },
+          size: 16.5,
+          font: { size: 12, color: '#ffffff' },
+          title: 'RBAC (Role-Based Access Control)',
+          community: 0,
+          community_name: 'Security & Isolation',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 5,
+        },
+        {
+          id: 'claude_bearer_auth',
+          label: 'Bearer Token Authentication',
+          color: {
+            background: '#E15759',
+            border: '#E15759',
+            highlight: { background: '#ffffff', border: '#E15759' },
+          },
+          size: 15.2,
+          font: { size: 12, color: '#ffffff' },
+          title: 'Bearer Token Authentication',
+          community: 2,
+          community_name: 'Backend Stack',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 4,
+        },
+        {
+          id: 'claude_project_isolation',
+          label: 'Project Isolation (Docker)',
+          color: {
+            background: '#4E79A7',
+            border: '#4E79A7',
+            highlight: { background: '#ffffff', border: '#4E79A7' },
+          },
+          size: 16.5,
+          font: { size: 12, color: '#ffffff' },
+          title: 'Project Isolation (Docker)',
+          community: 0,
+          community_name: 'Security & Isolation',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 5,
+        },
+        {
+          id: 'claude_sqlite_wal',
+          label: 'SQLite with WAL Mode',
+          color: {
+            background: '#E15759',
+            border: '#E15759',
+            highlight: { background: '#ffffff', border: '#E15759' },
+          },
+          size: 15.2,
+          font: { size: 12, color: '#ffffff' },
+          title: 'SQLite with WAL Mode',
+          community: 2,
+          community_name: 'Backend Stack',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 4,
+        },
+        {
+          id: 'claude_node_express',
+          label: 'Node.js + Express Backend',
+          color: {
+            background: '#E15759',
+            border: '#E15759',
+            highlight: { background: '#ffffff', border: '#E15759' },
+          },
+          size: 13.9,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Node.js + Express Backend',
+          community: 2,
+          community_name: 'Backend Stack',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 3,
+        },
+        {
+          id: 'claude_react_vite',
+          label: 'React + Vite Frontend',
+          color: {
+            background: '#59A14F',
+            border: '#59A14F',
+            highlight: { background: '#ffffff', border: '#59A14F' },
+          },
+          size: 12.6,
+          font: { size: 0, color: '#ffffff' },
+          title: 'React + Vite Frontend',
+          community: 4,
+          community_name: 'Dashboard & Audit',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 2,
+        },
+        {
+          id: 'claude_docker',
+          label: 'Docker Containerization',
+          color: {
+            background: '#4E79A7',
+            border: '#4E79A7',
+            highlight: { background: '#ffffff', border: '#4E79A7' },
+          },
+          size: 13.9,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Docker Containerization',
+          community: 0,
+          community_name: 'Security & Isolation',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 3,
+        },
+        {
+          id: 'claude_department_frontend',
+          label: 'Frontend Department',
+          color: {
+            background: '#EDC948',
+            border: '#EDC948',
+            highlight: { background: '#ffffff', border: '#EDC948' },
+          },
+          size: 13.9,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Frontend Department',
+          community: 5,
+          community_name: 'Departments',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 3,
+        },
+        {
+          id: 'claude_department_backend',
+          label: 'Backend Department',
+          color: {
+            background: '#EDC948',
+            border: '#EDC948',
+            highlight: { background: '#ffffff', border: '#EDC948' },
+          },
+          size: 13.9,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Backend Department',
+          community: 5,
+          community_name: 'Departments',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 3,
+        },
+        {
+          id: 'claude_department_infra',
+          label: 'Infra Department',
+          color: {
+            background: '#EDC948',
+            border: '#EDC948',
+            highlight: { background: '#ffffff', border: '#EDC948' },
+          },
+          size: 13.9,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Infra Department',
+          community: 5,
+          community_name: 'Departments',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 3,
+        },
+        {
+          id: 'claude_department_deployment',
+          label: 'Deployment Department',
+          color: {
+            background: '#EDC948',
+            border: '#EDC948',
+            highlight: { background: '#ffffff', border: '#EDC948' },
+          },
+          size: 13.9,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Deployment Department',
+          community: 5,
+          community_name: 'Departments',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 3,
+        },
+        {
+          id: 'claude_role_ceo',
+          label: 'Department CEO',
+          color: {
+            background: '#76B7B2',
+            border: '#76B7B2',
+            highlight: { background: '#ffffff', border: '#76B7B2' },
+          },
+          size: 15.2,
+          font: { size: 12, color: '#ffffff' },
+          title: 'Department CEO',
+          community: 3,
+          community_name: 'Leadership & Strategy',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 4,
+        },
+        {
+          id: 'claude_role_cto',
+          label: 'Department CTO',
+          color: {
+            background: '#76B7B2',
+            border: '#76B7B2',
+            highlight: { background: '#ffffff', border: '#76B7B2' },
+          },
+          size: 17.8,
+          font: { size: 12, color: '#ffffff' },
+          title: 'Department CTO',
+          community: 3,
+          community_name: 'Leadership & Strategy',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 6,
+        },
+        {
+          id: 'claude_role_pm',
+          label: 'Product Manager',
+          color: {
+            background: '#76B7B2',
+            border: '#76B7B2',
+            highlight: { background: '#ffffff', border: '#76B7B2' },
+          },
+          size: 16.5,
+          font: { size: 12, color: '#ffffff' },
+          title: 'Product Manager',
+          community: 3,
+          community_name: 'Leadership & Strategy',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 5,
+        },
+        {
+          id: 'claude_role_projmgr',
+          label: 'Project Manager',
+          color: {
+            background: '#F28E2B',
+            border: '#F28E2B',
+            highlight: { background: '#ffffff', border: '#F28E2B' },
+          },
+          size: 16.5,
+          font: { size: 12, color: '#ffffff' },
+          title: 'Project Manager',
+          community: 1,
+          community_name: 'Engineering Workflow',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 5,
+        },
+        {
+          id: 'claude_role_architect',
+          label: 'Architect',
+          color: {
+            background: '#F28E2B',
+            border: '#F28E2B',
+            highlight: { background: '#ffffff', border: '#F28E2B' },
+          },
+          size: 13.9,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Architect',
+          community: 1,
+          community_name: 'Engineering Workflow',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 3,
+        },
+        {
+          id: 'claude_role_techlead',
+          label: 'Tech Lead',
+          color: {
+            background: '#F28E2B',
+            border: '#F28E2B',
+            highlight: { background: '#ffffff', border: '#F28E2B' },
+          },
+          size: 21.7,
+          font: { size: 12, color: '#ffffff' },
+          title: 'Tech Lead',
+          community: 1,
+          community_name: 'Engineering Workflow',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 9,
+        },
+        {
+          id: 'claude_role_engineer',
+          label: 'Engineer',
+          color: {
+            background: '#F28E2B',
+            border: '#F28E2B',
+            highlight: { background: '#ffffff', border: '#F28E2B' },
+          },
+          size: 15.2,
+          font: { size: 12, color: '#ffffff' },
+          title: 'Engineer',
+          community: 1,
+          community_name: 'Engineering Workflow',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 4,
+        },
+        {
+          id: 'claude_role_reviewer',
+          label: 'Reviewer',
+          color: {
+            background: '#F28E2B',
+            border: '#F28E2B',
+            highlight: { background: '#ffffff', border: '#F28E2B' },
+          },
+          size: 15.2,
+          font: { size: 12, color: '#ffffff' },
+          title: 'Reviewer',
+          community: 1,
+          community_name: 'Engineering Workflow',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 4,
+        },
+        {
+          id: 'claude_role_tester',
+          label: 'Tester',
+          color: {
+            background: '#F28E2B',
+            border: '#F28E2B',
+            highlight: { background: '#ffffff', border: '#F28E2B' },
+          },
+          size: 15.2,
+          font: { size: 12, color: '#ffffff' },
+          title: 'Tester',
+          community: 1,
+          community_name: 'Engineering Workflow',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 4,
+        },
+        {
+          id: 'claude_role_gitmgr',
+          label: 'Git Manager',
+          color: {
+            background: '#F28E2B',
+            border: '#F28E2B',
+            highlight: { background: '#ffffff', border: '#F28E2B' },
+          },
+          size: 15.2,
+          font: { size: 12, color: '#ffffff' },
+          title: 'Git Manager',
+          community: 1,
+          community_name: 'Engineering Workflow',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 4,
+        },
+        {
+          id: 'claude_role_audit_agent',
+          label: 'Weekly Audit Agent',
+          color: {
+            background: '#59A14F',
+            border: '#59A14F',
+            highlight: { background: '#ffffff', border: '#59A14F' },
+          },
+          size: 12.6,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Weekly Audit Agent',
+          community: 4,
+          community_name: 'Dashboard & Audit',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 2,
+        },
+        {
+          id: 'claude_human_customer',
+          label: 'Human Customer',
+          color: {
+            background: '#76B7B2',
+            border: '#76B7B2',
+            highlight: { background: '#ffffff', border: '#76B7B2' },
+          },
+          size: 13.9,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Human Customer',
+          community: 3,
+          community_name: 'Leadership & Strategy',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 3,
+        },
+        {
+          id: 'claude_task_lifecycle',
+          label: 'Task Lifecycle (backlog -> done)',
+          color: {
+            background: '#F28E2B',
+            border: '#F28E2B',
+            highlight: { background: '#ffffff', border: '#F28E2B' },
+          },
+          size: 17.8,
+          font: { size: 12, color: '#ffffff' },
+          title: 'Task Lifecycle (backlog -&gt; done)',
+          community: 1,
+          community_name: 'Engineering Workflow',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 6,
+        },
+        {
+          id: 'claude_local_pr_workflow',
+          label: 'Local PR Workflow',
+          color: {
+            background: '#F28E2B',
+            border: '#F28E2B',
+            highlight: { background: '#ffffff', border: '#F28E2B' },
+          },
+          size: 23.0,
+          font: { size: 12, color: '#ffffff' },
+          title: 'Local PR Workflow',
+          community: 1,
+          community_name: 'Engineering Workflow',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 10,
+        },
+        {
+          id: 'claude_context_artifact_model',
+          label: 'Typed Versioned Context Artifacts',
+          color: {
+            background: '#76B7B2',
+            border: '#76B7B2',
+            highlight: { background: '#ffffff', border: '#76B7B2' },
+          },
+          size: 20.4,
+          font: { size: 12, color: '#ffffff' },
+          title: 'Typed Versioned Context Artifacts',
+          community: 3,
+          community_name: 'Leadership & Strategy',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 8,
+        },
+        {
+          id: 'claude_prompt_assembly',
+          label: 'Prompt Assembly Pipeline',
+          color: {
+            background: '#B07AA1',
+            border: '#B07AA1',
+            highlight: { background: '#ffffff', border: '#B07AA1' },
+          },
+          size: 15.2,
+          font: { size: 12, color: '#ffffff' },
+          title: 'Prompt Assembly Pipeline',
+          community: 6,
+          community_name: 'Prompt Assembly',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 4,
+        },
+        {
+          id: 'claude_dopamine',
+          label: 'Dopamine Ledger (Motivational Feedback)',
+          color: {
+            background: '#B07AA1',
+            border: '#B07AA1',
+            highlight: { background: '#ffffff', border: '#B07AA1' },
+          },
+          size: 13.9,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Dopamine Ledger (Motivational Feedback)',
+          community: 6,
+          community_name: 'Prompt Assembly',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 3,
+        },
+        {
+          id: 'claude_graphify',
+          label: 'Graphify Integration',
+          color: {
+            background: '#F28E2B',
+            border: '#F28E2B',
+            highlight: { background: '#ffffff', border: '#F28E2B' },
+          },
+          size: 17.8,
+          font: { size: 12, color: '#ffffff' },
+          title: 'Graphify Integration',
+          community: 1,
+          community_name: 'Engineering Workflow',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 6,
+        },
+        {
+          id: 'claude_weekly_audit',
+          label: 'Weekly Audit Process',
+          color: {
+            background: '#59A14F',
+            border: '#59A14F',
+            highlight: { background: '#ffffff', border: '#59A14F' },
+          },
+          size: 13.9,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Weekly Audit Process',
+          community: 4,
+          community_name: 'Dashboard & Audit',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 3,
+        },
+        {
+          id: 'claude_messaging_hierarchy',
+          label: 'Messaging Hierarchy Rules',
+          color: {
+            background: '#4E79A7',
+            border: '#4E79A7',
+            highlight: { background: '#ffffff', border: '#4E79A7' },
+          },
+          size: 16.5,
+          font: { size: 12, color: '#ffffff' },
+          title: 'Messaging Hierarchy Rules',
+          community: 0,
+          community_name: 'Security & Isolation',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 5,
+        },
+        {
+          id: 'claude_audit_trail',
+          label: 'Audit Trail (Event Logging)',
+          color: {
+            background: '#4E79A7',
+            border: '#4E79A7',
+            highlight: { background: '#ffffff', border: '#4E79A7' },
+          },
+          size: 12.6,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Audit Trail (Event Logging)',
+          community: 0,
+          community_name: 'Security & Isolation',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 2,
+        },
+        {
+          id: 'claude_ui_dashboard',
+          label: 'V1 Dashboard UI',
+          color: {
+            background: '#59A14F',
+            border: '#59A14F',
+            highlight: { background: '#ffffff', border: '#59A14F' },
+          },
+          size: 19.1,
+          font: { size: 12, color: '#ffffff' },
+          title: 'V1 Dashboard UI',
+          community: 4,
+          community_name: 'Dashboard & Audit',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 7,
+        },
+        {
+          id: 'claude_server_js',
+          label: 'server.js (Scaffolding)',
+          color: {
+            background: '#E15759',
+            border: '#E15759',
+            highlight: { background: '#ffffff', border: '#E15759' },
+          },
+          size: 12.6,
+          font: { size: 0, color: '#ffffff' },
+          title: 'server.js (Scaffolding)',
+          community: 2,
+          community_name: 'Backend Stack',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 2,
+        },
+        {
+          id: 'claude_structured_backend',
+          label: 'Structured Backend (src/ target)',
+          color: {
+            background: '#E15759',
+            border: '#E15759',
+            highlight: { background: '#ffffff', border: '#E15759' },
+          },
+          size: 11.3,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Structured Backend (src/ target)',
+          community: 2,
+          community_name: 'Backend Stack',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 1,
+        },
+        {
+          id: 'claude_worker_supervisor',
+          label: 'Worker Supervisor and Heartbeats',
+          color: {
+            background: '#4E79A7',
+            border: '#4E79A7',
+            highlight: { background: '#ffffff', border: '#4E79A7' },
+          },
+          size: 12.6,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Worker Supervisor and Heartbeats',
+          community: 0,
+          community_name: 'Security & Isolation',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 2,
+        },
+        {
+          id: 'claude_scheduler',
+          label: 'Scheduler (Daily Reports, Weekly Audits)',
+          color: {
+            background: '#59A14F',
+            border: '#59A14F',
+            highlight: { background: '#ffffff', border: '#59A14F' },
+          },
+          size: 12.6,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Scheduler (Daily Reports, Weekly Audits)',
+          community: 4,
+          community_name: 'Dashboard & Audit',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 2,
+        },
+        {
+          id: 'claude_loop_control',
+          label: 'Loop Control (Max Correction Cycles)',
+          color: {
+            background: '#F28E2B',
+            border: '#F28E2B',
+            highlight: { background: '#ffffff', border: '#F28E2B' },
+          },
+          size: 15.2,
+          font: { size: 12, color: '#ffffff' },
+          title: 'Loop Control (Max Correction Cycles)',
+          community: 1,
+          community_name: 'Engineering Workflow',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 4,
+        },
+        {
+          id: 'claude_cross_dept_comm',
+          label: 'Cross-Department Same-Role Communication',
+          color: {
+            background: '#4E79A7',
+            border: '#4E79A7',
+            highlight: { background: '#ffffff', border: '#4E79A7' },
+          },
+          size: 12.6,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Cross-Department Same-Role Communication',
+          community: 0,
+          community_name: 'Security & Isolation',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 2,
+        },
+        {
+          id: 'claude_human_comm_rules',
+          label: 'Human Communication Rules',
+          color: {
+            background: '#4E79A7',
+            border: '#4E79A7',
+            highlight: { background: '#ffffff', border: '#4E79A7' },
+          },
+          size: 12.6,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Human Communication Rules',
+          community: 0,
+          community_name: 'Security & Isolation',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 2,
+        },
+        {
+          id: 'claude_idempotency',
+          label: 'Idempotency Keys for State Changes',
+          color: {
+            background: '#4E79A7',
+            border: '#4E79A7',
+            highlight: { background: '#ffffff', border: '#4E79A7' },
+          },
+          size: 11.3,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Idempotency Keys for State Changes',
+          community: 0,
+          community_name: 'Security & Isolation',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 1,
+        },
+        {
+          id: 'claude_command_policy',
+          label: 'Command Safety Policy',
+          color: {
+            background: '#4E79A7',
+            border: '#4E79A7',
+            highlight: { background: '#ffffff', border: '#4E79A7' },
+          },
+          size: 13.9,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Command Safety Policy',
+          community: 0,
+          community_name: 'Security & Isolation',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 3,
+        },
+        {
+          id: 'claude_rationale_no_k8s',
+          label: 'Rationale: Keep V1 Simple (No K8s)',
+          color: {
+            background: '#E15759',
+            border: '#E15759',
+            highlight: { background: '#ffffff', border: '#E15759' },
+          },
+          size: 13.9,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Rationale: Keep V1 Simple (No K8s)',
+          community: 2,
+          community_name: 'Backend Stack',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 3,
+        },
+        {
+          id: 'claude_rationale_no_blob',
+          label: 'Rationale: No Giant Mutable Context Blob',
+          color: {
+            background: '#76B7B2',
+            border: '#76B7B2',
+            highlight: { background: '#ffffff', border: '#76B7B2' },
+          },
+          size: 11.3,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Rationale: No Giant Mutable Context Blob',
+          community: 3,
+          community_name: 'Leadership & Strategy',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 1,
+        },
+        {
+          id: 'claude_rationale_no_engineer_merge',
+          label: 'Rationale: Engineers Must Not Merge Main',
+          color: {
+            background: '#F28E2B',
+            border: '#F28E2B',
+            highlight: { background: '#ffffff', border: '#F28E2B' },
+          },
+          size: 11.3,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Rationale: Engineers Must Not Merge Main',
+          community: 1,
+          community_name: 'Engineering Workflow',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 1,
+        },
+        {
+          id: 'claude_rationale_bearer_not_network',
+          label: 'Rationale: Bearer Auth Over Container Networking',
+          color: {
+            background: '#E15759',
+            border: '#E15759',
+            highlight: { background: '#ffffff', border: '#E15759' },
+          },
+          size: 11.3,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Rationale: Bearer Auth Over Container Networking',
+          community: 2,
+          community_name: 'Backend Stack',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 1,
+        },
+        {
+          id: 'claude_rationale_dopamine_prompt_only',
+          label: 'Rationale: Dopamine Is Prompt-Only (Not Auth/RBAC)',
+          color: {
+            background: '#B07AA1',
+            border: '#B07AA1',
+            highlight: { background: '#ffffff', border: '#B07AA1' },
+          },
+          size: 11.3,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Rationale: Dopamine Is Prompt-Only (Not Auth/RBAC)',
+          community: 6,
+          community_name: 'Prompt Assembly',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 1,
+        },
+        {
+          id: 'claude_rationale_graphify_context_not_replacement',
+          label: 'Rationale: Graphify As Context Not Replacement',
+          color: {
+            background: '#F28E2B',
+            border: '#F28E2B',
+            highlight: { background: '#ffffff', border: '#F28E2B' },
+          },
+          size: 11.3,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Rationale: Graphify As Context Not Replacement',
+          community: 1,
+          community_name: 'Engineering Workflow',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 1,
+        },
+        {
+          id: 'readme_api_health',
+          label: 'GET /api/health Endpoint',
+          color: {
+            background: '#E15759',
+            border: '#E15759',
+            highlight: { background: '#ffffff', border: '#E15759' },
+          },
+          size: 11.3,
+          font: { size: 0, color: '#ffffff' },
+          title: 'GET /api/health Endpoint',
+          community: 2,
+          community_name: 'Backend Stack',
+          source_file: 'README.md',
+          file_type: 'document',
+          degree: 1,
+        },
+        {
+          id: 'readme_api_files',
+          label: 'File CRUD API Endpoints',
+          color: {
+            background: '#E15759',
+            border: '#E15759',
+            highlight: { background: '#ffffff', border: '#E15759' },
+          },
+          size: 12.6,
+          font: { size: 0, color: '#ffffff' },
+          title: 'File CRUD API Endpoints',
+          community: 2,
+          community_name: 'Backend Stack',
+          source_file: 'README.md',
+          file_type: 'document',
+          degree: 2,
+        },
+        {
+          id: 'readme_projects_dir',
+          label: 'Projects/ Directory (Agent Workspace)',
+          color: {
+            background: '#4E79A7',
+            border: '#4E79A7',
+            highlight: { background: '#ffffff', border: '#4E79A7' },
+          },
+          size: 11.3,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Projects/ Directory (Agent Workspace)',
+          community: 0,
+          community_name: 'Security & Isolation',
+          source_file: 'README.md',
+          file_type: 'document',
+          degree: 1,
+        },
+        {
+          id: 'readme_server_js',
+          label: 'server.js (Current Entry Point)',
+          color: {
+            background: '#E15759',
+            border: '#E15759',
+            highlight: { background: '#ffffff', border: '#E15759' },
+          },
+          size: 15.2,
+          font: { size: 12, color: '#ffffff' },
+          title: 'server.js (Current Entry Point)',
+          community: 2,
+          community_name: 'Backend Stack',
+          source_file: 'README.md',
+          file_type: 'document',
+          degree: 4,
+        },
+        {
+          id: 'readme_dockerfile',
+          label: '.devcontainer/Dockerfile',
+          color: {
+            background: '#E15759',
+            border: '#E15759',
+            highlight: { background: '#ffffff', border: '#E15759' },
+          },
+          size: 11.3,
+          font: { size: 0, color: '#ffffff' },
+          title: '.devcontainer/Dockerfile',
+          community: 2,
+          community_name: 'Backend Stack',
+          source_file: 'README.md',
+          file_type: 'document',
+          degree: 1,
+        },
+      ];
+      const RAW_EDGES = [
+        {
+          from: 'server_js',
+          to: 'server_safepath',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'tests_server_test_js',
+          to: 'server_test_createapp',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_silver_computing_machine',
+          to: 'claude_crispy_adventure',
+          label: 'references',
+          title: 'references [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_silver_computing_machine',
+          to: 'claude_zero_trust_security',
+          label: 'implements',
+          title: 'implements [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_silver_computing_machine',
+          to: 'claude_rbac',
+          label: 'implements',
+          title: 'implements [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_silver_computing_machine',
+          to: 'claude_sqlite_wal',
+          label: 'implements',
+          title: 'implements [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_silver_computing_machine',
+          to: 'claude_node_express',
+          label: 'implements',
+          title: 'implements [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_silver_computing_machine',
+          to: 'claude_react_vite',
+          label: 'implements',
+          title: 'implements [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_silver_computing_machine',
+          to: 'claude_docker',
+          label: 'implements',
+          title: 'implements [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_silver_computing_machine',
+          to: 'claude_project_isolation',
+          label: 'implements',
+          title: 'implements [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_silver_computing_machine',
+          to: 'claude_worker_supervisor',
+          label: 'implements',
+          title: 'implements [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_silver_computing_machine',
+          to: 'claude_scheduler',
+          label: 'implements',
+          title: 'implements [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_silver_computing_machine',
+          to: 'claude_ui_dashboard',
+          label: 'implements',
+          title: 'implements [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_silver_computing_machine',
+          to: 'claude_graphify',
+          label: 'references',
+          title: 'references [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_silver_computing_machine',
+          to: 'claude_audit_trail',
+          label: 'implements',
+          title: 'implements [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_silver_computing_machine',
+          to: 'claude_context_artifact_model',
+          label: 'implements',
+          title: 'implements [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_silver_computing_machine',
+          to: 'claude_prompt_assembly',
+          label: 'implements',
+          title: 'implements [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_silver_computing_machine',
+          to: 'claude_dopamine',
+          label: 'implements',
+          title: 'implements [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_silver_computing_machine',
+          to: 'claude_messaging_hierarchy',
+          label: 'implements',
+          title: 'implements [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_silver_computing_machine',
+          to: 'claude_local_pr_workflow',
+          label: 'implements',
+          title: 'implements [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_silver_computing_machine',
+          to: 'claude_task_lifecycle',
+          label: 'implements',
+          title: 'implements [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_silver_computing_machine',
+          to: 'claude_human_comm_rules',
+          label: 'implements',
+          title: 'implements [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_silver_computing_machine',
+          to: 'claude_cross_dept_comm',
+          label: 'implements',
+          title: 'implements [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_silver_computing_machine',
+          to: 'claude_command_policy',
+          label: 'implements',
+          title: 'implements [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_silver_computing_machine',
+          to: 'claude_idempotency',
+          label: 'implements',
+          title: 'implements [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_crispy_adventure',
+          to: 'claude_project_isolation',
+          label: 'references',
+          title: 'references [INFERRED]',
+          dashes: true,
+          width: 1,
+          color: { opacity: 0.35 },
+          confidence: 'INFERRED',
+        },
+        {
+          from: 'claude_crispy_adventure',
+          to: 'claude_worker_supervisor',
+          label: 'references',
+          title: 'references [INFERRED]',
+          dashes: true,
+          width: 1,
+          color: { opacity: 0.35 },
+          confidence: 'INFERRED',
+        },
+        {
+          from: 'claude_zero_trust_security',
+          to: 'claude_rbac',
+          label: 'conceptually_related_to',
+          title: 'conceptually_related_to [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_zero_trust_security',
+          to: 'claude_bearer_auth',
+          label: 'conceptually_related_to',
+          title: 'conceptually_related_to [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_zero_trust_security',
+          to: 'claude_project_isolation',
+          label: 'conceptually_related_to',
+          title: 'conceptually_related_to [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_zero_trust_security',
+          to: 'claude_audit_trail',
+          label: 'conceptually_related_to',
+          title: 'conceptually_related_to [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_rbac',
+          to: 'claude_command_policy',
+          label: 'conceptually_related_to',
+          title: 'conceptually_related_to [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_rbac',
+          to: 'claude_messaging_hierarchy',
+          label: 'conceptually_related_to',
+          title: 'conceptually_related_to [INFERRED]',
+          dashes: true,
+          width: 1,
+          color: { opacity: 0.35 },
+          confidence: 'INFERRED',
+        },
+        {
+          from: 'claude_rbac',
+          to: 'claude_task_lifecycle',
+          label: 'conceptually_related_to',
+          title: 'conceptually_related_to [INFERRED]',
+          dashes: true,
+          width: 1,
+          color: { opacity: 0.35 },
+          confidence: 'INFERRED',
+        },
+        {
+          from: 'claude_bearer_auth',
+          to: 'claude_sqlite_wal',
+          label: 'shares_data_with',
+          title: 'shares_data_with [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_bearer_auth',
+          to: 'claude_rationale_bearer_not_network',
+          label: 'rationale_for',
+          title: 'rationale_for [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_bearer_auth',
+          to: 'claude_command_policy',
+          label: 'conceptually_related_to',
+          title: 'conceptually_related_to [INFERRED]',
+          dashes: true,
+          width: 1,
+          color: { opacity: 0.35 },
+          confidence: 'INFERRED',
+        },
+        {
+          from: 'claude_project_isolation',
+          to: 'claude_docker',
+          label: 'implements',
+          title: 'implements [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_project_isolation',
+          to: 'readme_projects_dir',
+          label: 'implements',
+          title: 'implements [INFERRED]',
+          dashes: true,
+          width: 1,
+          color: { opacity: 0.35 },
+          confidence: 'INFERRED',
+        },
+        {
+          from: 'claude_sqlite_wal',
+          to: 'claude_context_artifact_model',
+          label: 'shares_data_with',
+          title: 'shares_data_with [INFERRED]',
+          dashes: true,
+          width: 1,
+          color: { opacity: 0.35 },
+          confidence: 'INFERRED',
+        },
+        {
+          from: 'claude_sqlite_wal',
+          to: 'claude_rationale_no_k8s',
+          label: 'rationale_for',
+          title: 'rationale_for [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_node_express',
+          to: 'claude_rationale_no_k8s',
+          label: 'rationale_for',
+          title: 'rationale_for [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_node_express',
+          to: 'readme_api_files',
+          label: 'semantically_similar_to',
+          title: 'semantically_similar_to [INFERRED]',
+          dashes: true,
+          width: 1,
+          color: { opacity: 0.35 },
+          confidence: 'INFERRED',
+        },
+        {
+          from: 'claude_react_vite',
+          to: 'claude_ui_dashboard',
+          label: 'implements',
+          title: 'implements [INFERRED]',
+          dashes: true,
+          width: 1,
+          color: { opacity: 0.35 },
+          confidence: 'INFERRED',
+        },
+        {
+          from: 'claude_docker',
+          to: 'claude_rationale_no_k8s',
+          label: 'rationale_for',
+          title: 'rationale_for [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_department_frontend',
+          to: 'claude_department_backend',
+          label: 'conceptually_related_to',
+          title: 'conceptually_related_to [INFERRED]',
+          dashes: true,
+          width: 1,
+          color: { opacity: 0.35 },
+          confidence: 'INFERRED',
+        },
+        {
+          from: 'claude_department_frontend',
+          to: 'claude_department_infra',
+          label: 'conceptually_related_to',
+          title: 'conceptually_related_to [INFERRED]',
+          dashes: true,
+          width: 1,
+          color: { opacity: 0.35 },
+          confidence: 'INFERRED',
+        },
+        {
+          from: 'claude_department_frontend',
+          to: 'claude_department_deployment',
+          label: 'conceptually_related_to',
+          title: 'conceptually_related_to [INFERRED]',
+          dashes: true,
+          width: 1,
+          color: { opacity: 0.35 },
+          confidence: 'INFERRED',
+        },
+        {
+          from: 'claude_department_backend',
+          to: 'claude_department_infra',
+          label: 'conceptually_related_to',
+          title: 'conceptually_related_to [INFERRED]',
+          dashes: true,
+          width: 1,
+          color: { opacity: 0.35 },
+          confidence: 'INFERRED',
+        },
+        {
+          from: 'claude_department_backend',
+          to: 'claude_department_deployment',
+          label: 'conceptually_related_to',
+          title: 'conceptually_related_to [INFERRED]',
+          dashes: true,
+          width: 1,
+          color: { opacity: 0.35 },
+          confidence: 'INFERRED',
+        },
+        {
+          from: 'claude_department_infra',
+          to: 'claude_department_deployment',
+          label: 'conceptually_related_to',
+          title: 'conceptually_related_to [INFERRED]',
+          dashes: true,
+          width: 1,
+          color: { opacity: 0.35 },
+          confidence: 'INFERRED',
+        },
+        {
+          from: 'claude_role_ceo',
+          to: 'claude_human_customer',
+          label: 'references',
+          title: 'references [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_role_ceo',
+          to: 'claude_role_cto',
+          label: 'references',
+          title: 'references [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_role_ceo',
+          to: 'claude_role_pm',
+          label: 'references',
+          title: 'references [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_role_ceo',
+          to: 'claude_context_artifact_model',
+          label: 'references',
+          title: 'references [INFERRED]',
+          dashes: true,
+          width: 1,
+          color: { opacity: 0.35 },
+          confidence: 'INFERRED',
+        },
+        {
+          from: 'claude_role_cto',
+          to: 'claude_human_customer',
+          label: 'references',
+          title: 'references [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_role_cto',
+          to: 'claude_role_pm',
+          label: 'references',
+          title: 'references [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_role_cto',
+          to: 'claude_role_projmgr',
+          label: 'references',
+          title: 'references [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_role_cto',
+          to: 'claude_role_architect',
+          label: 'references',
+          title: 'references [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_role_cto',
+          to: 'claude_context_artifact_model',
+          label: 'references',
+          title: 'references [INFERRED]',
+          dashes: true,
+          width: 1,
+          color: { opacity: 0.35 },
+          confidence: 'INFERRED',
+        },
+        {
+          from: 'claude_role_pm',
+          to: 'claude_human_customer',
+          label: 'references',
+          title: 'references [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_role_pm',
+          to: 'claude_role_projmgr',
+          label: 'references',
+          title: 'references [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_role_pm',
+          to: 'claude_context_artifact_model',
+          label: 'references',
+          title: 'references [INFERRED]',
+          dashes: true,
+          width: 1,
+          color: { opacity: 0.35 },
+          confidence: 'INFERRED',
+        },
+        {
+          from: 'claude_role_projmgr',
+          to: 'claude_role_techlead',
+          label: 'references',
+          title: 'references [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_role_projmgr',
+          to: 'claude_role_gitmgr',
+          label: 'references',
+          title: 'references [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_role_projmgr',
+          to: 'claude_task_lifecycle',
+          label: 'references',
+          title: 'references [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_role_architect',
+          to: 'claude_role_techlead',
+          label: 'references',
+          title: 'references [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_role_architect',
+          to: 'claude_graphify',
+          label: 'references',
+          title: 'references [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_role_techlead',
+          to: 'claude_role_engineer',
+          label: 'references',
+          title: 'references [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_role_techlead',
+          to: 'claude_role_reviewer',
+          label: 'references',
+          title: 'references [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_role_techlead',
+          to: 'claude_role_tester',
+          label: 'references',
+          title: 'references [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_role_techlead',
+          to: 'claude_role_gitmgr',
+          label: 'references',
+          title: 'references [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_role_techlead',
+          to: 'claude_role_audit_agent',
+          label: 'references',
+          title: 'references [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_role_techlead',
+          to: 'claude_local_pr_workflow',
+          label: 'references',
+          title: 'references [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_role_techlead',
+          to: 'claude_loop_control',
+          label: 'references',
+          title: 'references [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_role_engineer',
+          to: 'claude_local_pr_workflow',
+          label: 'references',
+          title: 'references [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_role_engineer',
+          to: 'claude_role_reviewer',
+          label: 'conceptually_related_to',
+          title: 'conceptually_related_to [INFERRED]',
+          dashes: true,
+          width: 1,
+          color: { opacity: 0.35 },
+          confidence: 'INFERRED',
+        },
+        {
+          from: 'claude_role_engineer',
+          to: 'claude_role_tester',
+          label: 'conceptually_related_to',
+          title: 'conceptually_related_to [INFERRED]',
+          dashes: true,
+          width: 1,
+          color: { opacity: 0.35 },
+          confidence: 'INFERRED',
+        },
+        {
+          from: 'claude_role_reviewer',
+          to: 'claude_local_pr_workflow',
+          label: 'references',
+          title: 'references [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_role_reviewer',
+          to: 'claude_loop_control',
+          label: 'references',
+          title: 'references [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_role_tester',
+          to: 'claude_local_pr_workflow',
+          label: 'references',
+          title: 'references [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_role_tester',
+          to: 'claude_loop_control',
+          label: 'references',
+          title: 'references [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_role_gitmgr',
+          to: 'claude_local_pr_workflow',
+          label: 'references',
+          title: 'references [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_role_gitmgr',
+          to: 'claude_graphify',
+          label: 'references',
+          title: 'references [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_role_audit_agent',
+          to: 'claude_weekly_audit',
+          label: 'implements',
+          title: 'implements [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_task_lifecycle',
+          to: 'claude_local_pr_workflow',
+          label: 'conceptually_related_to',
+          title: 'conceptually_related_to [INFERRED]',
+          dashes: true,
+          width: 1,
+          color: { opacity: 0.35 },
+          confidence: 'INFERRED',
+        },
+        {
+          from: 'claude_task_lifecycle',
+          to: 'claude_loop_control',
+          label: 'references',
+          title: 'references [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_task_lifecycle',
+          to: 'claude_ui_dashboard',
+          label: 'references',
+          title: 'references [INFERRED]',
+          dashes: true,
+          width: 1,
+          color: { opacity: 0.35 },
+          confidence: 'INFERRED',
+        },
+        {
+          from: 'claude_local_pr_workflow',
+          to: 'claude_graphify',
+          label: 'references',
+          title: 'references [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_local_pr_workflow',
+          to: 'claude_rationale_no_engineer_merge',
+          label: 'rationale_for',
+          title: 'rationale_for [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_local_pr_workflow',
+          to: 'claude_ui_dashboard',
+          label: 'references',
+          title: 'references [INFERRED]',
+          dashes: true,
+          width: 1,
+          color: { opacity: 0.35 },
+          confidence: 'INFERRED',
+        },
+        {
+          from: 'claude_context_artifact_model',
+          to: 'claude_prompt_assembly',
+          label: 'references',
+          title: 'references [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_context_artifact_model',
+          to: 'claude_rationale_no_blob',
+          label: 'rationale_for',
+          title: 'rationale_for [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_context_artifact_model',
+          to: 'claude_ui_dashboard',
+          label: 'references',
+          title: 'references [INFERRED]',
+          dashes: true,
+          width: 1,
+          color: { opacity: 0.35 },
+          confidence: 'INFERRED',
+        },
+        {
+          from: 'claude_prompt_assembly',
+          to: 'claude_dopamine',
+          label: 'references',
+          title: 'references [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_prompt_assembly',
+          to: 'claude_graphify',
+          label: 'references',
+          title: 'references [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_dopamine',
+          to: 'claude_rationale_dopamine_prompt_only',
+          label: 'rationale_for',
+          title: 'rationale_for [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_graphify',
+          to: 'claude_rationale_graphify_context_not_replacement',
+          label: 'rationale_for',
+          title: 'rationale_for [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_weekly_audit',
+          to: 'claude_scheduler',
+          label: 'references',
+          title: 'references [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_weekly_audit',
+          to: 'claude_ui_dashboard',
+          label: 'references',
+          title: 'references [INFERRED]',
+          dashes: true,
+          width: 1,
+          color: { opacity: 0.35 },
+          confidence: 'INFERRED',
+        },
+        {
+          from: 'claude_messaging_hierarchy',
+          to: 'claude_cross_dept_comm',
+          label: 'conceptually_related_to',
+          title: 'conceptually_related_to [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_messaging_hierarchy',
+          to: 'claude_human_comm_rules',
+          label: 'conceptually_related_to',
+          title: 'conceptually_related_to [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_messaging_hierarchy',
+          to: 'claude_ui_dashboard',
+          label: 'references',
+          title: 'references [INFERRED]',
+          dashes: true,
+          width: 1,
+          color: { opacity: 0.35 },
+          confidence: 'INFERRED',
+        },
+        {
+          from: 'claude_server_js',
+          to: 'claude_structured_backend',
+          label: 'conceptually_related_to',
+          title: 'conceptually_related_to [INFERRED]',
+          dashes: true,
+          width: 1,
+          color: { opacity: 0.35 },
+          confidence: 'INFERRED',
+        },
+        {
+          from: 'claude_server_js',
+          to: 'readme_server_js',
+          label: 'semantically_similar_to',
+          title: 'semantically_similar_to [INFERRED]',
+          dashes: true,
+          width: 1,
+          color: { opacity: 0.35 },
+          confidence: 'INFERRED',
+        },
+        {
+          from: 'readme_api_health',
+          to: 'readme_server_js',
+          label: 'implements',
+          title: 'implements [INFERRED]',
+          dashes: true,
+          width: 1,
+          color: { opacity: 0.35 },
+          confidence: 'INFERRED',
+        },
+        {
+          from: 'readme_api_files',
+          to: 'readme_server_js',
+          label: 'implements',
+          title: 'implements [INFERRED]',
+          dashes: true,
+          width: 1,
+          color: { opacity: 0.35 },
+          confidence: 'INFERRED',
+        },
+        {
+          from: 'readme_server_js',
+          to: 'readme_dockerfile',
+          label: 'references',
+          title: 'references [INFERRED]',
+          dashes: true,
+          width: 1,
+          color: { opacity: 0.35 },
+          confidence: 'INFERRED',
+        },
+      ];
+      const LEGEND = [
+        { cid: 0, color: '#4E79A7', label: 'Security &amp; Isolation', count: 14 },
+        { cid: 1, color: '#F28E2B', label: 'Engineering Workflow', count: 13 },
+        { cid: 2, color: '#E15759', label: 'Backend Stack', count: 11 },
+        { cid: 3, color: '#76B7B2', label: 'Leadership &amp; Strategy', count: 6 },
+        { cid: 4, color: '#59A14F', label: 'Dashboard &amp; Audit', count: 5 },
+        { cid: 5, color: '#EDC948', label: 'Departments', count: 4 },
+        { cid: 6, color: '#B07AA1', label: 'Prompt Assembly', count: 3 },
+        { cid: 7, color: '#FF9DA7', label: 'Server Core', count: 2 },
+        { cid: 8, color: '#9C755F', label: 'Test Suite', count: 2 },
+        { cid: 9, color: '#BAB0AC', label: 'Test Configuration', count: 1 },
+      ];
 
-// HTML-escape helper — prevents XSS when injecting graph data into innerHTML
-function esc(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-}
+      // HTML-escape helper — prevents XSS when injecting graph data into innerHTML
+      function esc(s) {
+        return String(s)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
 
-// Build vis datasets
-const nodesDS = new vis.DataSet(RAW_NODES.map(n => ({
-  id: n.id, label: n.label, color: n.color, size: n.size,
-  font: n.font, title: n.title,
-  _community: n.community, _community_name: n.community_name,
-  _source_file: n.source_file, _file_type: n.file_type, _degree: n.degree,
-})));
+      // Build vis datasets
+      const nodesDS = new vis.DataSet(
+        RAW_NODES.map((n) => ({
+          id: n.id,
+          label: n.label,
+          color: n.color,
+          size: n.size,
+          font: n.font,
+          title: n.title,
+          _community: n.community,
+          _community_name: n.community_name,
+          _source_file: n.source_file,
+          _file_type: n.file_type,
+          _degree: n.degree,
+        })),
+      );
 
-const edgesDS = new vis.DataSet(RAW_EDGES.map((e, i) => ({
-  id: i, from: e.from, to: e.to,
-  label: '',
-  title: e.title,
-  dashes: e.dashes,
-  width: e.width,
-  color: e.color,
-  arrows: { to: { enabled: true, scaleFactor: 0.5 } },
-})));
+      const edgesDS = new vis.DataSet(
+        RAW_EDGES.map((e, i) => ({
+          id: i,
+          from: e.from,
+          to: e.to,
+          label: '',
+          title: e.title,
+          dashes: e.dashes,
+          width: e.width,
+          color: e.color,
+          arrows: { to: { enabled: true, scaleFactor: 0.5 } },
+        })),
+      );
 
-const container = document.getElementById('graph');
-const network = new vis.Network(container, { nodes: nodesDS, edges: edgesDS }, {
-  physics: {
-    enabled: true,
-    solver: 'forceAtlas2Based',
-    forceAtlas2Based: {
-      gravitationalConstant: -60,
-      centralGravity: 0.005,
-      springLength: 120,
-      springConstant: 0.08,
-      damping: 0.4,
-      avoidOverlap: 0.8,
-    },
-    stabilization: { iterations: 200, fit: true },
-  },
-  interaction: {
-    hover: true,
-    tooltipDelay: 100,
-    hideEdgesOnDrag: true,
-    navigationButtons: false,
-    keyboard: false,
-  },
-  nodes: { shape: 'dot', borderWidth: 1.5 },
-  edges: { smooth: { type: 'continuous', roundness: 0.2 }, selectionWidth: 3 },
-});
+      const container = document.getElementById('graph');
+      const network = new vis.Network(
+        container,
+        { nodes: nodesDS, edges: edgesDS },
+        {
+          physics: {
+            enabled: true,
+            solver: 'forceAtlas2Based',
+            forceAtlas2Based: {
+              gravitationalConstant: -60,
+              centralGravity: 0.005,
+              springLength: 120,
+              springConstant: 0.08,
+              damping: 0.4,
+              avoidOverlap: 0.8,
+            },
+            stabilization: { iterations: 200, fit: true },
+          },
+          interaction: {
+            hover: true,
+            tooltipDelay: 100,
+            hideEdgesOnDrag: true,
+            navigationButtons: false,
+            keyboard: false,
+          },
+          nodes: { shape: 'dot', borderWidth: 1.5 },
+          edges: { smooth: { type: 'continuous', roundness: 0.2 }, selectionWidth: 3 },
+        },
+      );
 
-network.once('stabilizationIterationsDone', () => {
-  network.setOptions({ physics: { enabled: false } });
-});
+      network.once('stabilizationIterationsDone', () => {
+        network.setOptions({ physics: { enabled: false } });
+      });
 
-function showInfo(nodeId) {
-  const n = nodesDS.get(nodeId);
-  if (!n) return;
-  const neighborIds = network.getConnectedNodes(nodeId);
-  const neighborItems = neighborIds.map(nid => {
-    const nb = nodesDS.get(nid);
-    const color = nb ? nb.color.background : '#555';
-    return `<span class="neighbor-link" style="border-left-color:${esc(color)}" onclick="focusNode(${JSON.stringify(nid)})">${esc(nb ? nb.label : nid)}</span>`;
-  }).join('');
-  document.getElementById('info-content').innerHTML = `
+      function showInfo(nodeId) {
+        const n = nodesDS.get(nodeId);
+        if (!n) return;
+        const neighborIds = network.getConnectedNodes(nodeId);
+        const neighborItems = neighborIds
+          .map((nid) => {
+            const nb = nodesDS.get(nid);
+            const color = nb ? nb.color.background : '#555';
+            return `<span class="neighbor-link" style="border-left-color:${esc(color)}" onclick="focusNode(${JSON.stringify(nid)})">${esc(nb ? nb.label : nid)}</span>`;
+          })
+          .join('');
+        document.getElementById('info-content').innerHTML = `
     <div class="field"><b>${esc(n.label)}</b></div>
     <div class="field">Type: ${esc(n._file_type || 'unknown')}</div>
     <div class="field">Community: ${esc(n._community_name)}</div>
@@ -127,140 +2410,201 @@ function showInfo(nodeId) {
     <div class="field">Degree: ${n._degree}</div>
     ${neighborIds.length ? `<div class="field" style="margin-top:8px;color:#aaa;font-size:11px">Neighbors (${neighborIds.length})</div><div id="neighbors-list">${neighborItems}</div>` : ''}
   `;
-}
+      }
 
-function focusNode(nodeId) {
-  network.focus(nodeId, { scale: 1.4, animation: true });
-  network.selectNodes([nodeId]);
-  showInfo(nodeId);
-}
+      function focusNode(nodeId) {
+        network.focus(nodeId, { scale: 1.4, animation: true });
+        network.selectNodes([nodeId]);
+        showInfo(nodeId);
+      }
 
-// Track hovered node — hover detection is more reliable than click params
-let hoveredNodeId = null;
-network.on('hoverNode', params => {
-  hoveredNodeId = params.node;
-  container.style.cursor = 'pointer';
-});
-network.on('blurNode', () => {
-  hoveredNodeId = null;
-  container.style.cursor = 'default';
-});
-container.addEventListener('click', () => {
-  if (hoveredNodeId !== null) {
-    showInfo(hoveredNodeId);
-    network.selectNodes([hoveredNodeId]);
-  }
-});
-network.on('click', params => {
-  if (params.nodes.length > 0) {
-    showInfo(params.nodes[0]);
-  } else if (hoveredNodeId === null) {
-    document.getElementById('info-content').innerHTML = '<span class="empty">Click a node to inspect it</span>';
-  }
-});
+      // Track hovered node — hover detection is more reliable than click params
+      let hoveredNodeId = null;
+      network.on('hoverNode', (params) => {
+        hoveredNodeId = params.node;
+        container.style.cursor = 'pointer';
+      });
+      network.on('blurNode', () => {
+        hoveredNodeId = null;
+        container.style.cursor = 'default';
+      });
+      container.addEventListener('click', () => {
+        if (hoveredNodeId !== null) {
+          showInfo(hoveredNodeId);
+          network.selectNodes([hoveredNodeId]);
+        }
+      });
+      network.on('click', (params) => {
+        if (params.nodes.length > 0) {
+          showInfo(params.nodes[0]);
+        } else if (hoveredNodeId === null) {
+          document.getElementById('info-content').innerHTML =
+            '<span class="empty">Click a node to inspect it</span>';
+        }
+      });
 
-const searchInput = document.getElementById('search');
-const searchResults = document.getElementById('search-results');
-searchInput.addEventListener('input', () => {
-  const q = searchInput.value.toLowerCase().trim();
-  searchResults.innerHTML = '';
-  if (!q) { searchResults.style.display = 'none'; return; }
-  const matches = RAW_NODES.filter(n => n.label.toLowerCase().includes(q)).slice(0, 20);
-  if (!matches.length) { searchResults.style.display = 'none'; return; }
-  searchResults.style.display = 'block';
-  matches.forEach(n => {
-    const el = document.createElement('div');
-    el.className = 'search-item';
-    el.textContent = n.label;
-    el.style.borderLeft = `3px solid ${n.color.background}`;
-    el.style.paddingLeft = '8px';
-    el.onclick = () => {
-      network.focus(n.id, { scale: 1.5, animation: true });
-      network.selectNodes([n.id]);
-      showInfo(n.id);
-      searchResults.style.display = 'none';
-      searchInput.value = '';
-    };
-    searchResults.appendChild(el);
-  });
-});
-document.addEventListener('click', e => {
-  if (!searchResults.contains(e.target) && e.target !== searchInput)
-    searchResults.style.display = 'none';
-});
+      const searchInput = document.getElementById('search');
+      const searchResults = document.getElementById('search-results');
+      searchInput.addEventListener('input', () => {
+        const q = searchInput.value.toLowerCase().trim();
+        searchResults.innerHTML = '';
+        if (!q) {
+          searchResults.style.display = 'none';
+          return;
+        }
+        const matches = RAW_NODES.filter((n) => n.label.toLowerCase().includes(q)).slice(0, 20);
+        if (!matches.length) {
+          searchResults.style.display = 'none';
+          return;
+        }
+        searchResults.style.display = 'block';
+        matches.forEach((n) => {
+          const el = document.createElement('div');
+          el.className = 'search-item';
+          el.textContent = n.label;
+          el.style.borderLeft = `3px solid ${n.color.background}`;
+          el.style.paddingLeft = '8px';
+          el.onclick = () => {
+            network.focus(n.id, { scale: 1.5, animation: true });
+            network.selectNodes([n.id]);
+            showInfo(n.id);
+            searchResults.style.display = 'none';
+            searchInput.value = '';
+          };
+          searchResults.appendChild(el);
+        });
+      });
+      document.addEventListener('click', (e) => {
+        if (!searchResults.contains(e.target) && e.target !== searchInput)
+          searchResults.style.display = 'none';
+      });
 
-const hiddenCommunities = new Set();
-const legendEl = document.getElementById('legend');
-LEGEND.forEach(c => {
-  const item = document.createElement('div');
-  item.className = 'legend-item';
-  item.innerHTML = `<div class="legend-dot" style="background:${c.color}"></div>
+      const hiddenCommunities = new Set();
+      const legendEl = document.getElementById('legend');
+      LEGEND.forEach((c) => {
+        const item = document.createElement('div');
+        item.className = 'legend-item';
+        item.innerHTML = `<div class="legend-dot" style="background:${c.color}"></div>
     <span class="legend-label">${c.label}</span>
     <span class="legend-count">${c.count}</span>`;
-  item.onclick = () => {
-    if (hiddenCommunities.has(c.cid)) {
-      hiddenCommunities.delete(c.cid);
-      item.classList.remove('dimmed');
-    } else {
-      hiddenCommunities.add(c.cid);
-      item.classList.add('dimmed');
-    }
-    const updates = RAW_NODES
-      .filter(n => n.community === c.cid)
-      .map(n => ({ id: n.id, hidden: hiddenCommunities.has(c.cid) }));
-    nodesDS.update(updates);
-  };
-  legendEl.appendChild(item);
-});
-</script>
-<script>
-// Render hyperedges as shaded regions
-const hyperedges = [{"id": "pr_review_pipeline", "label": "Local PR Review Pipeline (Engineer -> Reviewer -> Tester -> Git Manager)", "nodes": ["claude_role_engineer", "claude_role_reviewer", "claude_role_tester", "claude_role_gitmgr", "claude_local_pr_workflow", "claude_task_lifecycle"], "relation": "participate_in", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "CLAUDE.md"}, {"id": "hierarchy_communication_flow", "label": "Hierarchical Communication Flow (Human -> CEO -> CTO -> Architect/Tech Lead -> Engineers)", "nodes": ["claude_human_customer", "claude_role_ceo", "claude_role_cto", "claude_role_pm", "claude_role_architect", "claude_role_techlead", "claude_role_engineer", "claude_messaging_hierarchy"], "relation": "participate_in", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "CLAUDE.md"}, {"id": "silver_security_layers", "label": "Layered Zero-Trust Security (Docker Isolation + RBAC + Bearer Auth + Audit Trail)", "nodes": ["claude_project_isolation", "claude_rbac", "claude_bearer_auth", "claude_audit_trail", "claude_zero_trust_security", "claude_command_policy"], "relation": "participate_in", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "CLAUDE.md"}];
-function drawHyperedges() {
-    const canvas = network.canvas.frame.canvas;
-    const ctx = canvas.getContext('2d');
-    hyperedges.forEach(h => {
-        const positions = h.nodes
-            .map(nid => network.getPositions([nid])[nid])
-            .filter(p => p !== undefined);
-        if (positions.length < 2) return;
-        // Draw convex hull as filled polygon
-        ctx.save();
-        ctx.globalAlpha = 0.12;
-        ctx.fillStyle = '#6366f1';
-        ctx.strokeStyle = '#6366f1';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        const scale = network.getScale();
-        const offset = network.getViewPosition();
-        const toCanvas = (p) => ({
+        item.onclick = () => {
+          if (hiddenCommunities.has(c.cid)) {
+            hiddenCommunities.delete(c.cid);
+            item.classList.remove('dimmed');
+          } else {
+            hiddenCommunities.add(c.cid);
+            item.classList.add('dimmed');
+          }
+          const updates = RAW_NODES.filter((n) => n.community === c.cid).map((n) => ({
+            id: n.id,
+            hidden: hiddenCommunities.has(c.cid),
+          }));
+          nodesDS.update(updates);
+        };
+        legendEl.appendChild(item);
+      });
+    </script>
+    <script>
+      // Render hyperedges as shaded regions
+      const hyperedges = [
+        {
+          id: 'pr_review_pipeline',
+          label: 'Local PR Review Pipeline (Engineer -> Reviewer -> Tester -> Git Manager)',
+          nodes: [
+            'claude_role_engineer',
+            'claude_role_reviewer',
+            'claude_role_tester',
+            'claude_role_gitmgr',
+            'claude_local_pr_workflow',
+            'claude_task_lifecycle',
+          ],
+          relation: 'participate_in',
+          confidence: 'EXTRACTED',
+          confidence_score: 1.0,
+          source_file: 'CLAUDE.md',
+        },
+        {
+          id: 'hierarchy_communication_flow',
+          label:
+            'Hierarchical Communication Flow (Human -> CEO -> CTO -> Architect/Tech Lead -> Engineers)',
+          nodes: [
+            'claude_human_customer',
+            'claude_role_ceo',
+            'claude_role_cto',
+            'claude_role_pm',
+            'claude_role_architect',
+            'claude_role_techlead',
+            'claude_role_engineer',
+            'claude_messaging_hierarchy',
+          ],
+          relation: 'participate_in',
+          confidence: 'EXTRACTED',
+          confidence_score: 1.0,
+          source_file: 'CLAUDE.md',
+        },
+        {
+          id: 'silver_security_layers',
+          label:
+            'Layered Zero-Trust Security (Docker Isolation + RBAC + Bearer Auth + Audit Trail)',
+          nodes: [
+            'claude_project_isolation',
+            'claude_rbac',
+            'claude_bearer_auth',
+            'claude_audit_trail',
+            'claude_zero_trust_security',
+            'claude_command_policy',
+          ],
+          relation: 'participate_in',
+          confidence: 'EXTRACTED',
+          confidence_score: 1.0,
+          source_file: 'CLAUDE.md',
+        },
+      ];
+      function drawHyperedges() {
+        const canvas = network.canvas.frame.canvas;
+        const ctx = canvas.getContext('2d');
+        hyperedges.forEach((h) => {
+          const positions = h.nodes
+            .map((nid) => network.getPositions([nid])[nid])
+            .filter((p) => p !== undefined);
+          if (positions.length < 2) return;
+          // Draw convex hull as filled polygon
+          ctx.save();
+          ctx.globalAlpha = 0.12;
+          ctx.fillStyle = '#6366f1';
+          ctx.strokeStyle = '#6366f1';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          const scale = network.getScale();
+          const offset = network.getViewPosition();
+          const toCanvas = (p) => ({
             x: (p.x - offset.x) * scale + canvas.width / 2,
-            y: (p.y - offset.y) * scale + canvas.height / 2
-        });
-        const pts = positions.map(toCanvas);
-        // Expand hull slightly
-        const cx = pts.reduce((s, p) => s + p.x, 0) / pts.length;
-        const cy = pts.reduce((s, p) => s + p.y, 0) / pts.length;
-        const expanded = pts.map(p => ({
+            y: (p.y - offset.y) * scale + canvas.height / 2,
+          });
+          const pts = positions.map(toCanvas);
+          // Expand hull slightly
+          const cx = pts.reduce((s, p) => s + p.x, 0) / pts.length;
+          const cy = pts.reduce((s, p) => s + p.y, 0) / pts.length;
+          const expanded = pts.map((p) => ({
             x: cx + (p.x - cx) * 1.15,
-            y: cy + (p.y - cy) * 1.15
-        }));
-        ctx.moveTo(expanded[0].x, expanded[0].y);
-        expanded.slice(1).forEach(p => ctx.lineTo(p.x, p.y));
-        ctx.closePath();
-        ctx.fill();
-        ctx.globalAlpha = 0.4;
-        ctx.stroke();
-        // Label
-        ctx.globalAlpha = 0.8;
-        ctx.fillStyle = '#4f46e5';
-        ctx.font = 'bold 11px sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText(h.label, cx, cy - 5);
-        ctx.restore();
-    });
-}
-network.on('afterDrawing', drawHyperedges);
-</script>
-</body>
+            y: cy + (p.y - cy) * 1.15,
+          }));
+          ctx.moveTo(expanded[0].x, expanded[0].y);
+          expanded.slice(1).forEach((p) => ctx.lineTo(p.x, p.y));
+          ctx.closePath();
+          ctx.fill();
+          ctx.globalAlpha = 0.4;
+          ctx.stroke();
+          // Label
+          ctx.globalAlpha = 0.8;
+          ctx.fillStyle = '#4f46e5';
+          ctx.font = 'bold 11px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(h.label, cx, cy - 5);
+          ctx.restore();
+        });
+      }
+      network.on('afterDrawing', drawHyperedges);
+    </script>
+  </body>
 </html>
