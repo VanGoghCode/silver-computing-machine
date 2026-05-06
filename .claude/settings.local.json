@@ -4,7 +4,11 @@
       "Bash(npx husky:*)",
       "Bash(npm run:*)",
       "Bash(npm test:*)",
-      "Bash(gh repo:*)"
+      "Bash(gh repo:*)",
+      "Bash(python -c \"import graphify\")",
+      "Bash(echo \"EXIT:$?\")",
+      "Bash(python:*)",
+      "Bash(graphify claude:*)"
     ]
   }
 }
