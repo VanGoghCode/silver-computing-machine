@@ -8,7 +8,10 @@
       "Bash(python -c \"import graphify\")",
       "Bash(echo \"EXIT:$?\")",
       "Bash(python:*)",
-      "Bash(graphify claude:*)"
+      "Bash(graphify claude:*)",
+      "Bash(npx prettier:*)",
+      "Bash(git add:*)",
+      "Bash(git push:*)"
     ]
   }
 }
