@@ -1,1 +1,29 @@
-{"nodes": [{"id": "src_migrations_006_role_templates_js", "label": "006_role_templates.js", "file_type": "code", "source_file": "src\\migrations\\006_role_templates.js", "source_location": "L1"}, {"id": "006_role_templates_up", "label": "up()", "file_type": "code", "source_file": "src\\migrations\\006_role_templates.js", "source_location": "L3"}], "edges": [{"source": "src_migrations_006_role_templates_js", "target": "006_role_templates_up", "relation": "contains", "confidence": "EXTRACTED", "source_file": "src\\migrations\\006_role_templates.js", "source_location": "L3", "weight": 1.0}]}
+{
+  "nodes": [
+    {
+      "id": "src_migrations_006_role_templates_js",
+      "label": "006_role_templates.js",
+      "file_type": "code",
+      "source_file": "src\\migrations\\006_role_templates.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "006_role_templates_up",
+      "label": "up()",
+      "file_type": "code",
+      "source_file": "src\\migrations\\006_role_templates.js",
+      "source_location": "L3"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_migrations_006_role_templates_js",
+      "target": "006_role_templates_up",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\migrations\\006_role_templates.js",
+      "source_location": "L3",
+      "weight": 1.0
+    }
+  ]
+}

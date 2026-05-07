@@ -1,1 +1,29 @@
-{"nodes": [{"id": "src_migrations_004_model_profiles_js", "label": "004_model_profiles.js", "file_type": "code", "source_file": "src\\migrations\\004_model_profiles.js", "source_location": "L1"}, {"id": "004_model_profiles_up", "label": "up()", "file_type": "code", "source_file": "src\\migrations\\004_model_profiles.js", "source_location": "L3"}], "edges": [{"source": "src_migrations_004_model_profiles_js", "target": "004_model_profiles_up", "relation": "contains", "confidence": "EXTRACTED", "source_file": "src\\migrations\\004_model_profiles.js", "source_location": "L3", "weight": 1.0}]}
+{
+  "nodes": [
+    {
+      "id": "src_migrations_004_model_profiles_js",
+      "label": "004_model_profiles.js",
+      "file_type": "code",
+      "source_file": "src\\migrations\\004_model_profiles.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "004_model_profiles_up",
+      "label": "up()",
+      "file_type": "code",
+      "source_file": "src\\migrations\\004_model_profiles.js",
+      "source_location": "L3"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_migrations_004_model_profiles_js",
+      "target": "004_model_profiles_up",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\migrations\\004_model_profiles.js",
+      "source_location": "L3",
+      "weight": 1.0
+    }
+  ]
+}

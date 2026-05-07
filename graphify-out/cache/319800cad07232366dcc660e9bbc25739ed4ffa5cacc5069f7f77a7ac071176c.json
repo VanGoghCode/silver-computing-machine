@@ -1,1 +1,29 @@
-{"nodes": [{"id": "src_db_seed_js", "label": "seed.js", "file_type": "code", "source_file": "src\\db\\seed.js", "source_location": "L1"}, {"id": "seed_runseeds", "label": "runSeeds()", "file_type": "code", "source_file": "src\\db\\seed.js", "source_location": "L1"}], "edges": [{"source": "src_db_seed_js", "target": "seed_runseeds", "relation": "contains", "confidence": "EXTRACTED", "source_file": "src\\db\\seed.js", "source_location": "L1", "weight": 1.0}]}
+{
+  "nodes": [
+    {
+      "id": "src_db_seed_js",
+      "label": "seed.js",
+      "file_type": "code",
+      "source_file": "src\\db\\seed.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "seed_runseeds",
+      "label": "runSeeds()",
+      "file_type": "code",
+      "source_file": "src\\db\\seed.js",
+      "source_location": "L1"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_db_seed_js",
+      "target": "seed_runseeds",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\db\\seed.js",
+      "source_location": "L1",
+      "weight": 1.0
+    }
+  ]
+}

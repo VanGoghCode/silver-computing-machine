@@ -1,14 +1,17 @@
-# Graph Report - .  (2026-05-06)
+# Graph Report - . (2026-05-06)
 
 ## Corpus Check
+
 - Corpus is ~6,538 words - fits in a single context window. You may not need a graph.
 
 ## Summary
+
 - 96 nodes · 62 edges · 41 communities detected
 - Extraction: 92% EXTRACTED · 8% INFERRED · 0% AMBIGUOUS · INFERRED: 5 edges (avg confidence: 0.81)
 - Token cost: 0 input · 0 output
 
 ## Community Hubs (Navigation)
+
 - [[_COMMUNITY_Platform Policy & Security|Platform Policy & Security]]
 - [[_COMMUNITY_Database Connection|Database Connection]]
 - [[_COMMUNITY_Test Infrastructure|Test Infrastructure]]
@@ -52,6 +55,7 @@
 - [[_COMMUNITY_Test Seeds|Test: Seeds]]
 
 ## God Nodes (most connected - your core abstractions)
+
 1. `Silver Gatekeeper` - 11 edges
 2. `Bearer Token Auth` - 4 edges
 3. `Role Graph (Data-Driven)` - 3 edges
@@ -64,187 +68,231 @@
 10. `Path Safety & Project Isolation` - 2 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `Silver Platform Overview` --semantically_similar_to--> `Silver Gatekeeper`  [INFERRED] [semantically similar]
+
+- `Silver Platform Overview` --semantically_similar_to--> `Silver Gatekeeper` [INFERRED] [semantically similar]
   README.md → CLAUDE.md
-- `God Nodes (Core Abstractions)` --references--> `Silver Gatekeeper`  [INFERRED]
+- `God Nodes (Core Abstractions)` --references--> `Silver Gatekeeper` [INFERRED]
   graphify-out/GRAPH_REPORT.md → CLAUDE.md
-- `Human Local-Owner Auth` --conceptually_related_to--> `Bearer Token Auth`  [INFERRED]
+- `Human Local-Owner Auth` --conceptually_related_to--> `Bearer Token Auth` [INFERRED]
   README.md → CLAUDE.md
-- `API Endpoints` --references--> `Bearer Token Auth`  [EXTRACTED]
+- `API Endpoints` --references--> `Bearer Token Auth` [EXTRACTED]
   README.md → CLAUDE.md
-- `Database Schema (11 Tables)` --references--> `Role Graph (Data-Driven)`  [EXTRACTED]
+- `Database Schema (11 Tables)` --references--> `Role Graph (Data-Driven)` [EXTRACTED]
   README.md → CLAUDE.md
 
 ## Hyperedges (group relationships)
+
 - **Security Stack (Auth + RBAC + Path Safety)** — claude_bearer_auth, claude_rbac, claude_path_safety [EXTRACTED 1.00]
 
 ## Communities
 
 ### Community 0 - "Platform Policy & Security"
+
 Cohesion: 0.17
 Nodes (15): Bearer Token Auth, Coding Conventions, Crispy Adventure Worker Runtime, Graphify Integration, No Guessing Rule, Path Safety & Project Isolation, RBAC Enforcement, Role Graph (Data-Driven) (+7 more)
 
 ### Community 1 - "Database Connection"
+
 Cohesion: 0.5
 Nodes (2): closeDatabase(), resetForTesting()
 
 ### Community 2 - "Test Infrastructure"
+
 Cohesion: 0.5
 Nodes (2): createSeededTestDb(), createTestDb()
 
 ### Community 3 - "DB Helpers"
+
 Cohesion: 0.67
-Nodes (0): 
+Nodes (0):
 
 ### Community 4 - "Agent Service"
+
 Cohesion: 0.67
-Nodes (0): 
+Nodes (0):
 
 ### Community 5 - "Path Safety"
+
 Cohesion: 0.67
-Nodes (0): 
+Nodes (0):
 
 ### Community 6 - "Old Graph Report"
+
 Cohesion: 0.67
 Nodes (3): God Nodes (Core Abstractions), Hyperedges (Group Relationships), Old Graph Summary (61 nodes)
 
 ### Community 7 - "App Factory"
+
 Cohesion: 1.0
-Nodes (0): 
+Nodes (0):
 
 ### Community 8 - "Config"
+
 Cohesion: 1.0
-Nodes (0): 
+Nodes (0):
 
 ### Community 9 - "Migration Runner"
+
 Cohesion: 1.0
-Nodes (0): 
+Nodes (0):
 
 ### Community 10 - "Seed Runner"
+
 Cohesion: 1.0
-Nodes (0): 
+Nodes (0):
 
 ### Community 11 - "Auth Middleware"
+
 Cohesion: 1.0
-Nodes (0): 
+Nodes (0):
 
 ### Community 12 - "Migration: Projects"
+
 Cohesion: 1.0
-Nodes (0): 
+Nodes (0):
 
 ### Community 13 - "Migration: Humans"
+
 Cohesion: 1.0
-Nodes (0): 
+Nodes (0):
 
 ### Community 14 - "Migration: Departments"
+
 Cohesion: 1.0
-Nodes (0): 
+Nodes (0):
 
 ### Community 15 - "Migration: Model Profiles"
+
 Cohesion: 1.0
-Nodes (0): 
+Nodes (0):
 
 ### Community 16 - "Migration: Permission Profiles"
+
 Cohesion: 1.0
-Nodes (0): 
+Nodes (0):
 
 ### Community 17 - "Migration: Role Templates"
+
 Cohesion: 1.0
-Nodes (0): 
+Nodes (0):
 
 ### Community 18 - "Migration: Role Prompt Files"
+
 Cohesion: 1.0
-Nodes (0): 
+Nodes (0):
 
 ### Community 19 - "Migration: Role Instances"
+
 Cohesion: 1.0
-Nodes (0): 
+Nodes (0):
 
 ### Community 20 - "Migration: Role Edges"
+
 Cohesion: 1.0
-Nodes (0): 
+Nodes (0):
 
 ### Community 21 - "Migration: Agents"
+
 Cohesion: 1.0
-Nodes (0): 
+Nodes (0):
 
 ### Community 22 - "Migration: Heartbeats"
+
 Cohesion: 1.0
-Nodes (0): 
+Nodes (0):
 
 ### Community 23 - "Route: Agents"
+
 Cohesion: 1.0
-Nodes (0): 
+Nodes (0):
 
 ### Community 24 - "Route: Files"
+
 Cohesion: 1.0
-Nodes (0): 
+Nodes (0):
 
 ### Community 25 - "Route: Health"
+
 Cohesion: 1.0
-Nodes (0): 
+Nodes (0):
 
 ### Community 26 - "Route: Tasks"
+
 Cohesion: 1.0
-Nodes (0): 
+Nodes (0):
 
 ### Community 27 - "Seed: Human Owner"
+
 Cohesion: 1.0
-Nodes (0): 
+Nodes (0):
 
 ### Community 28 - "Seed: Model Profiles"
+
 Cohesion: 1.0
-Nodes (0): 
+Nodes (0):
 
 ### Community 29 - "Seed: Permission Profiles"
+
 Cohesion: 1.0
-Nodes (0): 
+Nodes (0):
 
 ### Community 30 - "Seed: Role Templates"
+
 Cohesion: 1.0
-Nodes (0): 
+Nodes (0):
 
 ### Community 31 - "Server Test"
+
 Cohesion: 1.0
-Nodes (0): 
+Nodes (0):
 
 ### Community 32 - "Jest Config"
+
 Cohesion: 1.0
-Nodes (0): 
+Nodes (0):
 
 ### Community 33 - "Server Entry"
+
 Cohesion: 1.0
-Nodes (0): 
+Nodes (0):
 
 ### Community 34 - "Test: Agents"
+
 Cohesion: 1.0
-Nodes (0): 
+Nodes (0):
 
 ### Community 35 - "Test: Auth"
+
 Cohesion: 1.0
-Nodes (0): 
+Nodes (0):
 
 ### Community 36 - "Test: DB"
+
 Cohesion: 1.0
-Nodes (0): 
+Nodes (0):
 
 ### Community 37 - "Test: Health"
+
 Cohesion: 1.0
-Nodes (0): 
+Nodes (0):
 
 ### Community 38 - "Test: Migrations"
+
 Cohesion: 1.0
-Nodes (0): 
+Nodes (0):
 
 ### Community 39 - "Test: Path Safety"
+
 Cohesion: 1.0
-Nodes (0): 
+Nodes (0):
 
 ### Community 40 - "Test: Seeds"
+
 Cohesion: 1.0
-Nodes (0): 
+Nodes (0):
 
 ## Knowledge Gaps
+
 - **7 isolated node(s):** `Crispy Adventure Worker Runtime`, `No Guessing Rule`, `Coding Conventions`, `Graphify Integration`, `Silver Platform Overview` (+2 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **Thin community `App Factory`** (2 nodes): `createApp()`, `app.js`
@@ -317,6 +365,7 @@ Nodes (0):
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 
 ## Suggested Questions
+
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `Silver Gatekeeper` connect `Platform Policy & Security` to `Old Graph Report`?**

@@ -1,1 +1,12 @@
-{"nodes": [{"id": "tests_seeds_test_js", "label": "seeds.test.js", "file_type": "code", "source_file": "tests\\seeds.test.js", "source_location": "L1"}], "edges": []}
+{
+  "nodes": [
+    {
+      "id": "tests_seeds_test_js",
+      "label": "seeds.test.js",
+      "file_type": "code",
+      "source_file": "tests\\seeds.test.js",
+      "source_location": "L1"
+    }
+  ],
+  "edges": []
+}

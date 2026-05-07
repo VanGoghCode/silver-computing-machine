@@ -1,1 +1,29 @@
-{"nodes": [{"id": "src_seeds_model_profiles_js", "label": "model_profiles.js", "file_type": "code", "source_file": "src\\seeds\\model_profiles.js", "source_location": "L1"}, {"id": "model_profiles_run", "label": "run()", "file_type": "code", "source_file": "src\\seeds\\model_profiles.js", "source_location": "L36"}], "edges": [{"source": "src_seeds_model_profiles_js", "target": "model_profiles_run", "relation": "contains", "confidence": "EXTRACTED", "source_file": "src\\seeds\\model_profiles.js", "source_location": "L36", "weight": 1.0}]}
+{
+  "nodes": [
+    {
+      "id": "src_seeds_model_profiles_js",
+      "label": "model_profiles.js",
+      "file_type": "code",
+      "source_file": "src\\seeds\\model_profiles.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "model_profiles_run",
+      "label": "run()",
+      "file_type": "code",
+      "source_file": "src\\seeds\\model_profiles.js",
+      "source_location": "L36"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_seeds_model_profiles_js",
+      "target": "model_profiles_run",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\seeds\\model_profiles.js",
+      "source_location": "L36",
+      "weight": 1.0
+    }
+  ]
+}

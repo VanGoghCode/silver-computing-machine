@@ -6,11 +6,7 @@
       {
         "id": "security_stack",
         "label": "Security Stack (Auth + RBAC + Path Safety)",
-        "nodes": [
-          "claude_bearer_auth",
-          "claude_rbac",
-          "claude_path_safety"
-        ],
+        "nodes": ["claude_bearer_auth", "claude_rbac", "claude_path_safety"],
         "relation": "participate_in",
         "confidence": "EXTRACTED",
         "confidence_score": 1.0,
@@ -1610,11 +1606,7 @@
     {
       "id": "security_stack",
       "label": "Security Stack (Auth + RBAC + Path Safety)",
-      "nodes": [
-        "claude_bearer_auth",
-        "claude_rbac",
-        "claude_path_safety"
-      ],
+      "nodes": ["claude_bearer_auth", "claude_rbac", "claude_path_safety"],
       "relation": "participate_in",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,

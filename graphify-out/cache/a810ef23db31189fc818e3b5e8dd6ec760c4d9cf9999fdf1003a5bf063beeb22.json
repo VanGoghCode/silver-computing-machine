@@ -1,1 +1,29 @@
-{"nodes": [{"id": "src_migrations_008_project_role_instances_js", "label": "008_project_role_instances.js", "file_type": "code", "source_file": "src\\migrations\\008_project_role_instances.js", "source_location": "L1"}, {"id": "008_project_role_instances_up", "label": "up()", "file_type": "code", "source_file": "src\\migrations\\008_project_role_instances.js", "source_location": "L3"}], "edges": [{"source": "src_migrations_008_project_role_instances_js", "target": "008_project_role_instances_up", "relation": "contains", "confidence": "EXTRACTED", "source_file": "src\\migrations\\008_project_role_instances.js", "source_location": "L3", "weight": 1.0}]}
+{
+  "nodes": [
+    {
+      "id": "src_migrations_008_project_role_instances_js",
+      "label": "008_project_role_instances.js",
+      "file_type": "code",
+      "source_file": "src\\migrations\\008_project_role_instances.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "008_project_role_instances_up",
+      "label": "up()",
+      "file_type": "code",
+      "source_file": "src\\migrations\\008_project_role_instances.js",
+      "source_location": "L3"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_migrations_008_project_role_instances_js",
+      "target": "008_project_role_instances_up",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\migrations\\008_project_role_instances.js",
+      "source_location": "L3",
+      "weight": 1.0
+    }
+  ]
+}

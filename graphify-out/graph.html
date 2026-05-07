@@ -1,125 +1,2574 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>graphify - graphify-out/graph.html</title>
-<script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
-<style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: #0f0f1a; color: #e0e0e0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; display: flex; height: 100vh; overflow: hidden; }
-  #graph { flex: 1; }
-  #sidebar { width: 280px; background: #1a1a2e; border-left: 1px solid #2a2a4e; display: flex; flex-direction: column; overflow: hidden; }
-  #search-wrap { padding: 12px; border-bottom: 1px solid #2a2a4e; }
-  #search { width: 100%; background: #0f0f1a; border: 1px solid #3a3a5e; color: #e0e0e0; padding: 7px 10px; border-radius: 6px; font-size: 13px; outline: none; }
-  #search:focus { border-color: #4E79A7; }
-  #search-results { max-height: 140px; overflow-y: auto; padding: 4px 12px; border-bottom: 1px solid #2a2a4e; display: none; }
-  .search-item { padding: 4px 6px; cursor: pointer; border-radius: 4px; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .search-item:hover { background: #2a2a4e; }
-  #info-panel { padding: 14px; border-bottom: 1px solid #2a2a4e; min-height: 140px; }
-  #info-panel h3 { font-size: 13px; color: #aaa; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
-  #info-content { font-size: 13px; color: #ccc; line-height: 1.6; }
-  #info-content .field { margin-bottom: 5px; }
-  #info-content .field b { color: #e0e0e0; }
-  #info-content .empty { color: #555; font-style: italic; }
-  .neighbor-link { display: block; padding: 2px 6px; margin: 2px 0; border-radius: 3px; cursor: pointer; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-left: 3px solid #333; }
-  .neighbor-link:hover { background: #2a2a4e; }
-  #neighbors-list { max-height: 160px; overflow-y: auto; margin-top: 4px; }
-  #legend-wrap { flex: 1; overflow-y: auto; padding: 12px; }
-  #legend-wrap h3 { font-size: 13px; color: #aaa; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.05em; }
-  .legend-item { display: flex; align-items: center; gap: 8px; padding: 4px 0; cursor: pointer; border-radius: 4px; font-size: 12px; }
-  .legend-item:hover { background: #2a2a4e; padding-left: 4px; }
-  .legend-item.dimmed { opacity: 0.35; }
-  .legend-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
-  .legend-label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .legend-count { color: #666; font-size: 11px; }
-  #stats { padding: 10px 14px; border-top: 1px solid #2a2a4e; font-size: 11px; color: #555; }
-</style>
-</head>
-<body>
-<div id="graph"></div>
-<div id="sidebar">
-  <div id="search-wrap">
-    <input id="search" type="text" placeholder="Search nodes..." autocomplete="off">
-    <div id="search-results"></div>
-  </div>
-  <div id="info-panel">
-    <h3>Node Info</h3>
-    <div id="info-content"><span class="empty">Click a node to inspect it</span></div>
-  </div>
-  <div id="legend-wrap">
-    <h3>Communities</h3>
-    <div id="legend"></div>
-  </div>
-  <div id="stats">96 nodes &middot; 62 edges &middot; 41 communities</div>
-</div>
-<script>
-const RAW_NODES = [{"id": "jest_config_js", "label": "jest.config.js", "color": {"background": "#E15759", "border": "#E15759", "highlight": {"background": "#ffffff", "border": "#E15759"}}, "size": 10.0, "font": {"size": 0, "color": "#ffffff"}, "title": "jest.config.js", "community": 32, "community_name": "Jest Config", "source_file": "jest.config.js", "file_type": "code", "degree": 0}, {"id": "server_js", "label": "server.js", "color": {"background": "#76B7B2", "border": "#76B7B2", "highlight": {"background": "#ffffff", "border": "#76B7B2"}}, "size": 10.0, "font": {"size": 0, "color": "#ffffff"}, "title": "server.js", "community": 33, "community_name": "Server Entry", "source_file": "server.js", "file_type": "code", "degree": 0}, {"id": "src_app_js", "label": "app.js", "color": {"background": "#FF9DA7", "border": "#FF9DA7", "highlight": {"background": "#ffffff", "border": "#FF9DA7"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "app.js", "community": 7, "community_name": "App Factory", "source_file": "src\\app.js", "file_type": "code", "degree": 1}, {"id": "app_createapp", "label": "createApp()", "color": {"background": "#FF9DA7", "border": "#FF9DA7", "highlight": {"background": "#ffffff", "border": "#FF9DA7"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "createApp()", "community": 7, "community_name": "App Factory", "source_file": "src\\app.js", "file_type": "code", "degree": 1}, {"id": "src_config_js", "label": "config.js", "color": {"background": "#9C755F", "border": "#9C755F", "highlight": {"background": "#ffffff", "border": "#9C755F"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "config.js", "community": 8, "community_name": "Config", "source_file": "src\\config.js", "file_type": "code", "degree": 1}, {"id": "config_loadconfig", "label": "loadConfig()", "color": {"background": "#9C755F", "border": "#9C755F", "highlight": {"background": "#ffffff", "border": "#9C755F"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "loadConfig()", "community": 8, "community_name": "Config", "source_file": "src\\config.js", "file_type": "code", "degree": 1}, {"id": "src_db_helpers_js", "label": "helpers.js", "color": {"background": "#76B7B2", "border": "#76B7B2", "highlight": {"background": "#ffffff", "border": "#76B7B2"}}, "size": 15.5, "font": {"size": 12, "color": "#ffffff"}, "title": "helpers.js", "community": 3, "community_name": "DB Helpers", "source_file": "src\\db\\helpers.js", "file_type": "code", "degree": 2}, {"id": "helpers_generateid", "label": "generateId()", "color": {"background": "#76B7B2", "border": "#76B7B2", "highlight": {"background": "#ffffff", "border": "#76B7B2"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "generateId()", "community": 3, "community_name": "DB Helpers", "source_file": "src\\db\\helpers.js", "file_type": "code", "degree": 1}, {"id": "helpers_withtransaction", "label": "withTransaction()", "color": {"background": "#76B7B2", "border": "#76B7B2", "highlight": {"background": "#ffffff", "border": "#76B7B2"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "withTransaction()", "community": 3, "community_name": "DB Helpers", "source_file": "src\\db\\helpers.js", "file_type": "code", "degree": 1}, {"id": "src_db_index_js", "label": "index.js", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 20.9, "font": {"size": 12, "color": "#ffffff"}, "title": "index.js", "community": 1, "community_name": "Database Connection", "source_file": "src\\db\\index.js", "file_type": "code", "degree": 4}, {"id": "index_createdatabase", "label": "createDatabase()", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "createDatabase()", "community": 1, "community_name": "Database Connection", "source_file": "src\\db\\index.js", "file_type": "code", "degree": 1}, {"id": "index_getdatabase", "label": "getDatabase()", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "getDatabase()", "community": 1, "community_name": "Database Connection", "source_file": "src\\db\\index.js", "file_type": "code", "degree": 1}, {"id": "index_closedatabase", "label": "closeDatabase()", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 15.5, "font": {"size": 12, "color": "#ffffff"}, "title": "closeDatabase()", "community": 1, "community_name": "Database Connection", "source_file": "src\\db\\index.js", "file_type": "code", "degree": 2}, {"id": "index_resetfortesting", "label": "resetForTesting()", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 15.5, "font": {"size": 12, "color": "#ffffff"}, "title": "resetForTesting()", "community": 1, "community_name": "Database Connection", "source_file": "src\\db\\index.js", "file_type": "code", "degree": 2}, {"id": "src_db_migrate_js", "label": "migrate.js", "color": {"background": "#BAB0AC", "border": "#BAB0AC", "highlight": {"background": "#ffffff", "border": "#BAB0AC"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "migrate.js", "community": 9, "community_name": "Migration Runner", "source_file": "src\\db\\migrate.js", "file_type": "code", "degree": 1}, {"id": "migrate_runmigrations", "label": "runMigrations()", "color": {"background": "#BAB0AC", "border": "#BAB0AC", "highlight": {"background": "#ffffff", "border": "#BAB0AC"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "runMigrations()", "community": 9, "community_name": "Migration Runner", "source_file": "src\\db\\migrate.js", "file_type": "code", "degree": 1}, {"id": "src_db_seed_js", "label": "seed.js", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "seed.js", "community": 10, "community_name": "Seed Runner", "source_file": "src\\db\\seed.js", "file_type": "code", "degree": 1}, {"id": "seed_runseeds", "label": "runSeeds()", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "runSeeds()", "community": 10, "community_name": "Seed Runner", "source_file": "src\\db\\seed.js", "file_type": "code", "degree": 1}, {"id": "src_middleware_auth_js", "label": "auth.js", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "auth.js", "community": 11, "community_name": "Auth Middleware", "source_file": "src\\middleware\\auth.js", "file_type": "code", "degree": 1}, {"id": "auth_bearerauth", "label": "bearerAuth()", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "bearerAuth()", "community": 11, "community_name": "Auth Middleware", "source_file": "src\\middleware\\auth.js", "file_type": "code", "degree": 1}, {"id": "src_migrations_001_projects_js", "label": "001_projects.js", "color": {"background": "#E15759", "border": "#E15759", "highlight": {"background": "#ffffff", "border": "#E15759"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "001_projects.js", "community": 12, "community_name": "Migration: Projects", "source_file": "src\\migrations\\001_projects.js", "file_type": "code", "degree": 1}, {"id": "001_projects_up", "label": "up()", "color": {"background": "#E15759", "border": "#E15759", "highlight": {"background": "#ffffff", "border": "#E15759"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "up()", "community": 12, "community_name": "Migration: Projects", "source_file": "src\\migrations\\001_projects.js", "file_type": "code", "degree": 1}, {"id": "src_migrations_002_humans_js", "label": "002_humans.js", "color": {"background": "#76B7B2", "border": "#76B7B2", "highlight": {"background": "#ffffff", "border": "#76B7B2"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "002_humans.js", "community": 13, "community_name": "Migration: Humans", "source_file": "src\\migrations\\002_humans.js", "file_type": "code", "degree": 1}, {"id": "002_humans_up", "label": "up()", "color": {"background": "#76B7B2", "border": "#76B7B2", "highlight": {"background": "#ffffff", "border": "#76B7B2"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "up()", "community": 13, "community_name": "Migration: Humans", "source_file": "src\\migrations\\002_humans.js", "file_type": "code", "degree": 1}, {"id": "src_migrations_003_departments_js", "label": "003_departments.js", "color": {"background": "#59A14F", "border": "#59A14F", "highlight": {"background": "#ffffff", "border": "#59A14F"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "003_departments.js", "community": 14, "community_name": "Migration: Departments", "source_file": "src\\migrations\\003_departments.js", "file_type": "code", "degree": 1}, {"id": "003_departments_up", "label": "up()", "color": {"background": "#59A14F", "border": "#59A14F", "highlight": {"background": "#ffffff", "border": "#59A14F"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "up()", "community": 14, "community_name": "Migration: Departments", "source_file": "src\\migrations\\003_departments.js", "file_type": "code", "degree": 1}, {"id": "src_migrations_004_model_profiles_js", "label": "004_model_profiles.js", "color": {"background": "#EDC948", "border": "#EDC948", "highlight": {"background": "#ffffff", "border": "#EDC948"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "004_model_profiles.js", "community": 15, "community_name": "Migration: Model Profiles", "source_file": "src\\migrations\\004_model_profiles.js", "file_type": "code", "degree": 1}, {"id": "004_model_profiles_up", "label": "up()", "color": {"background": "#EDC948", "border": "#EDC948", "highlight": {"background": "#ffffff", "border": "#EDC948"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "up()", "community": 15, "community_name": "Migration: Model Profiles", "source_file": "src\\migrations\\004_model_profiles.js", "file_type": "code", "degree": 1}, {"id": "src_migrations_005_permission_profiles_js", "label": "005_permission_profiles.js", "color": {"background": "#B07AA1", "border": "#B07AA1", "highlight": {"background": "#ffffff", "border": "#B07AA1"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "005_permission_profiles.js", "community": 16, "community_name": "Migration: Permission Profiles", "source_file": "src\\migrations\\005_permission_profiles.js", "file_type": "code", "degree": 1}, {"id": "005_permission_profiles_up", "label": "up()", "color": {"background": "#B07AA1", "border": "#B07AA1", "highlight": {"background": "#ffffff", "border": "#B07AA1"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "up()", "community": 16, "community_name": "Migration: Permission Profiles", "source_file": "src\\migrations\\005_permission_profiles.js", "file_type": "code", "degree": 1}, {"id": "src_migrations_006_role_templates_js", "label": "006_role_templates.js", "color": {"background": "#FF9DA7", "border": "#FF9DA7", "highlight": {"background": "#ffffff", "border": "#FF9DA7"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "006_role_templates.js", "community": 17, "community_name": "Migration: Role Templates", "source_file": "src\\migrations\\006_role_templates.js", "file_type": "code", "degree": 1}, {"id": "006_role_templates_up", "label": "up()", "color": {"background": "#FF9DA7", "border": "#FF9DA7", "highlight": {"background": "#ffffff", "border": "#FF9DA7"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "up()", "community": 17, "community_name": "Migration: Role Templates", "source_file": "src\\migrations\\006_role_templates.js", "file_type": "code", "degree": 1}, {"id": "src_migrations_007_role_prompt_files_js", "label": "007_role_prompt_files.js", "color": {"background": "#9C755F", "border": "#9C755F", "highlight": {"background": "#ffffff", "border": "#9C755F"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "007_role_prompt_files.js", "community": 18, "community_name": "Migration: Role Prompt Files", "source_file": "src\\migrations\\007_role_prompt_files.js", "file_type": "code", "degree": 1}, {"id": "007_role_prompt_files_up", "label": "up()", "color": {"background": "#9C755F", "border": "#9C755F", "highlight": {"background": "#ffffff", "border": "#9C755F"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "up()", "community": 18, "community_name": "Migration: Role Prompt Files", "source_file": "src\\migrations\\007_role_prompt_files.js", "file_type": "code", "degree": 1}, {"id": "src_migrations_008_project_role_instances_js", "label": "008_project_role_instances.js", "color": {"background": "#BAB0AC", "border": "#BAB0AC", "highlight": {"background": "#ffffff", "border": "#BAB0AC"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "008_project_role_instances.js", "community": 19, "community_name": "Migration: Role Instances", "source_file": "src\\migrations\\008_project_role_instances.js", "file_type": "code", "degree": 1}, {"id": "008_project_role_instances_up", "label": "up()", "color": {"background": "#BAB0AC", "border": "#BAB0AC", "highlight": {"background": "#ffffff", "border": "#BAB0AC"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "up()", "community": 19, "community_name": "Migration: Role Instances", "source_file": "src\\migrations\\008_project_role_instances.js", "file_type": "code", "degree": 1}, {"id": "src_migrations_009_role_edges_js", "label": "009_role_edges.js", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "009_role_edges.js", "community": 20, "community_name": "Migration: Role Edges", "source_file": "src\\migrations\\009_role_edges.js", "file_type": "code", "degree": 1}, {"id": "009_role_edges_up", "label": "up()", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "up()", "community": 20, "community_name": "Migration: Role Edges", "source_file": "src\\migrations\\009_role_edges.js", "file_type": "code", "degree": 1}, {"id": "src_migrations_010_agents_js", "label": "010_agents.js", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "010_agents.js", "community": 21, "community_name": "Migration: Agents", "source_file": "src\\migrations\\010_agents.js", "file_type": "code", "degree": 1}, {"id": "010_agents_up", "label": "up()", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "up()", "community": 21, "community_name": "Migration: Agents", "source_file": "src\\migrations\\010_agents.js", "file_type": "code", "degree": 1}, {"id": "src_migrations_011_agent_heartbeats_js", "label": "011_agent_heartbeats.js", "color": {"background": "#E15759", "border": "#E15759", "highlight": {"background": "#ffffff", "border": "#E15759"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "011_agent_heartbeats.js", "community": 22, "community_name": "Migration: Heartbeats", "source_file": "src\\migrations\\011_agent_heartbeats.js", "file_type": "code", "degree": 1}, {"id": "011_agent_heartbeats_up", "label": "up()", "color": {"background": "#E15759", "border": "#E15759", "highlight": {"background": "#ffffff", "border": "#E15759"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "up()", "community": 22, "community_name": "Migration: Heartbeats", "source_file": "src\\migrations\\011_agent_heartbeats.js", "file_type": "code", "degree": 1}, {"id": "src_routes_agents_js", "label": "agents.js", "color": {"background": "#76B7B2", "border": "#76B7B2", "highlight": {"background": "#ffffff", "border": "#76B7B2"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "agents.js", "community": 23, "community_name": "Route: Agents", "source_file": "src\\routes\\agents.js", "file_type": "code", "degree": 1}, {"id": "agents_createagentsrouter", "label": "createAgentsRouter()", "color": {"background": "#76B7B2", "border": "#76B7B2", "highlight": {"background": "#ffffff", "border": "#76B7B2"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "createAgentsRouter()", "community": 23, "community_name": "Route: Agents", "source_file": "src\\routes\\agents.js", "file_type": "code", "degree": 1}, {"id": "src_routes_files_js", "label": "files.js", "color": {"background": "#59A14F", "border": "#59A14F", "highlight": {"background": "#ffffff", "border": "#59A14F"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "files.js", "community": 24, "community_name": "Route: Files", "source_file": "src\\routes\\files.js", "file_type": "code", "degree": 1}, {"id": "files_createfilesrouter", "label": "createFilesRouter()", "color": {"background": "#59A14F", "border": "#59A14F", "highlight": {"background": "#ffffff", "border": "#59A14F"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "createFilesRouter()", "community": 24, "community_name": "Route: Files", "source_file": "src\\routes\\files.js", "file_type": "code", "degree": 1}, {"id": "src_routes_health_js", "label": "health.js", "color": {"background": "#EDC948", "border": "#EDC948", "highlight": {"background": "#ffffff", "border": "#EDC948"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "health.js", "community": 25, "community_name": "Route: Health", "source_file": "src\\routes\\health.js", "file_type": "code", "degree": 1}, {"id": "health_createhealthrouter", "label": "createHealthRouter()", "color": {"background": "#EDC948", "border": "#EDC948", "highlight": {"background": "#ffffff", "border": "#EDC948"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "createHealthRouter()", "community": 25, "community_name": "Route: Health", "source_file": "src\\routes\\health.js", "file_type": "code", "degree": 1}, {"id": "src_routes_tasks_js", "label": "tasks.js", "color": {"background": "#B07AA1", "border": "#B07AA1", "highlight": {"background": "#ffffff", "border": "#B07AA1"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "tasks.js", "community": 26, "community_name": "Route: Tasks", "source_file": "src\\routes\\tasks.js", "file_type": "code", "degree": 1}, {"id": "tasks_createtasksrouter", "label": "createTasksRouter()", "color": {"background": "#B07AA1", "border": "#B07AA1", "highlight": {"background": "#ffffff", "border": "#B07AA1"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "createTasksRouter()", "community": 26, "community_name": "Route: Tasks", "source_file": "src\\routes\\tasks.js", "file_type": "code", "degree": 1}, {"id": "src_seeds_human_local_owner_js", "label": "human_local_owner.js", "color": {"background": "#FF9DA7", "border": "#FF9DA7", "highlight": {"background": "#ffffff", "border": "#FF9DA7"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "human_local_owner.js", "community": 27, "community_name": "Seed: Human Owner", "source_file": "src\\seeds\\human_local_owner.js", "file_type": "code", "degree": 1}, {"id": "human_local_owner_run", "label": "run()", "color": {"background": "#FF9DA7", "border": "#FF9DA7", "highlight": {"background": "#ffffff", "border": "#FF9DA7"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "run()", "community": 27, "community_name": "Seed: Human Owner", "source_file": "src\\seeds\\human_local_owner.js", "file_type": "code", "degree": 1}, {"id": "src_seeds_model_profiles_js", "label": "model_profiles.js", "color": {"background": "#9C755F", "border": "#9C755F", "highlight": {"background": "#ffffff", "border": "#9C755F"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "model_profiles.js", "community": 28, "community_name": "Seed: Model Profiles", "source_file": "src\\seeds\\model_profiles.js", "file_type": "code", "degree": 1}, {"id": "model_profiles_run", "label": "run()", "color": {"background": "#9C755F", "border": "#9C755F", "highlight": {"background": "#ffffff", "border": "#9C755F"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "run()", "community": 28, "community_name": "Seed: Model Profiles", "source_file": "src\\seeds\\model_profiles.js", "file_type": "code", "degree": 1}, {"id": "src_seeds_permission_profiles_js", "label": "permission_profiles.js", "color": {"background": "#BAB0AC", "border": "#BAB0AC", "highlight": {"background": "#ffffff", "border": "#BAB0AC"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "permission_profiles.js", "community": 29, "community_name": "Seed: Permission Profiles", "source_file": "src\\seeds\\permission_profiles.js", "file_type": "code", "degree": 1}, {"id": "permission_profiles_run", "label": "run()", "color": {"background": "#BAB0AC", "border": "#BAB0AC", "highlight": {"background": "#ffffff", "border": "#BAB0AC"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "run()", "community": 29, "community_name": "Seed: Permission Profiles", "source_file": "src\\seeds\\permission_profiles.js", "file_type": "code", "degree": 1}, {"id": "src_seeds_role_templates_js", "label": "role_templates.js", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "role_templates.js", "community": 30, "community_name": "Seed: Role Templates", "source_file": "src\\seeds\\role_templates.js", "file_type": "code", "degree": 1}, {"id": "role_templates_run", "label": "run()", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "run()", "community": 30, "community_name": "Seed: Role Templates", "source_file": "src\\seeds\\role_templates.js", "file_type": "code", "degree": 1}, {"id": "src_services_agents_js", "label": "agents.js", "color": {"background": "#59A14F", "border": "#59A14F", "highlight": {"background": "#ffffff", "border": "#59A14F"}}, "size": 15.5, "font": {"size": 12, "color": "#ffffff"}, "title": "agents.js", "community": 4, "community_name": "Agent Service", "source_file": "src\\services\\agents.js", "file_type": "code", "degree": 2}, {"id": "agents_findagentbytokenhash", "label": "findAgentByTokenHash()", "color": {"background": "#59A14F", "border": "#59A14F", "highlight": {"background": "#ffffff", "border": "#59A14F"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "findAgentByTokenHash()", "community": 4, "community_name": "Agent Service", "source_file": "src\\services\\agents.js", "file_type": "code", "degree": 1}, {"id": "agents_updateheartbeat", "label": "updateHeartbeat()", "color": {"background": "#59A14F", "border": "#59A14F", "highlight": {"background": "#ffffff", "border": "#59A14F"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "updateHeartbeat()", "community": 4, "community_name": "Agent Service", "source_file": "src\\services\\agents.js", "file_type": "code", "degree": 1}, {"id": "src_services_path_safety_js", "label": "path_safety.js", "color": {"background": "#EDC948", "border": "#EDC948", "highlight": {"background": "#ffffff", "border": "#EDC948"}}, "size": 15.5, "font": {"size": 12, "color": "#ffffff"}, "title": "path_safety.js", "community": 5, "community_name": "Path Safety", "source_file": "src\\services\\path_safety.js", "file_type": "code", "degree": 2}, {"id": "path_safety_safepath", "label": "safePath()", "color": {"background": "#EDC948", "border": "#EDC948", "highlight": {"background": "#ffffff", "border": "#EDC948"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "safePath()", "community": 5, "community_name": "Path Safety", "source_file": "src\\services\\path_safety.js", "file_type": "code", "degree": 1}, {"id": "path_safety_iswithinproject", "label": "isWithinProject()", "color": {"background": "#EDC948", "border": "#EDC948", "highlight": {"background": "#ffffff", "border": "#EDC948"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "isWithinProject()", "community": 5, "community_name": "Path Safety", "source_file": "src\\services\\path_safety.js", "file_type": "code", "degree": 1}, {"id": "tests_agents_test_js", "label": "agents.test.js", "color": {"background": "#59A14F", "border": "#59A14F", "highlight": {"background": "#ffffff", "border": "#59A14F"}}, "size": 10.0, "font": {"size": 0, "color": "#ffffff"}, "title": "agents.test.js", "community": 34, "community_name": "Test: Agents", "source_file": "tests\\agents.test.js", "file_type": "code", "degree": 0}, {"id": "tests_auth_test_js", "label": "auth.test.js", "color": {"background": "#EDC948", "border": "#EDC948", "highlight": {"background": "#ffffff", "border": "#EDC948"}}, "size": 10.0, "font": {"size": 0, "color": "#ffffff"}, "title": "auth.test.js", "community": 35, "community_name": "Test: Auth", "source_file": "tests\\auth.test.js", "file_type": "code", "degree": 0}, {"id": "tests_db_test_js", "label": "db.test.js", "color": {"background": "#B07AA1", "border": "#B07AA1", "highlight": {"background": "#ffffff", "border": "#B07AA1"}}, "size": 10.0, "font": {"size": 0, "color": "#ffffff"}, "title": "db.test.js", "community": 36, "community_name": "Test: DB", "source_file": "tests\\db.test.js", "file_type": "code", "degree": 0}, {"id": "tests_health_test_js", "label": "health.test.js", "color": {"background": "#FF9DA7", "border": "#FF9DA7", "highlight": {"background": "#ffffff", "border": "#FF9DA7"}}, "size": 10.0, "font": {"size": 0, "color": "#ffffff"}, "title": "health.test.js", "community": 37, "community_name": "Test: Health", "source_file": "tests\\health.test.js", "file_type": "code", "degree": 0}, {"id": "tests_helpers_js", "label": "helpers.js", "color": {"background": "#E15759", "border": "#E15759", "highlight": {"background": "#ffffff", "border": "#E15759"}}, "size": 20.9, "font": {"size": 12, "color": "#ffffff"}, "title": "helpers.js", "community": 2, "community_name": "Test Infrastructure", "source_file": "tests\\helpers.js", "file_type": "code", "degree": 4}, {"id": "helpers_createtestdb", "label": "createTestDb()", "color": {"background": "#E15759", "border": "#E15759", "highlight": {"background": "#ffffff", "border": "#E15759"}}, "size": 15.5, "font": {"size": 12, "color": "#ffffff"}, "title": "createTestDb()", "community": 2, "community_name": "Test Infrastructure", "source_file": "tests\\helpers.js", "file_type": "code", "degree": 2}, {"id": "helpers_createseededtestdb", "label": "createSeededTestDb()", "color": {"background": "#E15759", "border": "#E15759", "highlight": {"background": "#ffffff", "border": "#E15759"}}, "size": 15.5, "font": {"size": 12, "color": "#ffffff"}, "title": "createSeededTestDb()", "community": 2, "community_name": "Test Infrastructure", "source_file": "tests\\helpers.js", "file_type": "code", "degree": 2}, {"id": "helpers_createtestapp", "label": "createTestApp()", "color": {"background": "#E15759", "border": "#E15759", "highlight": {"background": "#ffffff", "border": "#E15759"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "createTestApp()", "community": 2, "community_name": "Test Infrastructure", "source_file": "tests\\helpers.js", "file_type": "code", "degree": 1}, {"id": "helpers_inserttestagent", "label": "insertTestAgent()", "color": {"background": "#E15759", "border": "#E15759", "highlight": {"background": "#ffffff", "border": "#E15759"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "insertTestAgent()", "community": 2, "community_name": "Test Infrastructure", "source_file": "tests\\helpers.js", "file_type": "code", "degree": 1}, {"id": "tests_migrations_test_js", "label": "migrations.test.js", "color": {"background": "#9C755F", "border": "#9C755F", "highlight": {"background": "#ffffff", "border": "#9C755F"}}, "size": 10.0, "font": {"size": 0, "color": "#ffffff"}, "title": "migrations.test.js", "community": 38, "community_name": "Test: Migrations", "source_file": "tests\\migrations.test.js", "file_type": "code", "degree": 0}, {"id": "tests_path_safety_test_js", "label": "path_safety.test.js", "color": {"background": "#BAB0AC", "border": "#BAB0AC", "highlight": {"background": "#ffffff", "border": "#BAB0AC"}}, "size": 10.0, "font": {"size": 0, "color": "#ffffff"}, "title": "path_safety.test.js", "community": 39, "community_name": "Test: Path Safety", "source_file": "tests\\path_safety.test.js", "file_type": "code", "degree": 0}, {"id": "tests_seeds_test_js", "label": "seeds.test.js", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 10.0, "font": {"size": 0, "color": "#ffffff"}, "title": "seeds.test.js", "community": 40, "community_name": "Test: Seeds", "source_file": "tests\\seeds.test.js", "file_type": "code", "degree": 0}, {"id": "tests_server_test_js", "label": "server.test.js", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "server.test.js", "community": 31, "community_name": "Server Test", "source_file": "tests\\server.test.js", "file_type": "code", "degree": 1}, {"id": "server_test_createapp", "label": "createApp()", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "createApp()", "community": 31, "community_name": "Server Test", "source_file": "tests\\server.test.js", "file_type": "code", "degree": 1}, {"id": "claude_silver_gatekeeper", "label": "Silver Gatekeeper", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 40.0, "font": {"size": 12, "color": "#ffffff"}, "title": "Silver Gatekeeper", "community": 0, "community_name": "Platform Policy & Security", "source_file": "CLAUDE.md", "file_type": "document", "degree": 11}, {"id": "claude_crispy_adventure", "label": "Crispy Adventure Worker Runtime", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "Crispy Adventure Worker Runtime", "community": 0, "community_name": "Platform Policy & Security", "source_file": "CLAUDE.md", "file_type": "document", "degree": 1}, {"id": "claude_bearer_auth", "label": "Bearer Token Auth", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 20.9, "font": {"size": 12, "color": "#ffffff"}, "title": "Bearer Token Auth", "community": 0, "community_name": "Platform Policy & Security", "source_file": "CLAUDE.md", "file_type": "document", "degree": 4}, {"id": "claude_role_graph", "label": "Role Graph (Data-Driven)", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 18.2, "font": {"size": 12, "color": "#ffffff"}, "title": "Role Graph (Data-Driven)", "community": 0, "community_name": "Platform Policy & Security", "source_file": "CLAUDE.md", "file_type": "document", "degree": 3}, {"id": "claude_rbac", "label": "RBAC Enforcement", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 15.5, "font": {"size": 12, "color": "#ffffff"}, "title": "RBAC Enforcement", "community": 0, "community_name": "Platform Policy & Security", "source_file": "CLAUDE.md", "file_type": "document", "degree": 2}, {"id": "claude_path_safety", "label": "Path Safety & Project Isolation", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 15.5, "font": {"size": 12, "color": "#ffffff"}, "title": "Path Safety &amp; Project Isolation", "community": 0, "community_name": "Platform Policy & Security", "source_file": "CLAUDE.md", "file_type": "document", "degree": 2}, {"id": "claude_sqlite_wal", "label": "SQLite with WAL Mode", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 15.5, "font": {"size": 12, "color": "#ffffff"}, "title": "SQLite with WAL Mode", "community": 0, "community_name": "Platform Policy & Security", "source_file": "CLAUDE.md", "file_type": "document", "degree": 2}, {"id": "claude_no_guessing", "label": "No Guessing Rule", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "No Guessing Rule", "community": 0, "community_name": "Platform Policy & Security", "source_file": "CLAUDE.md", "file_type": "document", "degree": 1}, {"id": "claude_coding_conventions", "label": "Coding Conventions", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "Coding Conventions", "community": 0, "community_name": "Platform Policy & Security", "source_file": "CLAUDE.md", "file_type": "document", "degree": 1}, {"id": "claude_graphify_integration", "label": "Graphify Integration", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "Graphify Integration", "community": 0, "community_name": "Platform Policy & Security", "source_file": "CLAUDE.md", "file_type": "document", "degree": 1}, {"id": "readme_silver_overview", "label": "Silver Platform Overview", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "Silver Platform Overview", "community": 0, "community_name": "Platform Policy & Security", "source_file": "README.md", "file_type": "document", "degree": 1}, {"id": "readme_db_schema", "label": "Database Schema (11 Tables)", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 18.2, "font": {"size": 12, "color": "#ffffff"}, "title": "Database Schema (11 Tables)", "community": 0, "community_name": "Platform Policy & Security", "source_file": "README.md", "file_type": "document", "degree": 3}, {"id": "readme_api_endpoints", "label": "API Endpoints", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 15.5, "font": {"size": 12, "color": "#ffffff"}, "title": "API Endpoints", "community": 0, "community_name": "Platform Policy & Security", "source_file": "README.md", "file_type": "document", "degree": 2}, {"id": "readme_human_local_owner", "label": "Human Local-Owner Auth", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "Human Local-Owner Auth", "community": 0, "community_name": "Platform Policy & Security", "source_file": "README.md", "file_type": "document", "degree": 1}, {"id": "readme_architecture_tree", "label": "Core Architecture", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 15.5, "font": {"size": 12, "color": "#ffffff"}, "title": "Core Architecture", "community": 0, "community_name": "Platform Policy & Security", "source_file": "README.md", "file_type": "document", "degree": 2}, {"id": "graphreport_old_summary", "label": "Old Graph Summary (61 nodes)", "color": {"background": "#B07AA1", "border": "#B07AA1", "highlight": {"background": "#ffffff", "border": "#B07AA1"}}, "size": 15.5, "font": {"size": 12, "color": "#ffffff"}, "title": "Old Graph Summary (61 nodes)", "community": 6, "community_name": "Old Graph Report", "source_file": "graphify-out/GRAPH_REPORT.md", "file_type": "document", "degree": 2}, {"id": "graphreport_god_nodes", "label": "God Nodes (Core Abstractions)", "color": {"background": "#B07AA1", "border": "#B07AA1", "highlight": {"background": "#ffffff", "border": "#B07AA1"}}, "size": 15.5, "font": {"size": 12, "color": "#ffffff"}, "title": "God Nodes (Core Abstractions)", "community": 6, "community_name": "Old Graph Report", "source_file": "graphify-out/GRAPH_REPORT.md", "file_type": "document", "degree": 2}, {"id": "graphreport_hyperedges", "label": "Hyperedges (Group Relationships)", "color": {"background": "#B07AA1", "border": "#B07AA1", "highlight": {"background": "#ffffff", "border": "#B07AA1"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "Hyperedges (Group Relationships)", "community": 6, "community_name": "Old Graph Report", "source_file": "graphify-out/GRAPH_REPORT.md", "file_type": "document", "degree": 1}];
-const RAW_EDGES = [{"from": "src_app_js", "to": "app_createapp", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "src_config_js", "to": "config_loadconfig", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "src_db_helpers_js", "to": "helpers_generateid", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "src_db_helpers_js", "to": "helpers_withtransaction", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "src_db_index_js", "to": "index_createdatabase", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "src_db_index_js", "to": "index_getdatabase", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "src_db_index_js", "to": "index_closedatabase", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "src_db_index_js", "to": "index_resetfortesting", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "index_closedatabase", "to": "index_resetfortesting", "label": "calls", "title": "calls [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "src_db_migrate_js", "to": "migrate_runmigrations", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "src_db_seed_js", "to": "seed_runseeds", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "src_middleware_auth_js", "to": "auth_bearerauth", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "src_migrations_001_projects_js", "to": "001_projects_up", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "src_migrations_002_humans_js", "to": "002_humans_up", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "src_migrations_003_departments_js", "to": "003_departments_up", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "src_migrations_004_model_profiles_js", "to": "004_model_profiles_up", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "src_migrations_005_permission_profiles_js", "to": "005_permission_profiles_up", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "src_migrations_006_role_templates_js", "to": "006_role_templates_up", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "src_migrations_007_role_prompt_files_js", "to": "007_role_prompt_files_up", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "src_migrations_008_project_role_instances_js", "to": "008_project_role_instances_up", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "src_migrations_009_role_edges_js", "to": "009_role_edges_up", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "src_migrations_010_agents_js", "to": "010_agents_up", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "src_migrations_011_agent_heartbeats_js", "to": "011_agent_heartbeats_up", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "src_routes_agents_js", "to": "agents_createagentsrouter", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "src_routes_files_js", "to": "files_createfilesrouter", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "src_routes_health_js", "to": "health_createhealthrouter", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "src_routes_tasks_js", "to": "tasks_createtasksrouter", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "src_seeds_human_local_owner_js", "to": "human_local_owner_run", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "src_seeds_model_profiles_js", "to": "model_profiles_run", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "src_seeds_permission_profiles_js", "to": "permission_profiles_run", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "src_seeds_role_templates_js", "to": "role_templates_run", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "src_services_agents_js", "to": "agents_findagentbytokenhash", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "src_services_agents_js", "to": "agents_updateheartbeat", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "src_services_path_safety_js", "to": "path_safety_safepath", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "src_services_path_safety_js", "to": "path_safety_iswithinproject", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "tests_helpers_js", "to": "helpers_createtestdb", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "tests_helpers_js", "to": "helpers_createseededtestdb", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "tests_helpers_js", "to": "helpers_createtestapp", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "tests_helpers_js", "to": "helpers_inserttestagent", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "helpers_createtestdb", "to": "helpers_createseededtestdb", "label": "calls", "title": "calls [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "tests_server_test_js", "to": "server_test_createapp", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_silver_gatekeeper", "to": "claude_crispy_adventure", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_silver_gatekeeper", "to": "claude_bearer_auth", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_silver_gatekeeper", "to": "claude_role_graph", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_silver_gatekeeper", "to": "claude_rbac", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_silver_gatekeeper", "to": "claude_path_safety", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_silver_gatekeeper", "to": "claude_sqlite_wal", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_silver_gatekeeper", "to": "claude_no_guessing", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_silver_gatekeeper", "to": "claude_coding_conventions", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_silver_gatekeeper", "to": "claude_graphify_integration", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_silver_gatekeeper", "to": "readme_silver_overview", "label": "semantically_similar_to", "title": "semantically_similar_to [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}, {"from": "claude_silver_gatekeeper", "to": "graphreport_god_nodes", "label": "references", "title": "references [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}, {"from": "claude_bearer_auth", "to": "claude_path_safety", "label": "conceptually_related_to", "title": "conceptually_related_to [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}, {"from": "claude_bearer_auth", "to": "readme_api_endpoints", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_bearer_auth", "to": "readme_human_local_owner", "label": "conceptually_related_to", "title": "conceptually_related_to [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}, {"from": "claude_role_graph", "to": "claude_rbac", "label": "conceptually_related_to", "title": "conceptually_related_to [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}, {"from": "claude_role_graph", "to": "readme_db_schema", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "claude_sqlite_wal", "to": "readme_db_schema", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "readme_db_schema", "to": "readme_architecture_tree", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "readme_api_endpoints", "to": "readme_architecture_tree", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "graphreport_old_summary", "to": "graphreport_god_nodes", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "graphreport_old_summary", "to": "graphreport_hyperedges", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}];
-const LEGEND = [{"cid": 0, "color": "#4E79A7", "label": "Platform Policy &amp; Security", "count": 15}, {"cid": 1, "color": "#F28E2B", "label": "Database Connection", "count": 5}, {"cid": 2, "color": "#E15759", "label": "Test Infrastructure", "count": 5}, {"cid": 3, "color": "#76B7B2", "label": "DB Helpers", "count": 3}, {"cid": 4, "color": "#59A14F", "label": "Agent Service", "count": 3}, {"cid": 5, "color": "#EDC948", "label": "Path Safety", "count": 3}, {"cid": 6, "color": "#B07AA1", "label": "Old Graph Report", "count": 3}, {"cid": 7, "color": "#FF9DA7", "label": "App Factory", "count": 2}, {"cid": 8, "color": "#9C755F", "label": "Config", "count": 2}, {"cid": 9, "color": "#BAB0AC", "label": "Migration Runner", "count": 2}, {"cid": 10, "color": "#4E79A7", "label": "Seed Runner", "count": 2}, {"cid": 11, "color": "#F28E2B", "label": "Auth Middleware", "count": 2}, {"cid": 12, "color": "#E15759", "label": "Migration: Projects", "count": 2}, {"cid": 13, "color": "#76B7B2", "label": "Migration: Humans", "count": 2}, {"cid": 14, "color": "#59A14F", "label": "Migration: Departments", "count": 2}, {"cid": 15, "color": "#EDC948", "label": "Migration: Model Profiles", "count": 2}, {"cid": 16, "color": "#B07AA1", "label": "Migration: Permission Profiles", "count": 2}, {"cid": 17, "color": "#FF9DA7", "label": "Migration: Role Templates", "count": 2}, {"cid": 18, "color": "#9C755F", "label": "Migration: Role Prompt Files", "count": 2}, {"cid": 19, "color": "#BAB0AC", "label": "Migration: Role Instances", "count": 2}, {"cid": 20, "color": "#4E79A7", "label": "Migration: Role Edges", "count": 2}, {"cid": 21, "color": "#F28E2B", "label": "Migration: Agents", "count": 2}, {"cid": 22, "color": "#E15759", "label": "Migration: Heartbeats", "count": 2}, {"cid": 23, "color": "#76B7B2", "label": "Route: Agents", "count": 2}, {"cid": 24, "color": "#59A14F", "label": "Route: Files", "count": 2}, {"cid": 25, "color": "#EDC948", "label": "Route: Health", "count": 2}, {"cid": 26, "color": "#B07AA1", "label": "Route: Tasks", "count": 2}, {"cid": 27, "color": "#FF9DA7", "label": "Seed: Human Owner", "count": 2}, {"cid": 28, "color": "#9C755F", "label": "Seed: Model Profiles", "count": 2}, {"cid": 29, "color": "#BAB0AC", "label": "Seed: Permission Profiles", "count": 2}, {"cid": 30, "color": "#4E79A7", "label": "Seed: Role Templates", "count": 2}, {"cid": 31, "color": "#F28E2B", "label": "Server Test", "count": 2}, {"cid": 32, "color": "#E15759", "label": "Jest Config", "count": 1}, {"cid": 33, "color": "#76B7B2", "label": "Server Entry", "count": 1}, {"cid": 34, "color": "#59A14F", "label": "Test: Agents", "count": 1}, {"cid": 35, "color": "#EDC948", "label": "Test: Auth", "count": 1}, {"cid": 36, "color": "#B07AA1", "label": "Test: DB", "count": 1}, {"cid": 37, "color": "#FF9DA7", "label": "Test: Health", "count": 1}, {"cid": 38, "color": "#9C755F", "label": "Test: Migrations", "count": 1}, {"cid": 39, "color": "#BAB0AC", "label": "Test: Path Safety", "count": 1}, {"cid": 40, "color": "#4E79A7", "label": "Test: Seeds", "count": 1}];
+  <head>
+    <meta charset="UTF-8" />
+    <title>graphify - graphify-out/graph.html</title>
+    <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: #0f0f1a;
+        color: #e0e0e0;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
+      }
+      #graph {
+        flex: 1;
+      }
+      #sidebar {
+        width: 280px;
+        background: #1a1a2e;
+        border-left: 1px solid #2a2a4e;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+      #search-wrap {
+        padding: 12px;
+        border-bottom: 1px solid #2a2a4e;
+      }
+      #search {
+        width: 100%;
+        background: #0f0f1a;
+        border: 1px solid #3a3a5e;
+        color: #e0e0e0;
+        padding: 7px 10px;
+        border-radius: 6px;
+        font-size: 13px;
+        outline: none;
+      }
+      #search:focus {
+        border-color: #4e79a7;
+      }
+      #search-results {
+        max-height: 140px;
+        overflow-y: auto;
+        padding: 4px 12px;
+        border-bottom: 1px solid #2a2a4e;
+        display: none;
+      }
+      .search-item {
+        padding: 4px 6px;
+        cursor: pointer;
+        border-radius: 4px;
+        font-size: 12px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .search-item:hover {
+        background: #2a2a4e;
+      }
+      #info-panel {
+        padding: 14px;
+        border-bottom: 1px solid #2a2a4e;
+        min-height: 140px;
+      }
+      #info-panel h3 {
+        font-size: 13px;
+        color: #aaa;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      #info-content {
+        font-size: 13px;
+        color: #ccc;
+        line-height: 1.6;
+      }
+      #info-content .field {
+        margin-bottom: 5px;
+      }
+      #info-content .field b {
+        color: #e0e0e0;
+      }
+      #info-content .empty {
+        color: #555;
+        font-style: italic;
+      }
+      .neighbor-link {
+        display: block;
+        padding: 2px 6px;
+        margin: 2px 0;
+        border-radius: 3px;
+        cursor: pointer;
+        font-size: 12px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        border-left: 3px solid #333;
+      }
+      .neighbor-link:hover {
+        background: #2a2a4e;
+      }
+      #neighbors-list {
+        max-height: 160px;
+        overflow-y: auto;
+        margin-top: 4px;
+      }
+      #legend-wrap {
+        flex: 1;
+        overflow-y: auto;
+        padding: 12px;
+      }
+      #legend-wrap h3 {
+        font-size: 13px;
+        color: #aaa;
+        margin-bottom: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 4px 0;
+        cursor: pointer;
+        border-radius: 4px;
+        font-size: 12px;
+      }
+      .legend-item:hover {
+        background: #2a2a4e;
+        padding-left: 4px;
+      }
+      .legend-item.dimmed {
+        opacity: 0.35;
+      }
+      .legend-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+      .legend-label {
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .legend-count {
+        color: #666;
+        font-size: 11px;
+      }
+      #stats {
+        padding: 10px 14px;
+        border-top: 1px solid #2a2a4e;
+        font-size: 11px;
+        color: #555;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="graph"></div>
+    <div id="sidebar">
+      <div id="search-wrap">
+        <input id="search" type="text" placeholder="Search nodes..." autocomplete="off" />
+        <div id="search-results"></div>
+      </div>
+      <div id="info-panel">
+        <h3>Node Info</h3>
+        <div id="info-content"><span class="empty">Click a node to inspect it</span></div>
+      </div>
+      <div id="legend-wrap">
+        <h3>Communities</h3>
+        <div id="legend"></div>
+      </div>
+      <div id="stats">96 nodes &middot; 62 edges &middot; 41 communities</div>
+    </div>
+    <script>
+      const RAW_NODES = [
+        {
+          id: 'jest_config_js',
+          label: 'jest.config.js',
+          color: {
+            background: '#E15759',
+            border: '#E15759',
+            highlight: { background: '#ffffff', border: '#E15759' },
+          },
+          size: 10.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'jest.config.js',
+          community: 32,
+          community_name: 'Jest Config',
+          source_file: 'jest.config.js',
+          file_type: 'code',
+          degree: 0,
+        },
+        {
+          id: 'server_js',
+          label: 'server.js',
+          color: {
+            background: '#76B7B2',
+            border: '#76B7B2',
+            highlight: { background: '#ffffff', border: '#76B7B2' },
+          },
+          size: 10.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'server.js',
+          community: 33,
+          community_name: 'Server Entry',
+          source_file: 'server.js',
+          file_type: 'code',
+          degree: 0,
+        },
+        {
+          id: 'src_app_js',
+          label: 'app.js',
+          color: {
+            background: '#FF9DA7',
+            border: '#FF9DA7',
+            highlight: { background: '#ffffff', border: '#FF9DA7' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'app.js',
+          community: 7,
+          community_name: 'App Factory',
+          source_file: 'src\\app.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: 'app_createapp',
+          label: 'createApp()',
+          color: {
+            background: '#FF9DA7',
+            border: '#FF9DA7',
+            highlight: { background: '#ffffff', border: '#FF9DA7' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'createApp()',
+          community: 7,
+          community_name: 'App Factory',
+          source_file: 'src\\app.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: 'src_config_js',
+          label: 'config.js',
+          color: {
+            background: '#9C755F',
+            border: '#9C755F',
+            highlight: { background: '#ffffff', border: '#9C755F' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'config.js',
+          community: 8,
+          community_name: 'Config',
+          source_file: 'src\\config.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: 'config_loadconfig',
+          label: 'loadConfig()',
+          color: {
+            background: '#9C755F',
+            border: '#9C755F',
+            highlight: { background: '#ffffff', border: '#9C755F' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'loadConfig()',
+          community: 8,
+          community_name: 'Config',
+          source_file: 'src\\config.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: 'src_db_helpers_js',
+          label: 'helpers.js',
+          color: {
+            background: '#76B7B2',
+            border: '#76B7B2',
+            highlight: { background: '#ffffff', border: '#76B7B2' },
+          },
+          size: 15.5,
+          font: { size: 12, color: '#ffffff' },
+          title: 'helpers.js',
+          community: 3,
+          community_name: 'DB Helpers',
+          source_file: 'src\\db\\helpers.js',
+          file_type: 'code',
+          degree: 2,
+        },
+        {
+          id: 'helpers_generateid',
+          label: 'generateId()',
+          color: {
+            background: '#76B7B2',
+            border: '#76B7B2',
+            highlight: { background: '#ffffff', border: '#76B7B2' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'generateId()',
+          community: 3,
+          community_name: 'DB Helpers',
+          source_file: 'src\\db\\helpers.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: 'helpers_withtransaction',
+          label: 'withTransaction()',
+          color: {
+            background: '#76B7B2',
+            border: '#76B7B2',
+            highlight: { background: '#ffffff', border: '#76B7B2' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'withTransaction()',
+          community: 3,
+          community_name: 'DB Helpers',
+          source_file: 'src\\db\\helpers.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: 'src_db_index_js',
+          label: 'index.js',
+          color: {
+            background: '#F28E2B',
+            border: '#F28E2B',
+            highlight: { background: '#ffffff', border: '#F28E2B' },
+          },
+          size: 20.9,
+          font: { size: 12, color: '#ffffff' },
+          title: 'index.js',
+          community: 1,
+          community_name: 'Database Connection',
+          source_file: 'src\\db\\index.js',
+          file_type: 'code',
+          degree: 4,
+        },
+        {
+          id: 'index_createdatabase',
+          label: 'createDatabase()',
+          color: {
+            background: '#F28E2B',
+            border: '#F28E2B',
+            highlight: { background: '#ffffff', border: '#F28E2B' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'createDatabase()',
+          community: 1,
+          community_name: 'Database Connection',
+          source_file: 'src\\db\\index.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: 'index_getdatabase',
+          label: 'getDatabase()',
+          color: {
+            background: '#F28E2B',
+            border: '#F28E2B',
+            highlight: { background: '#ffffff', border: '#F28E2B' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'getDatabase()',
+          community: 1,
+          community_name: 'Database Connection',
+          source_file: 'src\\db\\index.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: 'index_closedatabase',
+          label: 'closeDatabase()',
+          color: {
+            background: '#F28E2B',
+            border: '#F28E2B',
+            highlight: { background: '#ffffff', border: '#F28E2B' },
+          },
+          size: 15.5,
+          font: { size: 12, color: '#ffffff' },
+          title: 'closeDatabase()',
+          community: 1,
+          community_name: 'Database Connection',
+          source_file: 'src\\db\\index.js',
+          file_type: 'code',
+          degree: 2,
+        },
+        {
+          id: 'index_resetfortesting',
+          label: 'resetForTesting()',
+          color: {
+            background: '#F28E2B',
+            border: '#F28E2B',
+            highlight: { background: '#ffffff', border: '#F28E2B' },
+          },
+          size: 15.5,
+          font: { size: 12, color: '#ffffff' },
+          title: 'resetForTesting()',
+          community: 1,
+          community_name: 'Database Connection',
+          source_file: 'src\\db\\index.js',
+          file_type: 'code',
+          degree: 2,
+        },
+        {
+          id: 'src_db_migrate_js',
+          label: 'migrate.js',
+          color: {
+            background: '#BAB0AC',
+            border: '#BAB0AC',
+            highlight: { background: '#ffffff', border: '#BAB0AC' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'migrate.js',
+          community: 9,
+          community_name: 'Migration Runner',
+          source_file: 'src\\db\\migrate.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: 'migrate_runmigrations',
+          label: 'runMigrations()',
+          color: {
+            background: '#BAB0AC',
+            border: '#BAB0AC',
+            highlight: { background: '#ffffff', border: '#BAB0AC' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'runMigrations()',
+          community: 9,
+          community_name: 'Migration Runner',
+          source_file: 'src\\db\\migrate.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: 'src_db_seed_js',
+          label: 'seed.js',
+          color: {
+            background: '#4E79A7',
+            border: '#4E79A7',
+            highlight: { background: '#ffffff', border: '#4E79A7' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'seed.js',
+          community: 10,
+          community_name: 'Seed Runner',
+          source_file: 'src\\db\\seed.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: 'seed_runseeds',
+          label: 'runSeeds()',
+          color: {
+            background: '#4E79A7',
+            border: '#4E79A7',
+            highlight: { background: '#ffffff', border: '#4E79A7' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'runSeeds()',
+          community: 10,
+          community_name: 'Seed Runner',
+          source_file: 'src\\db\\seed.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: 'src_middleware_auth_js',
+          label: 'auth.js',
+          color: {
+            background: '#F28E2B',
+            border: '#F28E2B',
+            highlight: { background: '#ffffff', border: '#F28E2B' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'auth.js',
+          community: 11,
+          community_name: 'Auth Middleware',
+          source_file: 'src\\middleware\\auth.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: 'auth_bearerauth',
+          label: 'bearerAuth()',
+          color: {
+            background: '#F28E2B',
+            border: '#F28E2B',
+            highlight: { background: '#ffffff', border: '#F28E2B' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'bearerAuth()',
+          community: 11,
+          community_name: 'Auth Middleware',
+          source_file: 'src\\middleware\\auth.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: 'src_migrations_001_projects_js',
+          label: '001_projects.js',
+          color: {
+            background: '#E15759',
+            border: '#E15759',
+            highlight: { background: '#ffffff', border: '#E15759' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: '001_projects.js',
+          community: 12,
+          community_name: 'Migration: Projects',
+          source_file: 'src\\migrations\\001_projects.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: '001_projects_up',
+          label: 'up()',
+          color: {
+            background: '#E15759',
+            border: '#E15759',
+            highlight: { background: '#ffffff', border: '#E15759' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'up()',
+          community: 12,
+          community_name: 'Migration: Projects',
+          source_file: 'src\\migrations\\001_projects.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: 'src_migrations_002_humans_js',
+          label: '002_humans.js',
+          color: {
+            background: '#76B7B2',
+            border: '#76B7B2',
+            highlight: { background: '#ffffff', border: '#76B7B2' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: '002_humans.js',
+          community: 13,
+          community_name: 'Migration: Humans',
+          source_file: 'src\\migrations\\002_humans.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: '002_humans_up',
+          label: 'up()',
+          color: {
+            background: '#76B7B2',
+            border: '#76B7B2',
+            highlight: { background: '#ffffff', border: '#76B7B2' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'up()',
+          community: 13,
+          community_name: 'Migration: Humans',
+          source_file: 'src\\migrations\\002_humans.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: 'src_migrations_003_departments_js',
+          label: '003_departments.js',
+          color: {
+            background: '#59A14F',
+            border: '#59A14F',
+            highlight: { background: '#ffffff', border: '#59A14F' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: '003_departments.js',
+          community: 14,
+          community_name: 'Migration: Departments',
+          source_file: 'src\\migrations\\003_departments.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: '003_departments_up',
+          label: 'up()',
+          color: {
+            background: '#59A14F',
+            border: '#59A14F',
+            highlight: { background: '#ffffff', border: '#59A14F' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'up()',
+          community: 14,
+          community_name: 'Migration: Departments',
+          source_file: 'src\\migrations\\003_departments.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: 'src_migrations_004_model_profiles_js',
+          label: '004_model_profiles.js',
+          color: {
+            background: '#EDC948',
+            border: '#EDC948',
+            highlight: { background: '#ffffff', border: '#EDC948' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: '004_model_profiles.js',
+          community: 15,
+          community_name: 'Migration: Model Profiles',
+          source_file: 'src\\migrations\\004_model_profiles.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: '004_model_profiles_up',
+          label: 'up()',
+          color: {
+            background: '#EDC948',
+            border: '#EDC948',
+            highlight: { background: '#ffffff', border: '#EDC948' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'up()',
+          community: 15,
+          community_name: 'Migration: Model Profiles',
+          source_file: 'src\\migrations\\004_model_profiles.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: 'src_migrations_005_permission_profiles_js',
+          label: '005_permission_profiles.js',
+          color: {
+            background: '#B07AA1',
+            border: '#B07AA1',
+            highlight: { background: '#ffffff', border: '#B07AA1' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: '005_permission_profiles.js',
+          community: 16,
+          community_name: 'Migration: Permission Profiles',
+          source_file: 'src\\migrations\\005_permission_profiles.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: '005_permission_profiles_up',
+          label: 'up()',
+          color: {
+            background: '#B07AA1',
+            border: '#B07AA1',
+            highlight: { background: '#ffffff', border: '#B07AA1' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'up()',
+          community: 16,
+          community_name: 'Migration: Permission Profiles',
+          source_file: 'src\\migrations\\005_permission_profiles.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: 'src_migrations_006_role_templates_js',
+          label: '006_role_templates.js',
+          color: {
+            background: '#FF9DA7',
+            border: '#FF9DA7',
+            highlight: { background: '#ffffff', border: '#FF9DA7' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: '006_role_templates.js',
+          community: 17,
+          community_name: 'Migration: Role Templates',
+          source_file: 'src\\migrations\\006_role_templates.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: '006_role_templates_up',
+          label: 'up()',
+          color: {
+            background: '#FF9DA7',
+            border: '#FF9DA7',
+            highlight: { background: '#ffffff', border: '#FF9DA7' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'up()',
+          community: 17,
+          community_name: 'Migration: Role Templates',
+          source_file: 'src\\migrations\\006_role_templates.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: 'src_migrations_007_role_prompt_files_js',
+          label: '007_role_prompt_files.js',
+          color: {
+            background: '#9C755F',
+            border: '#9C755F',
+            highlight: { background: '#ffffff', border: '#9C755F' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: '007_role_prompt_files.js',
+          community: 18,
+          community_name: 'Migration: Role Prompt Files',
+          source_file: 'src\\migrations\\007_role_prompt_files.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: '007_role_prompt_files_up',
+          label: 'up()',
+          color: {
+            background: '#9C755F',
+            border: '#9C755F',
+            highlight: { background: '#ffffff', border: '#9C755F' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'up()',
+          community: 18,
+          community_name: 'Migration: Role Prompt Files',
+          source_file: 'src\\migrations\\007_role_prompt_files.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: 'src_migrations_008_project_role_instances_js',
+          label: '008_project_role_instances.js',
+          color: {
+            background: '#BAB0AC',
+            border: '#BAB0AC',
+            highlight: { background: '#ffffff', border: '#BAB0AC' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: '008_project_role_instances.js',
+          community: 19,
+          community_name: 'Migration: Role Instances',
+          source_file: 'src\\migrations\\008_project_role_instances.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: '008_project_role_instances_up',
+          label: 'up()',
+          color: {
+            background: '#BAB0AC',
+            border: '#BAB0AC',
+            highlight: { background: '#ffffff', border: '#BAB0AC' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'up()',
+          community: 19,
+          community_name: 'Migration: Role Instances',
+          source_file: 'src\\migrations\\008_project_role_instances.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: 'src_migrations_009_role_edges_js',
+          label: '009_role_edges.js',
+          color: {
+            background: '#4E79A7',
+            border: '#4E79A7',
+            highlight: { background: '#ffffff', border: '#4E79A7' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: '009_role_edges.js',
+          community: 20,
+          community_name: 'Migration: Role Edges',
+          source_file: 'src\\migrations\\009_role_edges.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: '009_role_edges_up',
+          label: 'up()',
+          color: {
+            background: '#4E79A7',
+            border: '#4E79A7',
+            highlight: { background: '#ffffff', border: '#4E79A7' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'up()',
+          community: 20,
+          community_name: 'Migration: Role Edges',
+          source_file: 'src\\migrations\\009_role_edges.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: 'src_migrations_010_agents_js',
+          label: '010_agents.js',
+          color: {
+            background: '#F28E2B',
+            border: '#F28E2B',
+            highlight: { background: '#ffffff', border: '#F28E2B' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: '010_agents.js',
+          community: 21,
+          community_name: 'Migration: Agents',
+          source_file: 'src\\migrations\\010_agents.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: '010_agents_up',
+          label: 'up()',
+          color: {
+            background: '#F28E2B',
+            border: '#F28E2B',
+            highlight: { background: '#ffffff', border: '#F28E2B' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'up()',
+          community: 21,
+          community_name: 'Migration: Agents',
+          source_file: 'src\\migrations\\010_agents.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: 'src_migrations_011_agent_heartbeats_js',
+          label: '011_agent_heartbeats.js',
+          color: {
+            background: '#E15759',
+            border: '#E15759',
+            highlight: { background: '#ffffff', border: '#E15759' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: '011_agent_heartbeats.js',
+          community: 22,
+          community_name: 'Migration: Heartbeats',
+          source_file: 'src\\migrations\\011_agent_heartbeats.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: '011_agent_heartbeats_up',
+          label: 'up()',
+          color: {
+            background: '#E15759',
+            border: '#E15759',
+            highlight: { background: '#ffffff', border: '#E15759' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'up()',
+          community: 22,
+          community_name: 'Migration: Heartbeats',
+          source_file: 'src\\migrations\\011_agent_heartbeats.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: 'src_routes_agents_js',
+          label: 'agents.js',
+          color: {
+            background: '#76B7B2',
+            border: '#76B7B2',
+            highlight: { background: '#ffffff', border: '#76B7B2' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'agents.js',
+          community: 23,
+          community_name: 'Route: Agents',
+          source_file: 'src\\routes\\agents.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: 'agents_createagentsrouter',
+          label: 'createAgentsRouter()',
+          color: {
+            background: '#76B7B2',
+            border: '#76B7B2',
+            highlight: { background: '#ffffff', border: '#76B7B2' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'createAgentsRouter()',
+          community: 23,
+          community_name: 'Route: Agents',
+          source_file: 'src\\routes\\agents.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: 'src_routes_files_js',
+          label: 'files.js',
+          color: {
+            background: '#59A14F',
+            border: '#59A14F',
+            highlight: { background: '#ffffff', border: '#59A14F' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'files.js',
+          community: 24,
+          community_name: 'Route: Files',
+          source_file: 'src\\routes\\files.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: 'files_createfilesrouter',
+          label: 'createFilesRouter()',
+          color: {
+            background: '#59A14F',
+            border: '#59A14F',
+            highlight: { background: '#ffffff', border: '#59A14F' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'createFilesRouter()',
+          community: 24,
+          community_name: 'Route: Files',
+          source_file: 'src\\routes\\files.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: 'src_routes_health_js',
+          label: 'health.js',
+          color: {
+            background: '#EDC948',
+            border: '#EDC948',
+            highlight: { background: '#ffffff', border: '#EDC948' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'health.js',
+          community: 25,
+          community_name: 'Route: Health',
+          source_file: 'src\\routes\\health.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: 'health_createhealthrouter',
+          label: 'createHealthRouter()',
+          color: {
+            background: '#EDC948',
+            border: '#EDC948',
+            highlight: { background: '#ffffff', border: '#EDC948' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'createHealthRouter()',
+          community: 25,
+          community_name: 'Route: Health',
+          source_file: 'src\\routes\\health.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: 'src_routes_tasks_js',
+          label: 'tasks.js',
+          color: {
+            background: '#B07AA1',
+            border: '#B07AA1',
+            highlight: { background: '#ffffff', border: '#B07AA1' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'tasks.js',
+          community: 26,
+          community_name: 'Route: Tasks',
+          source_file: 'src\\routes\\tasks.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: 'tasks_createtasksrouter',
+          label: 'createTasksRouter()',
+          color: {
+            background: '#B07AA1',
+            border: '#B07AA1',
+            highlight: { background: '#ffffff', border: '#B07AA1' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'createTasksRouter()',
+          community: 26,
+          community_name: 'Route: Tasks',
+          source_file: 'src\\routes\\tasks.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: 'src_seeds_human_local_owner_js',
+          label: 'human_local_owner.js',
+          color: {
+            background: '#FF9DA7',
+            border: '#FF9DA7',
+            highlight: { background: '#ffffff', border: '#FF9DA7' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'human_local_owner.js',
+          community: 27,
+          community_name: 'Seed: Human Owner',
+          source_file: 'src\\seeds\\human_local_owner.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: 'human_local_owner_run',
+          label: 'run()',
+          color: {
+            background: '#FF9DA7',
+            border: '#FF9DA7',
+            highlight: { background: '#ffffff', border: '#FF9DA7' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'run()',
+          community: 27,
+          community_name: 'Seed: Human Owner',
+          source_file: 'src\\seeds\\human_local_owner.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: 'src_seeds_model_profiles_js',
+          label: 'model_profiles.js',
+          color: {
+            background: '#9C755F',
+            border: '#9C755F',
+            highlight: { background: '#ffffff', border: '#9C755F' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'model_profiles.js',
+          community: 28,
+          community_name: 'Seed: Model Profiles',
+          source_file: 'src\\seeds\\model_profiles.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: 'model_profiles_run',
+          label: 'run()',
+          color: {
+            background: '#9C755F',
+            border: '#9C755F',
+            highlight: { background: '#ffffff', border: '#9C755F' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'run()',
+          community: 28,
+          community_name: 'Seed: Model Profiles',
+          source_file: 'src\\seeds\\model_profiles.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: 'src_seeds_permission_profiles_js',
+          label: 'permission_profiles.js',
+          color: {
+            background: '#BAB0AC',
+            border: '#BAB0AC',
+            highlight: { background: '#ffffff', border: '#BAB0AC' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'permission_profiles.js',
+          community: 29,
+          community_name: 'Seed: Permission Profiles',
+          source_file: 'src\\seeds\\permission_profiles.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: 'permission_profiles_run',
+          label: 'run()',
+          color: {
+            background: '#BAB0AC',
+            border: '#BAB0AC',
+            highlight: { background: '#ffffff', border: '#BAB0AC' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'run()',
+          community: 29,
+          community_name: 'Seed: Permission Profiles',
+          source_file: 'src\\seeds\\permission_profiles.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: 'src_seeds_role_templates_js',
+          label: 'role_templates.js',
+          color: {
+            background: '#4E79A7',
+            border: '#4E79A7',
+            highlight: { background: '#ffffff', border: '#4E79A7' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'role_templates.js',
+          community: 30,
+          community_name: 'Seed: Role Templates',
+          source_file: 'src\\seeds\\role_templates.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: 'role_templates_run',
+          label: 'run()',
+          color: {
+            background: '#4E79A7',
+            border: '#4E79A7',
+            highlight: { background: '#ffffff', border: '#4E79A7' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'run()',
+          community: 30,
+          community_name: 'Seed: Role Templates',
+          source_file: 'src\\seeds\\role_templates.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: 'src_services_agents_js',
+          label: 'agents.js',
+          color: {
+            background: '#59A14F',
+            border: '#59A14F',
+            highlight: { background: '#ffffff', border: '#59A14F' },
+          },
+          size: 15.5,
+          font: { size: 12, color: '#ffffff' },
+          title: 'agents.js',
+          community: 4,
+          community_name: 'Agent Service',
+          source_file: 'src\\services\\agents.js',
+          file_type: 'code',
+          degree: 2,
+        },
+        {
+          id: 'agents_findagentbytokenhash',
+          label: 'findAgentByTokenHash()',
+          color: {
+            background: '#59A14F',
+            border: '#59A14F',
+            highlight: { background: '#ffffff', border: '#59A14F' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'findAgentByTokenHash()',
+          community: 4,
+          community_name: 'Agent Service',
+          source_file: 'src\\services\\agents.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: 'agents_updateheartbeat',
+          label: 'updateHeartbeat()',
+          color: {
+            background: '#59A14F',
+            border: '#59A14F',
+            highlight: { background: '#ffffff', border: '#59A14F' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'updateHeartbeat()',
+          community: 4,
+          community_name: 'Agent Service',
+          source_file: 'src\\services\\agents.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: 'src_services_path_safety_js',
+          label: 'path_safety.js',
+          color: {
+            background: '#EDC948',
+            border: '#EDC948',
+            highlight: { background: '#ffffff', border: '#EDC948' },
+          },
+          size: 15.5,
+          font: { size: 12, color: '#ffffff' },
+          title: 'path_safety.js',
+          community: 5,
+          community_name: 'Path Safety',
+          source_file: 'src\\services\\path_safety.js',
+          file_type: 'code',
+          degree: 2,
+        },
+        {
+          id: 'path_safety_safepath',
+          label: 'safePath()',
+          color: {
+            background: '#EDC948',
+            border: '#EDC948',
+            highlight: { background: '#ffffff', border: '#EDC948' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'safePath()',
+          community: 5,
+          community_name: 'Path Safety',
+          source_file: 'src\\services\\path_safety.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: 'path_safety_iswithinproject',
+          label: 'isWithinProject()',
+          color: {
+            background: '#EDC948',
+            border: '#EDC948',
+            highlight: { background: '#ffffff', border: '#EDC948' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'isWithinProject()',
+          community: 5,
+          community_name: 'Path Safety',
+          source_file: 'src\\services\\path_safety.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: 'tests_agents_test_js',
+          label: 'agents.test.js',
+          color: {
+            background: '#59A14F',
+            border: '#59A14F',
+            highlight: { background: '#ffffff', border: '#59A14F' },
+          },
+          size: 10.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'agents.test.js',
+          community: 34,
+          community_name: 'Test: Agents',
+          source_file: 'tests\\agents.test.js',
+          file_type: 'code',
+          degree: 0,
+        },
+        {
+          id: 'tests_auth_test_js',
+          label: 'auth.test.js',
+          color: {
+            background: '#EDC948',
+            border: '#EDC948',
+            highlight: { background: '#ffffff', border: '#EDC948' },
+          },
+          size: 10.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'auth.test.js',
+          community: 35,
+          community_name: 'Test: Auth',
+          source_file: 'tests\\auth.test.js',
+          file_type: 'code',
+          degree: 0,
+        },
+        {
+          id: 'tests_db_test_js',
+          label: 'db.test.js',
+          color: {
+            background: '#B07AA1',
+            border: '#B07AA1',
+            highlight: { background: '#ffffff', border: '#B07AA1' },
+          },
+          size: 10.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'db.test.js',
+          community: 36,
+          community_name: 'Test: DB',
+          source_file: 'tests\\db.test.js',
+          file_type: 'code',
+          degree: 0,
+        },
+        {
+          id: 'tests_health_test_js',
+          label: 'health.test.js',
+          color: {
+            background: '#FF9DA7',
+            border: '#FF9DA7',
+            highlight: { background: '#ffffff', border: '#FF9DA7' },
+          },
+          size: 10.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'health.test.js',
+          community: 37,
+          community_name: 'Test: Health',
+          source_file: 'tests\\health.test.js',
+          file_type: 'code',
+          degree: 0,
+        },
+        {
+          id: 'tests_helpers_js',
+          label: 'helpers.js',
+          color: {
+            background: '#E15759',
+            border: '#E15759',
+            highlight: { background: '#ffffff', border: '#E15759' },
+          },
+          size: 20.9,
+          font: { size: 12, color: '#ffffff' },
+          title: 'helpers.js',
+          community: 2,
+          community_name: 'Test Infrastructure',
+          source_file: 'tests\\helpers.js',
+          file_type: 'code',
+          degree: 4,
+        },
+        {
+          id: 'helpers_createtestdb',
+          label: 'createTestDb()',
+          color: {
+            background: '#E15759',
+            border: '#E15759',
+            highlight: { background: '#ffffff', border: '#E15759' },
+          },
+          size: 15.5,
+          font: { size: 12, color: '#ffffff' },
+          title: 'createTestDb()',
+          community: 2,
+          community_name: 'Test Infrastructure',
+          source_file: 'tests\\helpers.js',
+          file_type: 'code',
+          degree: 2,
+        },
+        {
+          id: 'helpers_createseededtestdb',
+          label: 'createSeededTestDb()',
+          color: {
+            background: '#E15759',
+            border: '#E15759',
+            highlight: { background: '#ffffff', border: '#E15759' },
+          },
+          size: 15.5,
+          font: { size: 12, color: '#ffffff' },
+          title: 'createSeededTestDb()',
+          community: 2,
+          community_name: 'Test Infrastructure',
+          source_file: 'tests\\helpers.js',
+          file_type: 'code',
+          degree: 2,
+        },
+        {
+          id: 'helpers_createtestapp',
+          label: 'createTestApp()',
+          color: {
+            background: '#E15759',
+            border: '#E15759',
+            highlight: { background: '#ffffff', border: '#E15759' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'createTestApp()',
+          community: 2,
+          community_name: 'Test Infrastructure',
+          source_file: 'tests\\helpers.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: 'helpers_inserttestagent',
+          label: 'insertTestAgent()',
+          color: {
+            background: '#E15759',
+            border: '#E15759',
+            highlight: { background: '#ffffff', border: '#E15759' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'insertTestAgent()',
+          community: 2,
+          community_name: 'Test Infrastructure',
+          source_file: 'tests\\helpers.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: 'tests_migrations_test_js',
+          label: 'migrations.test.js',
+          color: {
+            background: '#9C755F',
+            border: '#9C755F',
+            highlight: { background: '#ffffff', border: '#9C755F' },
+          },
+          size: 10.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'migrations.test.js',
+          community: 38,
+          community_name: 'Test: Migrations',
+          source_file: 'tests\\migrations.test.js',
+          file_type: 'code',
+          degree: 0,
+        },
+        {
+          id: 'tests_path_safety_test_js',
+          label: 'path_safety.test.js',
+          color: {
+            background: '#BAB0AC',
+            border: '#BAB0AC',
+            highlight: { background: '#ffffff', border: '#BAB0AC' },
+          },
+          size: 10.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'path_safety.test.js',
+          community: 39,
+          community_name: 'Test: Path Safety',
+          source_file: 'tests\\path_safety.test.js',
+          file_type: 'code',
+          degree: 0,
+        },
+        {
+          id: 'tests_seeds_test_js',
+          label: 'seeds.test.js',
+          color: {
+            background: '#4E79A7',
+            border: '#4E79A7',
+            highlight: { background: '#ffffff', border: '#4E79A7' },
+          },
+          size: 10.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'seeds.test.js',
+          community: 40,
+          community_name: 'Test: Seeds',
+          source_file: 'tests\\seeds.test.js',
+          file_type: 'code',
+          degree: 0,
+        },
+        {
+          id: 'tests_server_test_js',
+          label: 'server.test.js',
+          color: {
+            background: '#F28E2B',
+            border: '#F28E2B',
+            highlight: { background: '#ffffff', border: '#F28E2B' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'server.test.js',
+          community: 31,
+          community_name: 'Server Test',
+          source_file: 'tests\\server.test.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: 'server_test_createapp',
+          label: 'createApp()',
+          color: {
+            background: '#F28E2B',
+            border: '#F28E2B',
+            highlight: { background: '#ffffff', border: '#F28E2B' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'createApp()',
+          community: 31,
+          community_name: 'Server Test',
+          source_file: 'tests\\server.test.js',
+          file_type: 'code',
+          degree: 1,
+        },
+        {
+          id: 'claude_silver_gatekeeper',
+          label: 'Silver Gatekeeper',
+          color: {
+            background: '#4E79A7',
+            border: '#4E79A7',
+            highlight: { background: '#ffffff', border: '#4E79A7' },
+          },
+          size: 40.0,
+          font: { size: 12, color: '#ffffff' },
+          title: 'Silver Gatekeeper',
+          community: 0,
+          community_name: 'Platform Policy & Security',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 11,
+        },
+        {
+          id: 'claude_crispy_adventure',
+          label: 'Crispy Adventure Worker Runtime',
+          color: {
+            background: '#4E79A7',
+            border: '#4E79A7',
+            highlight: { background: '#ffffff', border: '#4E79A7' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Crispy Adventure Worker Runtime',
+          community: 0,
+          community_name: 'Platform Policy & Security',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 1,
+        },
+        {
+          id: 'claude_bearer_auth',
+          label: 'Bearer Token Auth',
+          color: {
+            background: '#4E79A7',
+            border: '#4E79A7',
+            highlight: { background: '#ffffff', border: '#4E79A7' },
+          },
+          size: 20.9,
+          font: { size: 12, color: '#ffffff' },
+          title: 'Bearer Token Auth',
+          community: 0,
+          community_name: 'Platform Policy & Security',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 4,
+        },
+        {
+          id: 'claude_role_graph',
+          label: 'Role Graph (Data-Driven)',
+          color: {
+            background: '#4E79A7',
+            border: '#4E79A7',
+            highlight: { background: '#ffffff', border: '#4E79A7' },
+          },
+          size: 18.2,
+          font: { size: 12, color: '#ffffff' },
+          title: 'Role Graph (Data-Driven)',
+          community: 0,
+          community_name: 'Platform Policy & Security',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 3,
+        },
+        {
+          id: 'claude_rbac',
+          label: 'RBAC Enforcement',
+          color: {
+            background: '#4E79A7',
+            border: '#4E79A7',
+            highlight: { background: '#ffffff', border: '#4E79A7' },
+          },
+          size: 15.5,
+          font: { size: 12, color: '#ffffff' },
+          title: 'RBAC Enforcement',
+          community: 0,
+          community_name: 'Platform Policy & Security',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 2,
+        },
+        {
+          id: 'claude_path_safety',
+          label: 'Path Safety & Project Isolation',
+          color: {
+            background: '#4E79A7',
+            border: '#4E79A7',
+            highlight: { background: '#ffffff', border: '#4E79A7' },
+          },
+          size: 15.5,
+          font: { size: 12, color: '#ffffff' },
+          title: 'Path Safety &amp; Project Isolation',
+          community: 0,
+          community_name: 'Platform Policy & Security',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 2,
+        },
+        {
+          id: 'claude_sqlite_wal',
+          label: 'SQLite with WAL Mode',
+          color: {
+            background: '#4E79A7',
+            border: '#4E79A7',
+            highlight: { background: '#ffffff', border: '#4E79A7' },
+          },
+          size: 15.5,
+          font: { size: 12, color: '#ffffff' },
+          title: 'SQLite with WAL Mode',
+          community: 0,
+          community_name: 'Platform Policy & Security',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 2,
+        },
+        {
+          id: 'claude_no_guessing',
+          label: 'No Guessing Rule',
+          color: {
+            background: '#4E79A7',
+            border: '#4E79A7',
+            highlight: { background: '#ffffff', border: '#4E79A7' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'No Guessing Rule',
+          community: 0,
+          community_name: 'Platform Policy & Security',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 1,
+        },
+        {
+          id: 'claude_coding_conventions',
+          label: 'Coding Conventions',
+          color: {
+            background: '#4E79A7',
+            border: '#4E79A7',
+            highlight: { background: '#ffffff', border: '#4E79A7' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Coding Conventions',
+          community: 0,
+          community_name: 'Platform Policy & Security',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 1,
+        },
+        {
+          id: 'claude_graphify_integration',
+          label: 'Graphify Integration',
+          color: {
+            background: '#4E79A7',
+            border: '#4E79A7',
+            highlight: { background: '#ffffff', border: '#4E79A7' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Graphify Integration',
+          community: 0,
+          community_name: 'Platform Policy & Security',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 1,
+        },
+        {
+          id: 'readme_silver_overview',
+          label: 'Silver Platform Overview',
+          color: {
+            background: '#4E79A7',
+            border: '#4E79A7',
+            highlight: { background: '#ffffff', border: '#4E79A7' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Silver Platform Overview',
+          community: 0,
+          community_name: 'Platform Policy & Security',
+          source_file: 'README.md',
+          file_type: 'document',
+          degree: 1,
+        },
+        {
+          id: 'readme_db_schema',
+          label: 'Database Schema (11 Tables)',
+          color: {
+            background: '#4E79A7',
+            border: '#4E79A7',
+            highlight: { background: '#ffffff', border: '#4E79A7' },
+          },
+          size: 18.2,
+          font: { size: 12, color: '#ffffff' },
+          title: 'Database Schema (11 Tables)',
+          community: 0,
+          community_name: 'Platform Policy & Security',
+          source_file: 'README.md',
+          file_type: 'document',
+          degree: 3,
+        },
+        {
+          id: 'readme_api_endpoints',
+          label: 'API Endpoints',
+          color: {
+            background: '#4E79A7',
+            border: '#4E79A7',
+            highlight: { background: '#ffffff', border: '#4E79A7' },
+          },
+          size: 15.5,
+          font: { size: 12, color: '#ffffff' },
+          title: 'API Endpoints',
+          community: 0,
+          community_name: 'Platform Policy & Security',
+          source_file: 'README.md',
+          file_type: 'document',
+          degree: 2,
+        },
+        {
+          id: 'readme_human_local_owner',
+          label: 'Human Local-Owner Auth',
+          color: {
+            background: '#4E79A7',
+            border: '#4E79A7',
+            highlight: { background: '#ffffff', border: '#4E79A7' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Human Local-Owner Auth',
+          community: 0,
+          community_name: 'Platform Policy & Security',
+          source_file: 'README.md',
+          file_type: 'document',
+          degree: 1,
+        },
+        {
+          id: 'readme_architecture_tree',
+          label: 'Core Architecture',
+          color: {
+            background: '#4E79A7',
+            border: '#4E79A7',
+            highlight: { background: '#ffffff', border: '#4E79A7' },
+          },
+          size: 15.5,
+          font: { size: 12, color: '#ffffff' },
+          title: 'Core Architecture',
+          community: 0,
+          community_name: 'Platform Policy & Security',
+          source_file: 'README.md',
+          file_type: 'document',
+          degree: 2,
+        },
+        {
+          id: 'graphreport_old_summary',
+          label: 'Old Graph Summary (61 nodes)',
+          color: {
+            background: '#B07AA1',
+            border: '#B07AA1',
+            highlight: { background: '#ffffff', border: '#B07AA1' },
+          },
+          size: 15.5,
+          font: { size: 12, color: '#ffffff' },
+          title: 'Old Graph Summary (61 nodes)',
+          community: 6,
+          community_name: 'Old Graph Report',
+          source_file: 'graphify-out/GRAPH_REPORT.md',
+          file_type: 'document',
+          degree: 2,
+        },
+        {
+          id: 'graphreport_god_nodes',
+          label: 'God Nodes (Core Abstractions)',
+          color: {
+            background: '#B07AA1',
+            border: '#B07AA1',
+            highlight: { background: '#ffffff', border: '#B07AA1' },
+          },
+          size: 15.5,
+          font: { size: 12, color: '#ffffff' },
+          title: 'God Nodes (Core Abstractions)',
+          community: 6,
+          community_name: 'Old Graph Report',
+          source_file: 'graphify-out/GRAPH_REPORT.md',
+          file_type: 'document',
+          degree: 2,
+        },
+        {
+          id: 'graphreport_hyperedges',
+          label: 'Hyperedges (Group Relationships)',
+          color: {
+            background: '#B07AA1',
+            border: '#B07AA1',
+            highlight: { background: '#ffffff', border: '#B07AA1' },
+          },
+          size: 12.7,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Hyperedges (Group Relationships)',
+          community: 6,
+          community_name: 'Old Graph Report',
+          source_file: 'graphify-out/GRAPH_REPORT.md',
+          file_type: 'document',
+          degree: 1,
+        },
+      ];
+      const RAW_EDGES = [
+        {
+          from: 'src_app_js',
+          to: 'app_createapp',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'src_config_js',
+          to: 'config_loadconfig',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'src_db_helpers_js',
+          to: 'helpers_generateid',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'src_db_helpers_js',
+          to: 'helpers_withtransaction',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'src_db_index_js',
+          to: 'index_createdatabase',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'src_db_index_js',
+          to: 'index_getdatabase',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'src_db_index_js',
+          to: 'index_closedatabase',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'src_db_index_js',
+          to: 'index_resetfortesting',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'index_closedatabase',
+          to: 'index_resetfortesting',
+          label: 'calls',
+          title: 'calls [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'src_db_migrate_js',
+          to: 'migrate_runmigrations',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'src_db_seed_js',
+          to: 'seed_runseeds',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'src_middleware_auth_js',
+          to: 'auth_bearerauth',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'src_migrations_001_projects_js',
+          to: '001_projects_up',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'src_migrations_002_humans_js',
+          to: '002_humans_up',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'src_migrations_003_departments_js',
+          to: '003_departments_up',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'src_migrations_004_model_profiles_js',
+          to: '004_model_profiles_up',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'src_migrations_005_permission_profiles_js',
+          to: '005_permission_profiles_up',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'src_migrations_006_role_templates_js',
+          to: '006_role_templates_up',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'src_migrations_007_role_prompt_files_js',
+          to: '007_role_prompt_files_up',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'src_migrations_008_project_role_instances_js',
+          to: '008_project_role_instances_up',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'src_migrations_009_role_edges_js',
+          to: '009_role_edges_up',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'src_migrations_010_agents_js',
+          to: '010_agents_up',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'src_migrations_011_agent_heartbeats_js',
+          to: '011_agent_heartbeats_up',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'src_routes_agents_js',
+          to: 'agents_createagentsrouter',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'src_routes_files_js',
+          to: 'files_createfilesrouter',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'src_routes_health_js',
+          to: 'health_createhealthrouter',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'src_routes_tasks_js',
+          to: 'tasks_createtasksrouter',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'src_seeds_human_local_owner_js',
+          to: 'human_local_owner_run',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'src_seeds_model_profiles_js',
+          to: 'model_profiles_run',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'src_seeds_permission_profiles_js',
+          to: 'permission_profiles_run',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'src_seeds_role_templates_js',
+          to: 'role_templates_run',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'src_services_agents_js',
+          to: 'agents_findagentbytokenhash',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'src_services_agents_js',
+          to: 'agents_updateheartbeat',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'src_services_path_safety_js',
+          to: 'path_safety_safepath',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'src_services_path_safety_js',
+          to: 'path_safety_iswithinproject',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'tests_helpers_js',
+          to: 'helpers_createtestdb',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'tests_helpers_js',
+          to: 'helpers_createseededtestdb',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'tests_helpers_js',
+          to: 'helpers_createtestapp',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'tests_helpers_js',
+          to: 'helpers_inserttestagent',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'helpers_createtestdb',
+          to: 'helpers_createseededtestdb',
+          label: 'calls',
+          title: 'calls [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'tests_server_test_js',
+          to: 'server_test_createapp',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_silver_gatekeeper',
+          to: 'claude_crispy_adventure',
+          label: 'references',
+          title: 'references [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_silver_gatekeeper',
+          to: 'claude_bearer_auth',
+          label: 'references',
+          title: 'references [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_silver_gatekeeper',
+          to: 'claude_role_graph',
+          label: 'references',
+          title: 'references [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_silver_gatekeeper',
+          to: 'claude_rbac',
+          label: 'references',
+          title: 'references [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_silver_gatekeeper',
+          to: 'claude_path_safety',
+          label: 'references',
+          title: 'references [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_silver_gatekeeper',
+          to: 'claude_sqlite_wal',
+          label: 'references',
+          title: 'references [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_silver_gatekeeper',
+          to: 'claude_no_guessing',
+          label: 'references',
+          title: 'references [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_silver_gatekeeper',
+          to: 'claude_coding_conventions',
+          label: 'references',
+          title: 'references [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_silver_gatekeeper',
+          to: 'claude_graphify_integration',
+          label: 'references',
+          title: 'references [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_silver_gatekeeper',
+          to: 'readme_silver_overview',
+          label: 'semantically_similar_to',
+          title: 'semantically_similar_to [INFERRED]',
+          dashes: true,
+          width: 1,
+          color: { opacity: 0.35 },
+          confidence: 'INFERRED',
+        },
+        {
+          from: 'claude_silver_gatekeeper',
+          to: 'graphreport_god_nodes',
+          label: 'references',
+          title: 'references [INFERRED]',
+          dashes: true,
+          width: 1,
+          color: { opacity: 0.35 },
+          confidence: 'INFERRED',
+        },
+        {
+          from: 'claude_bearer_auth',
+          to: 'claude_path_safety',
+          label: 'conceptually_related_to',
+          title: 'conceptually_related_to [INFERRED]',
+          dashes: true,
+          width: 1,
+          color: { opacity: 0.35 },
+          confidence: 'INFERRED',
+        },
+        {
+          from: 'claude_bearer_auth',
+          to: 'readme_api_endpoints',
+          label: 'references',
+          title: 'references [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_bearer_auth',
+          to: 'readme_human_local_owner',
+          label: 'conceptually_related_to',
+          title: 'conceptually_related_to [INFERRED]',
+          dashes: true,
+          width: 1,
+          color: { opacity: 0.35 },
+          confidence: 'INFERRED',
+        },
+        {
+          from: 'claude_role_graph',
+          to: 'claude_rbac',
+          label: 'conceptually_related_to',
+          title: 'conceptually_related_to [INFERRED]',
+          dashes: true,
+          width: 1,
+          color: { opacity: 0.35 },
+          confidence: 'INFERRED',
+        },
+        {
+          from: 'claude_role_graph',
+          to: 'readme_db_schema',
+          label: 'references',
+          title: 'references [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'claude_sqlite_wal',
+          to: 'readme_db_schema',
+          label: 'references',
+          title: 'references [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'readme_db_schema',
+          to: 'readme_architecture_tree',
+          label: 'references',
+          title: 'references [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'readme_api_endpoints',
+          to: 'readme_architecture_tree',
+          label: 'references',
+          title: 'references [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'graphreport_old_summary',
+          to: 'graphreport_god_nodes',
+          label: 'references',
+          title: 'references [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+        {
+          from: 'graphreport_old_summary',
+          to: 'graphreport_hyperedges',
+          label: 'references',
+          title: 'references [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED',
+        },
+      ];
+      const LEGEND = [
+        { cid: 0, color: '#4E79A7', label: 'Platform Policy &amp; Security', count: 15 },
+        { cid: 1, color: '#F28E2B', label: 'Database Connection', count: 5 },
+        { cid: 2, color: '#E15759', label: 'Test Infrastructure', count: 5 },
+        { cid: 3, color: '#76B7B2', label: 'DB Helpers', count: 3 },
+        { cid: 4, color: '#59A14F', label: 'Agent Service', count: 3 },
+        { cid: 5, color: '#EDC948', label: 'Path Safety', count: 3 },
+        { cid: 6, color: '#B07AA1', label: 'Old Graph Report', count: 3 },
+        { cid: 7, color: '#FF9DA7', label: 'App Factory', count: 2 },
+        { cid: 8, color: '#9C755F', label: 'Config', count: 2 },
+        { cid: 9, color: '#BAB0AC', label: 'Migration Runner', count: 2 },
+        { cid: 10, color: '#4E79A7', label: 'Seed Runner', count: 2 },
+        { cid: 11, color: '#F28E2B', label: 'Auth Middleware', count: 2 },
+        { cid: 12, color: '#E15759', label: 'Migration: Projects', count: 2 },
+        { cid: 13, color: '#76B7B2', label: 'Migration: Humans', count: 2 },
+        { cid: 14, color: '#59A14F', label: 'Migration: Departments', count: 2 },
+        { cid: 15, color: '#EDC948', label: 'Migration: Model Profiles', count: 2 },
+        { cid: 16, color: '#B07AA1', label: 'Migration: Permission Profiles', count: 2 },
+        { cid: 17, color: '#FF9DA7', label: 'Migration: Role Templates', count: 2 },
+        { cid: 18, color: '#9C755F', label: 'Migration: Role Prompt Files', count: 2 },
+        { cid: 19, color: '#BAB0AC', label: 'Migration: Role Instances', count: 2 },
+        { cid: 20, color: '#4E79A7', label: 'Migration: Role Edges', count: 2 },
+        { cid: 21, color: '#F28E2B', label: 'Migration: Agents', count: 2 },
+        { cid: 22, color: '#E15759', label: 'Migration: Heartbeats', count: 2 },
+        { cid: 23, color: '#76B7B2', label: 'Route: Agents', count: 2 },
+        { cid: 24, color: '#59A14F', label: 'Route: Files', count: 2 },
+        { cid: 25, color: '#EDC948', label: 'Route: Health', count: 2 },
+        { cid: 26, color: '#B07AA1', label: 'Route: Tasks', count: 2 },
+        { cid: 27, color: '#FF9DA7', label: 'Seed: Human Owner', count: 2 },
+        { cid: 28, color: '#9C755F', label: 'Seed: Model Profiles', count: 2 },
+        { cid: 29, color: '#BAB0AC', label: 'Seed: Permission Profiles', count: 2 },
+        { cid: 30, color: '#4E79A7', label: 'Seed: Role Templates', count: 2 },
+        { cid: 31, color: '#F28E2B', label: 'Server Test', count: 2 },
+        { cid: 32, color: '#E15759', label: 'Jest Config', count: 1 },
+        { cid: 33, color: '#76B7B2', label: 'Server Entry', count: 1 },
+        { cid: 34, color: '#59A14F', label: 'Test: Agents', count: 1 },
+        { cid: 35, color: '#EDC948', label: 'Test: Auth', count: 1 },
+        { cid: 36, color: '#B07AA1', label: 'Test: DB', count: 1 },
+        { cid: 37, color: '#FF9DA7', label: 'Test: Health', count: 1 },
+        { cid: 38, color: '#9C755F', label: 'Test: Migrations', count: 1 },
+        { cid: 39, color: '#BAB0AC', label: 'Test: Path Safety', count: 1 },
+        { cid: 40, color: '#4E79A7', label: 'Test: Seeds', count: 1 },
+      ];
 
-// HTML-escape helper — prevents XSS when injecting graph data into innerHTML
-function esc(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-}
+      // HTML-escape helper — prevents XSS when injecting graph data into innerHTML
+      function esc(s) {
+        return String(s)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
 
-// Build vis datasets
-const nodesDS = new vis.DataSet(RAW_NODES.map(n => ({
-  id: n.id, label: n.label, color: n.color, size: n.size,
-  font: n.font, title: n.title,
-  _community: n.community, _community_name: n.community_name,
-  _source_file: n.source_file, _file_type: n.file_type, _degree: n.degree,
-})));
+      // Build vis datasets
+      const nodesDS = new vis.DataSet(
+        RAW_NODES.map((n) => ({
+          id: n.id,
+          label: n.label,
+          color: n.color,
+          size: n.size,
+          font: n.font,
+          title: n.title,
+          _community: n.community,
+          _community_name: n.community_name,
+          _source_file: n.source_file,
+          _file_type: n.file_type,
+          _degree: n.degree,
+        })),
+      );
 
-const edgesDS = new vis.DataSet(RAW_EDGES.map((e, i) => ({
-  id: i, from: e.from, to: e.to,
-  label: '',
-  title: e.title,
-  dashes: e.dashes,
-  width: e.width,
-  color: e.color,
-  arrows: { to: { enabled: true, scaleFactor: 0.5 } },
-})));
+      const edgesDS = new vis.DataSet(
+        RAW_EDGES.map((e, i) => ({
+          id: i,
+          from: e.from,
+          to: e.to,
+          label: '',
+          title: e.title,
+          dashes: e.dashes,
+          width: e.width,
+          color: e.color,
+          arrows: { to: { enabled: true, scaleFactor: 0.5 } },
+        })),
+      );
 
-const container = document.getElementById('graph');
-const network = new vis.Network(container, { nodes: nodesDS, edges: edgesDS }, {
-  physics: {
-    enabled: true,
-    solver: 'forceAtlas2Based',
-    forceAtlas2Based: {
-      gravitationalConstant: -60,
-      centralGravity: 0.005,
-      springLength: 120,
-      springConstant: 0.08,
-      damping: 0.4,
-      avoidOverlap: 0.8,
-    },
-    stabilization: { iterations: 200, fit: true },
-  },
-  interaction: {
-    hover: true,
-    tooltipDelay: 100,
-    hideEdgesOnDrag: true,
-    navigationButtons: false,
-    keyboard: false,
-  },
-  nodes: { shape: 'dot', borderWidth: 1.5 },
-  edges: { smooth: { type: 'continuous', roundness: 0.2 }, selectionWidth: 3 },
-});
+      const container = document.getElementById('graph');
+      const network = new vis.Network(
+        container,
+        { nodes: nodesDS, edges: edgesDS },
+        {
+          physics: {
+            enabled: true,
+            solver: 'forceAtlas2Based',
+            forceAtlas2Based: {
+              gravitationalConstant: -60,
+              centralGravity: 0.005,
+              springLength: 120,
+              springConstant: 0.08,
+              damping: 0.4,
+              avoidOverlap: 0.8,
+            },
+            stabilization: { iterations: 200, fit: true },
+          },
+          interaction: {
+            hover: true,
+            tooltipDelay: 100,
+            hideEdgesOnDrag: true,
+            navigationButtons: false,
+            keyboard: false,
+          },
+          nodes: { shape: 'dot', borderWidth: 1.5 },
+          edges: { smooth: { type: 'continuous', roundness: 0.2 }, selectionWidth: 3 },
+        },
+      );
 
-network.once('stabilizationIterationsDone', () => {
-  network.setOptions({ physics: { enabled: false } });
-});
+      network.once('stabilizationIterationsDone', () => {
+        network.setOptions({ physics: { enabled: false } });
+      });
 
-function showInfo(nodeId) {
-  const n = nodesDS.get(nodeId);
-  if (!n) return;
-  const neighborIds = network.getConnectedNodes(nodeId);
-  const neighborItems = neighborIds.map(nid => {
-    const nb = nodesDS.get(nid);
-    const color = nb ? nb.color.background : '#555';
-    return `<span class="neighbor-link" style="border-left-color:${esc(color)}" onclick="focusNode(${JSON.stringify(nid)})">${esc(nb ? nb.label : nid)}</span>`;
-  }).join('');
-  document.getElementById('info-content').innerHTML = `
+      function showInfo(nodeId) {
+        const n = nodesDS.get(nodeId);
+        if (!n) return;
+        const neighborIds = network.getConnectedNodes(nodeId);
+        const neighborItems = neighborIds
+          .map((nid) => {
+            const nb = nodesDS.get(nid);
+            const color = nb ? nb.color.background : '#555';
+            return `<span class="neighbor-link" style="border-left-color:${esc(color)}" onclick="focusNode(${JSON.stringify(nid)})">${esc(nb ? nb.label : nid)}</span>`;
+          })
+          .join('');
+        document.getElementById('info-content').innerHTML = `
     <div class="field"><b>${esc(n.label)}</b></div>
     <div class="field">Type: ${esc(n._file_type || 'unknown')}</div>
     <div class="field">Community: ${esc(n._community_name)}</div>
@@ -127,140 +2576,158 @@ function showInfo(nodeId) {
     <div class="field">Degree: ${n._degree}</div>
     ${neighborIds.length ? `<div class="field" style="margin-top:8px;color:#aaa;font-size:11px">Neighbors (${neighborIds.length})</div><div id="neighbors-list">${neighborItems}</div>` : ''}
   `;
-}
+      }
 
-function focusNode(nodeId) {
-  network.focus(nodeId, { scale: 1.4, animation: true });
-  network.selectNodes([nodeId]);
-  showInfo(nodeId);
-}
+      function focusNode(nodeId) {
+        network.focus(nodeId, { scale: 1.4, animation: true });
+        network.selectNodes([nodeId]);
+        showInfo(nodeId);
+      }
 
-// Track hovered node — hover detection is more reliable than click params
-let hoveredNodeId = null;
-network.on('hoverNode', params => {
-  hoveredNodeId = params.node;
-  container.style.cursor = 'pointer';
-});
-network.on('blurNode', () => {
-  hoveredNodeId = null;
-  container.style.cursor = 'default';
-});
-container.addEventListener('click', () => {
-  if (hoveredNodeId !== null) {
-    showInfo(hoveredNodeId);
-    network.selectNodes([hoveredNodeId]);
-  }
-});
-network.on('click', params => {
-  if (params.nodes.length > 0) {
-    showInfo(params.nodes[0]);
-  } else if (hoveredNodeId === null) {
-    document.getElementById('info-content').innerHTML = '<span class="empty">Click a node to inspect it</span>';
-  }
-});
+      // Track hovered node — hover detection is more reliable than click params
+      let hoveredNodeId = null;
+      network.on('hoverNode', (params) => {
+        hoveredNodeId = params.node;
+        container.style.cursor = 'pointer';
+      });
+      network.on('blurNode', () => {
+        hoveredNodeId = null;
+        container.style.cursor = 'default';
+      });
+      container.addEventListener('click', () => {
+        if (hoveredNodeId !== null) {
+          showInfo(hoveredNodeId);
+          network.selectNodes([hoveredNodeId]);
+        }
+      });
+      network.on('click', (params) => {
+        if (params.nodes.length > 0) {
+          showInfo(params.nodes[0]);
+        } else if (hoveredNodeId === null) {
+          document.getElementById('info-content').innerHTML =
+            '<span class="empty">Click a node to inspect it</span>';
+        }
+      });
 
-const searchInput = document.getElementById('search');
-const searchResults = document.getElementById('search-results');
-searchInput.addEventListener('input', () => {
-  const q = searchInput.value.toLowerCase().trim();
-  searchResults.innerHTML = '';
-  if (!q) { searchResults.style.display = 'none'; return; }
-  const matches = RAW_NODES.filter(n => n.label.toLowerCase().includes(q)).slice(0, 20);
-  if (!matches.length) { searchResults.style.display = 'none'; return; }
-  searchResults.style.display = 'block';
-  matches.forEach(n => {
-    const el = document.createElement('div');
-    el.className = 'search-item';
-    el.textContent = n.label;
-    el.style.borderLeft = `3px solid ${n.color.background}`;
-    el.style.paddingLeft = '8px';
-    el.onclick = () => {
-      network.focus(n.id, { scale: 1.5, animation: true });
-      network.selectNodes([n.id]);
-      showInfo(n.id);
-      searchResults.style.display = 'none';
-      searchInput.value = '';
-    };
-    searchResults.appendChild(el);
-  });
-});
-document.addEventListener('click', e => {
-  if (!searchResults.contains(e.target) && e.target !== searchInput)
-    searchResults.style.display = 'none';
-});
+      const searchInput = document.getElementById('search');
+      const searchResults = document.getElementById('search-results');
+      searchInput.addEventListener('input', () => {
+        const q = searchInput.value.toLowerCase().trim();
+        searchResults.innerHTML = '';
+        if (!q) {
+          searchResults.style.display = 'none';
+          return;
+        }
+        const matches = RAW_NODES.filter((n) => n.label.toLowerCase().includes(q)).slice(0, 20);
+        if (!matches.length) {
+          searchResults.style.display = 'none';
+          return;
+        }
+        searchResults.style.display = 'block';
+        matches.forEach((n) => {
+          const el = document.createElement('div');
+          el.className = 'search-item';
+          el.textContent = n.label;
+          el.style.borderLeft = `3px solid ${n.color.background}`;
+          el.style.paddingLeft = '8px';
+          el.onclick = () => {
+            network.focus(n.id, { scale: 1.5, animation: true });
+            network.selectNodes([n.id]);
+            showInfo(n.id);
+            searchResults.style.display = 'none';
+            searchInput.value = '';
+          };
+          searchResults.appendChild(el);
+        });
+      });
+      document.addEventListener('click', (e) => {
+        if (!searchResults.contains(e.target) && e.target !== searchInput)
+          searchResults.style.display = 'none';
+      });
 
-const hiddenCommunities = new Set();
-const legendEl = document.getElementById('legend');
-LEGEND.forEach(c => {
-  const item = document.createElement('div');
-  item.className = 'legend-item';
-  item.innerHTML = `<div class="legend-dot" style="background:${c.color}"></div>
+      const hiddenCommunities = new Set();
+      const legendEl = document.getElementById('legend');
+      LEGEND.forEach((c) => {
+        const item = document.createElement('div');
+        item.className = 'legend-item';
+        item.innerHTML = `<div class="legend-dot" style="background:${c.color}"></div>
     <span class="legend-label">${c.label}</span>
     <span class="legend-count">${c.count}</span>`;
-  item.onclick = () => {
-    if (hiddenCommunities.has(c.cid)) {
-      hiddenCommunities.delete(c.cid);
-      item.classList.remove('dimmed');
-    } else {
-      hiddenCommunities.add(c.cid);
-      item.classList.add('dimmed');
-    }
-    const updates = RAW_NODES
-      .filter(n => n.community === c.cid)
-      .map(n => ({ id: n.id, hidden: hiddenCommunities.has(c.cid) }));
-    nodesDS.update(updates);
-  };
-  legendEl.appendChild(item);
-});
-</script>
-<script>
-// Render hyperedges as shaded regions
-const hyperedges = [{"id": "security_stack", "label": "Security Stack (Auth + RBAC + Path Safety)", "nodes": ["claude_bearer_auth", "claude_rbac", "claude_path_safety"], "relation": "participate_in", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "CLAUDE.md"}];
-function drawHyperedges() {
-    const canvas = network.canvas.frame.canvas;
-    const ctx = canvas.getContext('2d');
-    hyperedges.forEach(h => {
-        const positions = h.nodes
-            .map(nid => network.getPositions([nid])[nid])
-            .filter(p => p !== undefined);
-        if (positions.length < 2) return;
-        // Draw convex hull as filled polygon
-        ctx.save();
-        ctx.globalAlpha = 0.12;
-        ctx.fillStyle = '#6366f1';
-        ctx.strokeStyle = '#6366f1';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        const scale = network.getScale();
-        const offset = network.getViewPosition();
-        const toCanvas = (p) => ({
+        item.onclick = () => {
+          if (hiddenCommunities.has(c.cid)) {
+            hiddenCommunities.delete(c.cid);
+            item.classList.remove('dimmed');
+          } else {
+            hiddenCommunities.add(c.cid);
+            item.classList.add('dimmed');
+          }
+          const updates = RAW_NODES.filter((n) => n.community === c.cid).map((n) => ({
+            id: n.id,
+            hidden: hiddenCommunities.has(c.cid),
+          }));
+          nodesDS.update(updates);
+        };
+        legendEl.appendChild(item);
+      });
+    </script>
+    <script>
+      // Render hyperedges as shaded regions
+      const hyperedges = [
+        {
+          id: 'security_stack',
+          label: 'Security Stack (Auth + RBAC + Path Safety)',
+          nodes: ['claude_bearer_auth', 'claude_rbac', 'claude_path_safety'],
+          relation: 'participate_in',
+          confidence: 'EXTRACTED',
+          confidence_score: 1.0,
+          source_file: 'CLAUDE.md',
+        },
+      ];
+      function drawHyperedges() {
+        const canvas = network.canvas.frame.canvas;
+        const ctx = canvas.getContext('2d');
+        hyperedges.forEach((h) => {
+          const positions = h.nodes
+            .map((nid) => network.getPositions([nid])[nid])
+            .filter((p) => p !== undefined);
+          if (positions.length < 2) return;
+          // Draw convex hull as filled polygon
+          ctx.save();
+          ctx.globalAlpha = 0.12;
+          ctx.fillStyle = '#6366f1';
+          ctx.strokeStyle = '#6366f1';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          const scale = network.getScale();
+          const offset = network.getViewPosition();
+          const toCanvas = (p) => ({
             x: (p.x - offset.x) * scale + canvas.width / 2,
-            y: (p.y - offset.y) * scale + canvas.height / 2
-        });
-        const pts = positions.map(toCanvas);
-        // Expand hull slightly
-        const cx = pts.reduce((s, p) => s + p.x, 0) / pts.length;
-        const cy = pts.reduce((s, p) => s + p.y, 0) / pts.length;
-        const expanded = pts.map(p => ({
+            y: (p.y - offset.y) * scale + canvas.height / 2,
+          });
+          const pts = positions.map(toCanvas);
+          // Expand hull slightly
+          const cx = pts.reduce((s, p) => s + p.x, 0) / pts.length;
+          const cy = pts.reduce((s, p) => s + p.y, 0) / pts.length;
+          const expanded = pts.map((p) => ({
             x: cx + (p.x - cx) * 1.15,
-            y: cy + (p.y - cy) * 1.15
-        }));
-        ctx.moveTo(expanded[0].x, expanded[0].y);
-        expanded.slice(1).forEach(p => ctx.lineTo(p.x, p.y));
-        ctx.closePath();
-        ctx.fill();
-        ctx.globalAlpha = 0.4;
-        ctx.stroke();
-        // Label
-        ctx.globalAlpha = 0.8;
-        ctx.fillStyle = '#4f46e5';
-        ctx.font = 'bold 11px sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText(h.label, cx, cy - 5);
-        ctx.restore();
-    });
-}
-network.on('afterDrawing', drawHyperedges);
-</script>
-</body>
+            y: cy + (p.y - cy) * 1.15,
+          }));
+          ctx.moveTo(expanded[0].x, expanded[0].y);
+          expanded.slice(1).forEach((p) => ctx.lineTo(p.x, p.y));
+          ctx.closePath();
+          ctx.fill();
+          ctx.globalAlpha = 0.4;
+          ctx.stroke();
+          // Label
+          ctx.globalAlpha = 0.8;
+          ctx.fillStyle = '#4f46e5';
+          ctx.font = 'bold 11px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(h.label, cx, cy - 5);
+          ctx.restore();
+        });
+      }
+      network.on('afterDrawing', drawHyperedges);
+    </script>
+  </body>
 </html>
