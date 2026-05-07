@@ -1,6 +1,6 @@
 FROM --platform=linux/arm64 node:22-bookworm-slim
 
-# Install dev tools (no sudo)
+# Install dev tools
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     curl \
@@ -13,12 +13,13 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY server.js ./
+COPY src/ ./src/
 
-# Workspace: only Silver-Computing-Machine contents will be mounted here
-RUN mkdir -p /workspace/Projects && chown -R node:node /workspace
+# Database and workspace directories
+RUN mkdir -p /app/data /workspace/Projects && chown -R node:node /app/data /workspace
 WORKDIR /workspace
 
-# Run as non-root user (node user already exists in node image)
+# Run as non-root user
 USER node
 
 EXPOSE 4000

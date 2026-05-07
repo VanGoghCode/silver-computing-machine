@@ -1,81 +1,55 @@
-const express = require('express');
-const fs = require('fs');
-const path = require('path');
-
 require('dotenv').config();
 
-const app = express();
-const PORT = process.env.PORT || 4000;
-const WORKSPACE_DIR = process.env.WORKSPACE_DIR || '/workspace';
+const { loadConfig } = require('./src/config');
+const { createDatabase, closeDatabase } = require('./src/db');
+const { runMigrations } = require('./src/db/migrate');
+const { runSeeds } = require('./src/db/seed');
+const { createApp } = require('./src/app');
 
-app.use(express.json());
+// Collect all migrations
+const migrations = [
+  require('./src/migrations/001_projects'),
+  require('./src/migrations/002_humans'),
+  require('./src/migrations/003_departments'),
+  require('./src/migrations/004_model_profiles'),
+  require('./src/migrations/005_permission_profiles'),
+  require('./src/migrations/006_role_templates'),
+  require('./src/migrations/007_role_prompt_files'),
+  require('./src/migrations/008_project_role_instances'),
+  require('./src/migrations/009_role_edges'),
+  require('./src/migrations/010_agents'),
+  require('./src/migrations/011_agent_heartbeats'),
+];
 
-// ---------- Sandbox: prevent path traversal outside /workspace ----------
+// Collect all seeds
+const seeds = [
+  require('./src/seeds/model_profiles'),
+  require('./src/seeds/permission_profiles'),
+  require('./src/seeds/role_templates'),
+  require('./src/seeds/human_local_owner'),
+];
 
-function safePath(...segments) {
-  const resolved = path.resolve(WORKSPACE_DIR, ...segments);
-  if (!resolved.startsWith(WORKSPACE_DIR + path.sep) && resolved !== WORKSPACE_DIR) {
-    return null; // attempted escape
-  }
-  return resolved;
-}
+const config = loadConfig();
+const db = createDatabase(config.dbPath);
 
-// ---------- Health ----------
+runMigrations(db, migrations);
+runSeeds(db, seeds);
 
-app.get('/api/health', (_req, res) => {
-  res.json({ status: 'ok', workspace: WORKSPACE_DIR, uptime: process.uptime() });
+const app = createApp(db, config);
+
+const server = app.listen(config.port, '0.0.0.0', () => {
+  console.log(`Silver Gatekeeper running at http://localhost:${config.port}`);
+  console.log(`Workspace dir: ${config.workspaceDir}`);
+  console.log(`Projects dir: ${config.projectsDir}`);
+  console.log(`Database: ${config.dbPath}`);
 });
 
-// ---------- Workspace File Operations ----------
-
-// List files in workspace
-app.get('/api/files', (req, res) => {
-  const dir = safePath(req.query.dir || '');
-  if (!dir) return res.status(403).json({ error: 'Path escapes workspace' });
-  try {
-    const entries = fs.readdirSync(dir, { withFileTypes: true }).map((e) => ({
-      name: e.name,
-      type: e.isDirectory() ? 'dir' : 'file',
-    }));
-    res.json({ path: dir, entries });
-  } catch (err) {
-    res.status(404).json({ error: err.message });
-  }
+process.on('SIGTERM', () => {
+  server.close(() => closeDatabase());
 });
 
-// Read a file from workspace
-app.get('/api/files/:filePath(*)', (req, res) => {
-  const fullPath = safePath(req.params.filePath);
-  if (!fullPath) return res.status(403).json({ error: 'Path escapes workspace' });
-  try {
-    const content = fs.readFileSync(fullPath, 'utf-8');
-    res.json({ path: fullPath, content });
-  } catch (err) {
-    res.status(404).json({ error: err.message });
-  }
+process.on('SIGINT', () => {
+  server.close(() => closeDatabase());
 });
 
-// Write a file to workspace
-app.put('/api/files/:filePath(*)', (req, res) => {
-  const fullPath = safePath(req.params.filePath);
-  if (!fullPath) return res.status(403).json({ error: 'Path escapes workspace' });
-  const { content } = req.body;
-  if (typeof content !== 'string') {
-    return res.status(400).json({ error: 'content (string) is required' });
-  }
-  try {
-    fs.mkdirSync(path.dirname(fullPath), { recursive: true });
-    fs.writeFileSync(fullPath, content, 'utf-8');
-    res.json({ path: fullPath, written: true });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// ---------- Start ----------
-
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Humai Workspace running at http://localhost:${PORT}`);
-  console.log(`Workspace dir: ${WORKSPACE_DIR}`);
-  console.log(`Sandbox: file access restricted to ${WORKSPACE_DIR}`);
-});
+module.exports = { app, db, config };

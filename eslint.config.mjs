@@ -20,6 +20,6 @@ export default [
     },
   },
   {
-    ignores: ['node_modules/', 'coverage/', 'Projects/'],
+    ignores: ['node_modules/', 'coverage/', 'Projects/', 'data/'],
   },
 ];
