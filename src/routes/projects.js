@@ -23,6 +23,12 @@ function createProjectsRouter(db, config, auth) {
     }
   });
 
+  // GET /api/projects — list all projects
+  router.get('/api/projects', auth, (req, res) => {
+    const projects = db.prepare('SELECT * FROM projects ORDER BY created_at DESC').all();
+    res.json({ projects });
+  });
+
   router.post('/api/projects/:id/start-runtime', auth, async (req, res) => {
     const project = db.prepare('SELECT * FROM projects WHERE id = ?').get(req.params.id);
     if (!project) {

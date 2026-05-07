@@ -9,6 +9,8 @@ function loadConfig() {
 
   const agentHeartbeatStaleMs = parseInt(process.env.AGENT_HEARTBEAT_STALE_MS || '60000', 10);
 
+  const graphifyCommand = process.env.GRAPHIFY_COMMAND || 'graphify';
+
   return {
     port,
     workspaceDir,
@@ -16,6 +18,7 @@ function loadConfig() {
     dbPath,
     nodeEnv: process.env.NODE_ENV || 'development',
     agentHeartbeatStaleMs,
+    graphifyCommand,
   };
 }
 

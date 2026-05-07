@@ -1,0 +1,104 @@
+{
+  "nodes": [
+    {
+      "id": "src_seeds_permission_profiles_js",
+      "label": "permission_profiles.js",
+      "file_type": "code",
+      "source_file": "src\\seeds\\permission_profiles.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "seeds_permission_profiles_generateid",
+      "label": "{ generateId }",
+      "file_type": "code",
+      "source_file": "src\\seeds\\permission_profiles.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "seeds_permission_profiles_profiles",
+      "label": "PROFILES",
+      "file_type": "code",
+      "source_file": "src\\seeds\\permission_profiles.js",
+      "source_location": "L3"
+    },
+    {
+      "id": "seeds_permission_profiles_run",
+      "label": "run()",
+      "file_type": "code",
+      "source_file": "src\\seeds\\permission_profiles.js",
+      "source_location": "L63"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_seeds_permission_profiles_js",
+      "target": "src_db_helpers_js",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\seeds\\permission_profiles.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_seeds_permission_profiles_js",
+      "target": "db_helpers_generateid",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\seeds\\permission_profiles.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_seeds_permission_profiles_js",
+      "target": "seeds_permission_profiles_generateid",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\seeds\\permission_profiles.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_seeds_permission_profiles_js",
+      "target": "seeds_permission_profiles_profiles",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\seeds\\permission_profiles.js",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_seeds_permission_profiles_js",
+      "target": "seeds_permission_profiles_run",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\seeds\\permission_profiles.js",
+      "source_location": "L63",
+      "weight": 1.0
+    }
+  ],
+  "raw_calls": [
+    {
+      "caller_nid": "seeds_permission_profiles_run",
+      "callee": "prepare",
+      "is_member_call": true,
+      "source_file": "src\\seeds\\permission_profiles.js",
+      "source_location": "L64"
+    },
+    {
+      "caller_nid": "seeds_permission_profiles_run",
+      "callee": "generateId",
+      "is_member_call": false,
+      "source_file": "src\\seeds\\permission_profiles.js",
+      "source_location": "L70"
+    },
+    {
+      "caller_nid": "seeds_permission_profiles_run",
+      "callee": "stringify",
+      "is_member_call": true,
+      "source_file": "src\\seeds\\permission_profiles.js",
+      "source_location": "L70"
+    }
+  ]
+}

@@ -1,0 +1,224 @@
+{
+  "nodes": [
+    {
+      "id": "src_services_role_library_import_js",
+      "label": "role_library_import.js",
+      "file_type": "code",
+      "source_file": "src\\services\\role_library_import.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "services_role_library_import_fs",
+      "label": "fs",
+      "file_type": "code",
+      "source_file": "src\\services\\role_library_import.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "services_role_library_import_path",
+      "label": "path",
+      "file_type": "code",
+      "source_file": "src\\services\\role_library_import.js",
+      "source_location": "L2"
+    },
+    {
+      "id": "services_role_library_import_crypto",
+      "label": "crypto",
+      "file_type": "code",
+      "source_file": "src\\services\\role_library_import.js",
+      "source_location": "L3"
+    },
+    {
+      "id": "services_role_library_import_generateid",
+      "label": "{ generateId }",
+      "file_type": "code",
+      "source_file": "src\\services\\role_library_import.js",
+      "source_location": "L4"
+    },
+    {
+      "id": "services_role_library_import_computehash",
+      "label": "computeHash()",
+      "file_type": "code",
+      "source_file": "src\\services\\role_library_import.js",
+      "source_location": "L6"
+    },
+    {
+      "id": "services_role_library_import_importrolelibrary",
+      "label": "importRoleLibrary()",
+      "file_type": "code",
+      "source_file": "src\\services\\role_library_import.js",
+      "source_location": "L10"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_services_role_library_import_js",
+      "target": "fs",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\role_library_import.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_role_library_import_js",
+      "target": "services_role_library_import_fs",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\role_library_import.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_role_library_import_js",
+      "target": "path",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\role_library_import.js",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_role_library_import_js",
+      "target": "services_role_library_import_path",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\role_library_import.js",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_role_library_import_js",
+      "target": "crypto",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\role_library_import.js",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_role_library_import_js",
+      "target": "services_role_library_import_crypto",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\role_library_import.js",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_role_library_import_js",
+      "target": "src_db_helpers_js",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\role_library_import.js",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_role_library_import_js",
+      "target": "db_helpers_generateid",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\role_library_import.js",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_role_library_import_js",
+      "target": "services_role_library_import_generateid",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\role_library_import.js",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_role_library_import_js",
+      "target": "services_role_library_import_computehash",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\role_library_import.js",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_role_library_import_js",
+      "target": "services_role_library_import_importrolelibrary",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\role_library_import.js",
+      "source_location": "L10",
+      "weight": 1.0
+    }
+  ],
+  "raw_calls": [
+    {
+      "caller_nid": "services_role_library_import_computehash",
+      "callee": "digest",
+      "is_member_call": true,
+      "source_file": "src\\services\\role_library_import.js",
+      "source_location": "L7"
+    },
+    {
+      "caller_nid": "services_role_library_import_computehash",
+      "callee": "update",
+      "is_member_call": true,
+      "source_file": "src\\services\\role_library_import.js",
+      "source_location": "L7"
+    },
+    {
+      "caller_nid": "services_role_library_import_computehash",
+      "callee": "createHash",
+      "is_member_call": true,
+      "source_file": "src\\services\\role_library_import.js",
+      "source_location": "L7"
+    },
+    {
+      "caller_nid": "services_role_library_import_importrolelibrary",
+      "callee": "resolve",
+      "is_member_call": true,
+      "source_file": "src\\services\\role_library_import.js",
+      "source_location": "L12"
+    },
+    {
+      "caller_nid": "services_role_library_import_importrolelibrary",
+      "callee": "existsSync",
+      "is_member_call": true,
+      "source_file": "src\\services\\role_library_import.js",
+      "source_location": "L13"
+    },
+    {
+      "caller_nid": "services_role_library_import_importrolelibrary",
+      "callee": "isDirectory",
+      "is_member_call": true,
+      "source_file": "src\\services\\role_library_import.js",
+      "source_location": "L16"
+    },
+    {
+      "caller_nid": "services_role_library_import_importrolelibrary",
+      "callee": "statSync",
+      "is_member_call": true,
+      "source_file": "src\\services\\role_library_import.js",
+      "source_location": "L16"
+    },
+    {
+      "caller_nid": "services_role_library_import_importrolelibrary",
+      "callee": "db.transaction(() => {\n    let templatesCreated = 0;\n    let filesImported = 0;\n\n    const insertTemplate = db.prepare(`\n      INSERT OR IGNORE INTO role_templates (id, key, display_name, description)\n      VALUES (?, ?, ?, ?)\n    `);\n\n    // Ensure global virtual template exists\n    insertTemplate.run(\n      'global',\n      'global',\n      'Global Context',\n      'Shared global context files for all roles',\n    );\n\n    const findActiveFile = db.prepare(`\n      SELECT * FROM role_prompt_files\n      WHERE role_template_id = ? AND section_key = ? AND is_active = 1\n    `);\n\n    const deactivateFile = db.prepare(`\n      UPDATE role_prompt_files SET is_active = 0, updated_at = datetime('now')\n      WHERE role_template_id = ? AND section_key = ? AND is_active = 1\n    `);\n\n    const insertFile = db.prepare(`\n      INSERT INTO role_prompt_files (id, role_template_id, file_name, section_key, content_md, content_hash, version, is_active)\n      VALUES (?, ?, ?, ?, ?, ?, ?, 1)\n    `);\n\n    // Import global files\n    const globalDir = path.join(resolved, 'global');\n    if (fs.existsSync(globalDir)) {\n      const globalFiles = fs.readdirSync(globalDir).filter((f) => f.endsWith('.md'));\n      for (const file of globalFiles) {\n        const content = fs.readFileSync(path.join(globalDir, file), 'utf-8').trim();\n        const sectionKey = path.basename(file, '.md');\n        const hash = computeHash(content);\n\n        const existing = findActiveFile.get('global', sectionKey);\n        if (existing) {\n          if (existing.content_hash !== hash) {\n            deactivateFile.run('global', sectionKey);\n            insertFile.run(\n              generateId(),\n              'global',\n              file,\n              sectionKey,\n              content,\n              hash,\n              existing.version + 1,\n            );\n            filesImported++;\n          }\n        } else {\n          insertFile.run(generateId(), 'global', file, sectionKey, content, hash, 1);\n          filesImported++;\n        }\n      }\n    }\n\n    // Import role files\n    const rolesDir = path.join(resolved, 'roles');\n    if (fs.existsSync(rolesDir)) {\n      const roleDirs = fs\n        .readdirSync(rolesDir)\n        .filter((f) => fs.statSync(path.join(rolesDir, f)).isDirectory());\n\n      for (const roleKey of roleDirs) {\n        const roleDir = path.join(rolesDir, roleKey);\n\n        // Ensure template exists\n        let template = db.prepare(`SELECT * FROM role_templates WHERE key = ?`).get(roleKey);\n        if (!template) {\n          const id = generateId();\n          const displayName = roleKey\n            .split('-')\n            .map((w) => w.charAt(0).toUpperCase() + w.slice(1))\n            .join(' ');\n          insertTemplate.run(id, roleKey, displayName, '');\n          template = { id };\n          templatesCreated++;\n        }\n\n        const files = fs.readdirSync(roleDir).filter((f) => f.endsWith('.md'));\n        for (const file of files) {\n          const sectionKey = path.basename(file, '.md');\n          const content = fs.readFileSync(path.join(roleDir, file), 'utf-8').trim();\n          const hash = computeHash(content);\n\n          const existing = findActiveFile.get(template.id, sectionKey);\n          if (existing) {\n            if (existing.content_hash !== hash) {\n              deactivateFile.run(template.id, sectionKey);\n              insertFile.run(\n                generateId(),\n                template.id,\n                file,\n                sectionKey,\n                content,\n                hash,\n                existing.version + 1,\n              );\n              filesImported++;\n            }\n          } else {\n            insertFile.run(generateId(), template.id, file, sectionKey, content, hash, 1);\n            filesImported++;\n          }\n        }\n      }\n    }\n\n    return { templatesCreated, filesImported };\n  })",
+      "is_member_call": false,
+      "source_file": "src\\services\\role_library_import.js",
+      "source_location": "L20"
+    },
+    {
+      "caller_nid": "services_role_library_import_importrolelibrary",
+      "callee": "transaction",
+      "is_member_call": true,
+      "source_file": "src\\services\\role_library_import.js",
+      "source_location": "L20"
+    }
+  ]
+}

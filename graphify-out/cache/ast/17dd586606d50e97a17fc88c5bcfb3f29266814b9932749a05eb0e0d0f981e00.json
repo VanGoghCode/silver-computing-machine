@@ -1,0 +1,173 @@
+{
+  "nodes": [
+    {
+      "id": "src_routes_files_js",
+      "label": "files.js",
+      "file_type": "code",
+      "source_file": "src\\routes\\files.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "routes_files_express",
+      "label": "express",
+      "file_type": "code",
+      "source_file": "src\\routes\\files.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "routes_files_fs",
+      "label": "fs",
+      "file_type": "code",
+      "source_file": "src\\routes\\files.js",
+      "source_location": "L2"
+    },
+    {
+      "id": "routes_files_path",
+      "label": "path",
+      "file_type": "code",
+      "source_file": "src\\routes\\files.js",
+      "source_location": "L3"
+    },
+    {
+      "id": "routes_files_safepath",
+      "label": "{ safePath }",
+      "file_type": "code",
+      "source_file": "src\\routes\\files.js",
+      "source_location": "L4"
+    },
+    {
+      "id": "routes_files_createfilesrouter",
+      "label": "createFilesRouter()",
+      "file_type": "code",
+      "source_file": "src\\routes\\files.js",
+      "source_location": "L6"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_routes_files_js",
+      "target": "express",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\files.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_files_js",
+      "target": "routes_files_express",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\files.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_files_js",
+      "target": "fs",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\files.js",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_files_js",
+      "target": "routes_files_fs",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\files.js",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_files_js",
+      "target": "path",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\files.js",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_files_js",
+      "target": "routes_files_path",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\files.js",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_files_js",
+      "target": "src_services_path_safety_js",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\files.js",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_files_js",
+      "target": "services_path_safety_safepath",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\files.js",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_files_js",
+      "target": "routes_files_safepath",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\files.js",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_files_js",
+      "target": "routes_files_createfilesrouter",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\files.js",
+      "source_location": "L6",
+      "weight": 1.0
+    }
+  ],
+  "raw_calls": [
+    {
+      "caller_nid": "routes_files_createfilesrouter",
+      "callee": "Router",
+      "is_member_call": true,
+      "source_file": "src\\routes\\files.js",
+      "source_location": "L7"
+    },
+    {
+      "caller_nid": "routes_files_createfilesrouter",
+      "callee": "get",
+      "is_member_call": true,
+      "source_file": "src\\routes\\files.js",
+      "source_location": "L9"
+    },
+    {
+      "caller_nid": "routes_files_createfilesrouter",
+      "callee": "get",
+      "is_member_call": true,
+      "source_file": "src\\routes\\files.js",
+      "source_location": "L23"
+    },
+    {
+      "caller_nid": "routes_files_createfilesrouter",
+      "callee": "put",
+      "is_member_call": true,
+      "source_file": "src\\routes\\files.js",
+      "source_location": "L34"
+    }
+  ]
+}

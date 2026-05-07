@@ -1,0 +1,80 @@
+{
+  "nodes": [
+    {
+      "id": "src_db_migrate_js",
+      "label": "migrate.js",
+      "file_type": "code",
+      "source_file": "src\\db\\migrate.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "db_migrate_runmigrations",
+      "label": "runMigrations()",
+      "file_type": "code",
+      "source_file": "src\\db\\migrate.js",
+      "source_location": "L1"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_db_migrate_js",
+      "target": "db_migrate_runmigrations",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\db\\migrate.js",
+      "source_location": "L1",
+      "weight": 1.0
+    }
+  ],
+  "raw_calls": [
+    {
+      "caller_nid": "db_migrate_runmigrations",
+      "callee": "exec",
+      "is_member_call": true,
+      "source_file": "src\\db\\migrate.js",
+      "source_location": "L3"
+    },
+    {
+      "caller_nid": "db_migrate_runmigrations",
+      "callee": "map",
+      "is_member_call": true,
+      "source_file": "src\\db\\migrate.js",
+      "source_location": "L12"
+    },
+    {
+      "caller_nid": "db_migrate_runmigrations",
+      "callee": "all",
+      "is_member_call": true,
+      "source_file": "src\\db\\migrate.js",
+      "source_location": "L12"
+    },
+    {
+      "caller_nid": "db_migrate_runmigrations",
+      "callee": "prepare",
+      "is_member_call": true,
+      "source_file": "src\\db\\migrate.js",
+      "source_location": "L12"
+    },
+    {
+      "caller_nid": "db_migrate_runmigrations",
+      "callee": "has",
+      "is_member_call": true,
+      "source_file": "src\\db\\migrate.js",
+      "source_location": "L19"
+    },
+    {
+      "caller_nid": "db_migrate_runmigrations",
+      "callee": "db.transaction(() => {\n      migration.up(db);\n      db.prepare('INSERT INTO _migrations (name) VALUES (?)').run(migration.name);\n    })",
+      "is_member_call": false,
+      "source_file": "src\\db\\migrate.js",
+      "source_location": "L20"
+    },
+    {
+      "caller_nid": "db_migrate_runmigrations",
+      "callee": "transaction",
+      "is_member_call": true,
+      "source_file": "src\\db\\migrate.js",
+      "source_location": "L20"
+    }
+  ]
+}

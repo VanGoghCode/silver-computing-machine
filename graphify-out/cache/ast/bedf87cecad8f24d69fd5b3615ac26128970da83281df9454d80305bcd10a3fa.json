@@ -1,0 +1,108 @@
+{
+  "nodes": [
+    {
+      "id": "src_utils_tokens_js",
+      "label": "tokens.js",
+      "file_type": "code",
+      "source_file": "src\\utils\\tokens.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "utils_tokens_crypto",
+      "label": "crypto",
+      "file_type": "code",
+      "source_file": "src\\utils\\tokens.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "utils_tokens_generatetoken",
+      "label": "generateToken()",
+      "file_type": "code",
+      "source_file": "src\\utils\\tokens.js",
+      "source_location": "L3"
+    },
+    {
+      "id": "utils_tokens_hashtoken",
+      "label": "hashToken()",
+      "file_type": "code",
+      "source_file": "src\\utils\\tokens.js",
+      "source_location": "L7"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_utils_tokens_js",
+      "target": "crypto",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\utils\\tokens.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_utils_tokens_js",
+      "target": "utils_tokens_crypto",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\utils\\tokens.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_utils_tokens_js",
+      "target": "utils_tokens_generatetoken",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\utils\\tokens.js",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_utils_tokens_js",
+      "target": "utils_tokens_hashtoken",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\utils\\tokens.js",
+      "source_location": "L7",
+      "weight": 1.0
+    }
+  ],
+  "raw_calls": [
+    {
+      "caller_nid": "utils_tokens_generatetoken",
+      "callee": "toString",
+      "is_member_call": true,
+      "source_file": "src\\utils\\tokens.js",
+      "source_location": "L4"
+    },
+    {
+      "caller_nid": "utils_tokens_generatetoken",
+      "callee": "randomBytes",
+      "is_member_call": true,
+      "source_file": "src\\utils\\tokens.js",
+      "source_location": "L4"
+    },
+    {
+      "caller_nid": "utils_tokens_hashtoken",
+      "callee": "digest",
+      "is_member_call": true,
+      "source_file": "src\\utils\\tokens.js",
+      "source_location": "L8"
+    },
+    {
+      "caller_nid": "utils_tokens_hashtoken",
+      "callee": "update",
+      "is_member_call": true,
+      "source_file": "src\\utils\\tokens.js",
+      "source_location": "L8"
+    },
+    {
+      "caller_nid": "utils_tokens_hashtoken",
+      "callee": "createHash",
+      "is_member_call": true,
+      "source_file": "src\\utils\\tokens.js",
+      "source_location": "L8"
+    }
+  ]
+}

@@ -1,0 +1,230 @@
+{
+  "nodes": [
+    {
+      "id": "src_routes_context_artifacts_js",
+      "label": "context_artifacts.js",
+      "file_type": "code",
+      "source_file": "src\\routes\\context_artifacts.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "routes_context_artifacts_express",
+      "label": "express",
+      "file_type": "code",
+      "source_file": "src\\routes\\context_artifacts.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "routes_context_artifacts_generateid",
+      "label": "{ generateId }",
+      "file_type": "code",
+      "source_file": "src\\routes\\context_artifacts.js",
+      "source_location": "L2"
+    },
+    {
+      "id": "routes_context_artifacts_valid_artifact_types",
+      "label": "VALID_ARTIFACT_TYPES",
+      "file_type": "code",
+      "source_file": "src\\routes\\context_artifacts.js",
+      "source_location": "L4"
+    },
+    {
+      "id": "routes_context_artifacts_valid_lifecycle_stages",
+      "label": "VALID_LIFECYCLE_STAGES",
+      "file_type": "code",
+      "source_file": "src\\routes\\context_artifacts.js",
+      "source_location": "L25"
+    },
+    {
+      "id": "routes_context_artifacts_createcontextartifactsrouter",
+      "label": "createContextArtifactsRouter()",
+      "file_type": "code",
+      "source_file": "src\\routes\\context_artifacts.js",
+      "source_location": "L27"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_routes_context_artifacts_js",
+      "target": "express",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\context_artifacts.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_context_artifacts_js",
+      "target": "routes_context_artifacts_express",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\context_artifacts.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_context_artifacts_js",
+      "target": "src_db_helpers_js",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\context_artifacts.js",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_context_artifacts_js",
+      "target": "db_helpers_generateid",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\context_artifacts.js",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_context_artifacts_js",
+      "target": "routes_context_artifacts_generateid",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\context_artifacts.js",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_context_artifacts_js",
+      "target": "routes_context_artifacts_valid_artifact_types",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\context_artifacts.js",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_context_artifacts_js",
+      "target": "routes_context_artifacts_valid_lifecycle_stages",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\context_artifacts.js",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_context_artifacts_js",
+      "target": "routes_context_artifacts_createcontextartifactsrouter",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\context_artifacts.js",
+      "source_location": "L27",
+      "weight": 1.0
+    }
+  ],
+  "raw_calls": [
+    {
+      "caller_nid": "routes_context_artifacts_createcontextartifactsrouter",
+      "callee": "Router",
+      "is_member_call": true,
+      "source_file": "src\\routes\\context_artifacts.js",
+      "source_location": "L28"
+    },
+    {
+      "caller_nid": "routes_context_artifacts_createcontextartifactsrouter",
+      "callee": "use",
+      "is_member_call": true,
+      "source_file": "src\\routes\\context_artifacts.js",
+      "source_location": "L29"
+    },
+    {
+      "caller_nid": "routes_context_artifacts_createcontextartifactsrouter",
+      "callee": "post",
+      "is_member_call": true,
+      "source_file": "src\\routes\\context_artifacts.js",
+      "source_location": "L32"
+    },
+    {
+      "caller_nid": "routes_context_artifacts_createcontextartifactsrouter",
+      "callee": "get",
+      "is_member_call": true,
+      "source_file": "src\\routes\\context_artifacts.js",
+      "source_location": "L110"
+    },
+    {
+      "caller_nid": "routes_context_artifacts_createcontextartifactsrouter",
+      "callee": "patch",
+      "is_member_call": true,
+      "source_file": "src\\routes\\context_artifacts.js",
+      "source_location": "L117"
+    },
+    {
+      "caller_nid": "routes_context_artifacts_createcontextartifactsrouter",
+      "callee": "post",
+      "is_member_call": true,
+      "source_file": "src\\routes\\context_artifacts.js",
+      "source_location": "L149"
+    },
+    {
+      "caller_nid": "routes_context_artifacts_createcontextartifactsrouter",
+      "callee": "post",
+      "is_member_call": true,
+      "source_file": "src\\routes\\context_artifacts.js",
+      "source_location": "L193"
+    },
+    {
+      "caller_nid": "routes_context_artifacts_createcontextartifactsrouter",
+      "callee": "post",
+      "is_member_call": true,
+      "source_file": "src\\routes\\context_artifacts.js",
+      "source_location": "L216"
+    },
+    {
+      "caller_nid": "routes_context_artifacts_createcontextartifactsrouter",
+      "callee": "post",
+      "is_member_call": true,
+      "source_file": "src\\routes\\context_artifacts.js",
+      "source_location": "L236"
+    },
+    {
+      "caller_nid": "routes_context_artifacts_createcontextartifactsrouter",
+      "callee": "get",
+      "is_member_call": true,
+      "source_file": "src\\routes\\context_artifacts.js",
+      "source_location": "L253"
+    },
+    {
+      "caller_nid": "routes_context_artifacts_createcontextartifactsrouter",
+      "callee": "post",
+      "is_member_call": true,
+      "source_file": "src\\routes\\context_artifacts.js",
+      "source_location": "L264"
+    },
+    {
+      "caller_nid": "routes_context_artifacts_createcontextartifactsrouter",
+      "callee": "get",
+      "is_member_call": true,
+      "source_file": "src\\routes\\context_artifacts.js",
+      "source_location": "L289"
+    },
+    {
+      "caller_nid": "routes_context_artifacts_createcontextartifactsrouter",
+      "callee": "get",
+      "is_member_call": true,
+      "source_file": "src\\routes\\context_artifacts.js",
+      "source_location": "L297"
+    },
+    {
+      "caller_nid": "routes_context_artifacts_createcontextartifactsrouter",
+      "callee": "get",
+      "is_member_call": true,
+      "source_file": "src\\routes\\context_artifacts.js",
+      "source_location": "L323"
+    },
+    {
+      "caller_nid": "routes_context_artifacts_createcontextartifactsrouter",
+      "callee": "post",
+      "is_member_call": true,
+      "source_file": "src\\routes\\context_artifacts.js",
+      "source_location": "L342"
+    }
+  ]
+}

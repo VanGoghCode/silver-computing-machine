@@ -2,4 +2,5 @@
 module.exports = {
   testMatch: ['**/tests/**/*.test.js'],
   collectCoverageFrom: ['src/**/*.js'],
+  testPathIgnorePatterns: ['/node_modules/', '/client/'],
 };

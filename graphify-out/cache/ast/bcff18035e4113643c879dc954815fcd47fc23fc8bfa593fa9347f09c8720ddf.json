@@ -1,0 +1,38 @@
+{
+  "nodes": [
+    {
+      "id": "src_migrations_017_runtime_status_js",
+      "label": "017_runtime_status.js",
+      "file_type": "code",
+      "source_file": "src\\migrations\\017_runtime_status.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "migrations_017_runtime_status_up",
+      "label": "up()",
+      "file_type": "code",
+      "source_file": "src\\migrations\\017_runtime_status.js",
+      "source_location": "L3"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_migrations_017_runtime_status_js",
+      "target": "migrations_017_runtime_status_up",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\migrations\\017_runtime_status.js",
+      "source_location": "L3",
+      "weight": 1.0
+    }
+  ],
+  "raw_calls": [
+    {
+      "caller_nid": "migrations_017_runtime_status_up",
+      "callee": "exec",
+      "is_member_call": true,
+      "source_file": "src\\migrations\\017_runtime_status.js",
+      "source_location": "L4"
+    }
+  ]
+}

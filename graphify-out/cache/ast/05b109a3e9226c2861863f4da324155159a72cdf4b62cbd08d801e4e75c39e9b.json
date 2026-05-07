@@ -1,0 +1,121 @@
+{
+  "nodes": [
+    {
+      "id": "src_routes_permission_profiles_js",
+      "label": "permission_profiles.js",
+      "file_type": "code",
+      "source_file": "src\\routes\\permission_profiles.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "routes_permission_profiles_express",
+      "label": "express",
+      "file_type": "code",
+      "source_file": "src\\routes\\permission_profiles.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "routes_permission_profiles_generateid",
+      "label": "{ generateId }",
+      "file_type": "code",
+      "source_file": "src\\routes\\permission_profiles.js",
+      "source_location": "L2"
+    },
+    {
+      "id": "routes_permission_profiles_createpermissionprofilesrouter",
+      "label": "createPermissionProfilesRouter()",
+      "file_type": "code",
+      "source_file": "src\\routes\\permission_profiles.js",
+      "source_location": "L4"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_routes_permission_profiles_js",
+      "target": "express",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\permission_profiles.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_permission_profiles_js",
+      "target": "routes_permission_profiles_express",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\permission_profiles.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_permission_profiles_js",
+      "target": "src_db_helpers_js",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\permission_profiles.js",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_permission_profiles_js",
+      "target": "db_helpers_generateid",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\permission_profiles.js",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_permission_profiles_js",
+      "target": "routes_permission_profiles_generateid",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\permission_profiles.js",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_permission_profiles_js",
+      "target": "routes_permission_profiles_createpermissionprofilesrouter",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\permission_profiles.js",
+      "source_location": "L4",
+      "weight": 1.0
+    }
+  ],
+  "raw_calls": [
+    {
+      "caller_nid": "routes_permission_profiles_createpermissionprofilesrouter",
+      "callee": "Router",
+      "is_member_call": true,
+      "source_file": "src\\routes\\permission_profiles.js",
+      "source_location": "L5"
+    },
+    {
+      "caller_nid": "routes_permission_profiles_createpermissionprofilesrouter",
+      "callee": "get",
+      "is_member_call": true,
+      "source_file": "src\\routes\\permission_profiles.js",
+      "source_location": "L7"
+    },
+    {
+      "caller_nid": "routes_permission_profiles_createpermissionprofilesrouter",
+      "callee": "post",
+      "is_member_call": true,
+      "source_file": "src\\routes\\permission_profiles.js",
+      "source_location": "L17"
+    },
+    {
+      "caller_nid": "routes_permission_profiles_createpermissionprofilesrouter",
+      "callee": "patch",
+      "is_member_call": true,
+      "source_file": "src\\routes\\permission_profiles.js",
+      "source_location": "L44"
+    }
+  ]
+}

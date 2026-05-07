@@ -1,0 +1,38 @@
+{
+  "nodes": [
+    {
+      "id": "src_db_seed_js",
+      "label": "seed.js",
+      "file_type": "code",
+      "source_file": "src\\db\\seed.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "db_seed_runseeds",
+      "label": "runSeeds()",
+      "file_type": "code",
+      "source_file": "src\\db\\seed.js",
+      "source_location": "L1"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_db_seed_js",
+      "target": "db_seed_runseeds",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\db\\seed.js",
+      "source_location": "L1",
+      "weight": 1.0
+    }
+  ],
+  "raw_calls": [
+    {
+      "caller_nid": "db_seed_runseeds",
+      "callee": "run",
+      "is_member_call": true,
+      "source_file": "src\\db\\seed.js",
+      "source_location": "L3"
+    }
+  ]
+}

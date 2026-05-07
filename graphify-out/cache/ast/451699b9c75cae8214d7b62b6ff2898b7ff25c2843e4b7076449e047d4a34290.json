@@ -1,0 +1,112 @@
+{
+  "nodes": [
+    {
+      "id": "tests_auth_test_js",
+      "label": "auth.test.js",
+      "file_type": "code",
+      "source_file": "tests\\auth.test.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "tests_auth_test_request",
+      "label": "request",
+      "file_type": "code",
+      "source_file": "tests\\auth.test.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "tests_auth_test_createtestdb_createtestapp_inserttestagent",
+      "label": "{ createTestDb, createTestApp, insertTestAgent }",
+      "file_type": "code",
+      "source_file": "tests\\auth.test.js",
+      "source_location": "L2"
+    },
+    {
+      "id": "tests_auth_test_token",
+      "label": "{ token }",
+      "file_type": "code",
+      "source_file": "tests\\auth.test.js",
+      "source_location": "L36"
+    }
+  ],
+  "edges": [
+    {
+      "source": "tests_auth_test_js",
+      "target": "supertest",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests\\auth.test.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_auth_test_js",
+      "target": "tests_auth_test_request",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests\\auth.test.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_auth_test_js",
+      "target": "tests_helpers_js",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests\\auth.test.js",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_auth_test_js",
+      "target": "tests_helpers_createtestdb",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests\\auth.test.js",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_auth_test_js",
+      "target": "tests_helpers_createtestapp",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests\\auth.test.js",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_auth_test_js",
+      "target": "tests_helpers_inserttestagent",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests\\auth.test.js",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_auth_test_js",
+      "target": "tests_auth_test_createtestdb_createtestapp_inserttestagent",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests\\auth.test.js",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_auth_test_js",
+      "target": "tests_auth_test_token",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests\\auth.test.js",
+      "source_location": "L36",
+      "weight": 1.0
+    }
+  ],
+  "raw_calls": []
+}

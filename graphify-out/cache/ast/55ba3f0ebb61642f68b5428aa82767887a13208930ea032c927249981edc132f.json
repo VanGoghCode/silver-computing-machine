@@ -1,0 +1,85 @@
+{
+  "nodes": [
+    {
+      "id": "src_config_js",
+      "label": "config.js",
+      "file_type": "code",
+      "source_file": "src\\config.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_config_path",
+      "label": "path",
+      "file_type": "code",
+      "source_file": "src\\config.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_config_loadconfig",
+      "label": "loadConfig()",
+      "file_type": "code",
+      "source_file": "src\\config.js",
+      "source_location": "L3"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_config_js",
+      "target": "path",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\config.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_config_js",
+      "target": "src_config_path",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\config.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_config_js",
+      "target": "src_config_loadconfig",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\config.js",
+      "source_location": "L3",
+      "weight": 1.0
+    }
+  ],
+  "raw_calls": [
+    {
+      "caller_nid": "src_config_loadconfig",
+      "callee": "parseInt",
+      "is_member_call": false,
+      "source_file": "src\\config.js",
+      "source_location": "L4"
+    },
+    {
+      "caller_nid": "src_config_loadconfig",
+      "callee": "join",
+      "is_member_call": true,
+      "source_file": "src\\config.js",
+      "source_location": "L6"
+    },
+    {
+      "caller_nid": "src_config_loadconfig",
+      "callee": "join",
+      "is_member_call": true,
+      "source_file": "src\\config.js",
+      "source_location": "L8"
+    },
+    {
+      "caller_nid": "src_config_loadconfig",
+      "callee": "parseInt",
+      "is_member_call": false,
+      "source_file": "src\\config.js",
+      "source_location": "L10"
+    }
+  ]
+}

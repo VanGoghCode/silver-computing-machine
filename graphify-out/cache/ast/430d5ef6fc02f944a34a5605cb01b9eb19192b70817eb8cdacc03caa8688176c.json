@@ -1,0 +1,209 @@
+{
+  "nodes": [
+    {
+      "id": "src_db_index_js",
+      "label": "index.js",
+      "file_type": "code",
+      "source_file": "src\\db\\index.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "db_index_database",
+      "label": "Database",
+      "file_type": "code",
+      "source_file": "src\\db\\index.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "db_index_path",
+      "label": "path",
+      "file_type": "code",
+      "source_file": "src\\db\\index.js",
+      "source_location": "L2"
+    },
+    {
+      "id": "db_index_fs",
+      "label": "fs",
+      "file_type": "code",
+      "source_file": "src\\db\\index.js",
+      "source_location": "L3"
+    },
+    {
+      "id": "db_index_createdatabase",
+      "label": "createDatabase()",
+      "file_type": "code",
+      "source_file": "src\\db\\index.js",
+      "source_location": "L7"
+    },
+    {
+      "id": "db_index_getdatabase",
+      "label": "getDatabase()",
+      "file_type": "code",
+      "source_file": "src\\db\\index.js",
+      "source_location": "L32"
+    },
+    {
+      "id": "db_index_closedatabase",
+      "label": "closeDatabase()",
+      "file_type": "code",
+      "source_file": "src\\db\\index.js",
+      "source_location": "L37"
+    },
+    {
+      "id": "db_index_resetfortesting",
+      "label": "resetForTesting()",
+      "file_type": "code",
+      "source_file": "src\\db\\index.js",
+      "source_location": "L44"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_db_index_js",
+      "target": "better_sqlite3",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\db\\index.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_db_index_js",
+      "target": "db_index_database",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\db\\index.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_db_index_js",
+      "target": "path",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\db\\index.js",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_db_index_js",
+      "target": "db_index_path",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\db\\index.js",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_db_index_js",
+      "target": "fs",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\db\\index.js",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_db_index_js",
+      "target": "db_index_fs",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\db\\index.js",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_db_index_js",
+      "target": "db_index_createdatabase",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\db\\index.js",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "src_db_index_js",
+      "target": "db_index_getdatabase",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\db\\index.js",
+      "source_location": "L32",
+      "weight": 1.0
+    },
+    {
+      "source": "src_db_index_js",
+      "target": "db_index_closedatabase",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\db\\index.js",
+      "source_location": "L37",
+      "weight": 1.0
+    },
+    {
+      "source": "src_db_index_js",
+      "target": "db_index_resetfortesting",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\db\\index.js",
+      "source_location": "L44",
+      "weight": 1.0
+    },
+    {
+      "source": "db_index_resetfortesting",
+      "target": "db_index_closedatabase",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\db\\index.js",
+      "source_location": "L45",
+      "weight": 1.0
+    }
+  ],
+  "raw_calls": [
+    {
+      "caller_nid": "db_index_createdatabase",
+      "callee": "dirname",
+      "is_member_call": true,
+      "source_file": "src\\db\\index.js",
+      "source_location": "L12"
+    },
+    {
+      "caller_nid": "db_index_createdatabase",
+      "callee": "existsSync",
+      "is_member_call": true,
+      "source_file": "src\\db\\index.js",
+      "source_location": "L13"
+    },
+    {
+      "caller_nid": "db_index_createdatabase",
+      "callee": "mkdirSync",
+      "is_member_call": true,
+      "source_file": "src\\db\\index.js",
+      "source_location": "L14"
+    },
+    {
+      "caller_nid": "db_index_createdatabase",
+      "callee": "pragma",
+      "is_member_call": true,
+      "source_file": "src\\db\\index.js",
+      "source_location": "L22"
+    },
+    {
+      "caller_nid": "db_index_createdatabase",
+      "callee": "pragma",
+      "is_member_call": true,
+      "source_file": "src\\db\\index.js",
+      "source_location": "L26"
+    },
+    {
+      "caller_nid": "db_index_closedatabase",
+      "callee": "close",
+      "is_member_call": true,
+      "source_file": "src\\db\\index.js",
+      "source_location": "L39"
+    }
+  ]
+}

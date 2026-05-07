@@ -1,0 +1,38 @@
+{
+  "nodes": [
+    {
+      "id": "src_seeds_human_local_owner_js",
+      "label": "human_local_owner.js",
+      "file_type": "code",
+      "source_file": "src\\seeds\\human_local_owner.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "seeds_human_local_owner_run",
+      "label": "run()",
+      "file_type": "code",
+      "source_file": "src\\seeds\\human_local_owner.js",
+      "source_location": "L3"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_seeds_human_local_owner_js",
+      "target": "seeds_human_local_owner_run",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\seeds\\human_local_owner.js",
+      "source_location": "L3",
+      "weight": 1.0
+    }
+  ],
+  "raw_calls": [
+    {
+      "caller_nid": "seeds_human_local_owner_run",
+      "callee": "prepare",
+      "is_member_call": true,
+      "source_file": "src\\seeds\\human_local_owner.js",
+      "source_location": "L4"
+    }
+  ]
+}

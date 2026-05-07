@@ -1,0 +1,387 @@
+{
+  "nodes": [
+    {
+      "id": "src_services_graphify_js",
+      "label": "graphify.js",
+      "file_type": "code",
+      "source_file": "src\\services\\graphify.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "services_graphify_execfilesync",
+      "label": "{ execFileSync }",
+      "file_type": "code",
+      "source_file": "src\\services\\graphify.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "services_graphify_fs",
+      "label": "fs",
+      "file_type": "code",
+      "source_file": "src\\services\\graphify.js",
+      "source_location": "L2"
+    },
+    {
+      "id": "services_graphify_path",
+      "label": "path",
+      "file_type": "code",
+      "source_file": "src\\services\\graphify.js",
+      "source_location": "L3"
+    },
+    {
+      "id": "services_graphify_generateid",
+      "label": "{ generateId }",
+      "file_type": "code",
+      "source_file": "src\\services\\graphify.js",
+      "source_location": "L4"
+    },
+    {
+      "id": "services_graphify_creategraphifyrun",
+      "label": "createGraphifyRun()",
+      "file_type": "code",
+      "source_file": "src\\services\\graphify.js",
+      "source_location": "L8"
+    },
+    {
+      "id": "services_graphify_listgraphifyruns",
+      "label": "listGraphifyRuns()",
+      "file_type": "code",
+      "source_file": "src\\services\\graphify.js",
+      "source_location": "L61"
+    },
+    {
+      "id": "services_graphify_querygraphify",
+      "label": "queryGraphify()",
+      "file_type": "code",
+      "source_file": "src\\services\\graphify.js",
+      "source_location": "L67"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_services_graphify_js",
+      "target": "child_process",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\graphify.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_graphify_js",
+      "target": "services_graphify_execfilesync",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\graphify.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_graphify_js",
+      "target": "fs",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\graphify.js",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_graphify_js",
+      "target": "services_graphify_fs",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\graphify.js",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_graphify_js",
+      "target": "path",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\graphify.js",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_graphify_js",
+      "target": "services_graphify_path",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\graphify.js",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_graphify_js",
+      "target": "src_db_helpers_js",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\graphify.js",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_graphify_js",
+      "target": "db_helpers_generateid",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\graphify.js",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_graphify_js",
+      "target": "services_graphify_generateid",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\graphify.js",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_graphify_js",
+      "target": "services_graphify_creategraphifyrun",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\graphify.js",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_graphify_js",
+      "target": "services_graphify_listgraphifyruns",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\graphify.js",
+      "source_location": "L61",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_graphify_js",
+      "target": "services_graphify_querygraphify",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\graphify.js",
+      "source_location": "L67",
+      "weight": 1.0
+    }
+  ],
+  "raw_calls": [
+    {
+      "caller_nid": "services_graphify_creategraphifyrun",
+      "callee": "generateId",
+      "is_member_call": false,
+      "source_file": "src\\services\\graphify.js",
+      "source_location": "L9"
+    },
+    {
+      "caller_nid": "services_graphify_creategraphifyrun",
+      "callee": "split",
+      "is_member_call": true,
+      "source_file": "src\\services\\graphify.js",
+      "source_location": "L11"
+    },
+    {
+      "caller_nid": "services_graphify_creategraphifyrun",
+      "callee": "slice",
+      "is_member_call": true,
+      "source_file": "src\\services\\graphify.js",
+      "source_location": "L13"
+    },
+    {
+      "caller_nid": "services_graphify_creategraphifyrun",
+      "callee": "test",
+      "is_member_call": true,
+      "source_file": "src\\services\\graphify.js",
+      "source_location": "L16"
+    },
+    {
+      "caller_nid": "services_graphify_creategraphifyrun",
+      "callee": "run",
+      "is_member_call": true,
+      "source_file": "src\\services\\graphify.js",
+      "source_location": "L17"
+    },
+    {
+      "caller_nid": "services_graphify_creategraphifyrun",
+      "callee": "prepare",
+      "is_member_call": true,
+      "source_file": "src\\services\\graphify.js",
+      "source_location": "L17"
+    },
+    {
+      "caller_nid": "services_graphify_creategraphifyrun",
+      "callee": "get",
+      "is_member_call": true,
+      "source_file": "src\\services\\graphify.js",
+      "source_location": "L21"
+    },
+    {
+      "caller_nid": "services_graphify_creategraphifyrun",
+      "callee": "prepare",
+      "is_member_call": true,
+      "source_file": "src\\services\\graphify.js",
+      "source_location": "L21"
+    },
+    {
+      "caller_nid": "services_graphify_creategraphifyrun",
+      "callee": "run",
+      "is_member_call": true,
+      "source_file": "src\\services\\graphify.js",
+      "source_location": "L24"
+    },
+    {
+      "caller_nid": "services_graphify_creategraphifyrun",
+      "callee": "prepare",
+      "is_member_call": true,
+      "source_file": "src\\services\\graphify.js",
+      "source_location": "L24"
+    },
+    {
+      "caller_nid": "services_graphify_creategraphifyrun",
+      "callee": "execFileSync",
+      "is_member_call": false,
+      "source_file": "src\\services\\graphify.js",
+      "source_location": "L31"
+    },
+    {
+      "caller_nid": "services_graphify_creategraphifyrun",
+      "callee": "get",
+      "is_member_call": true,
+      "source_file": "src\\services\\graphify.js",
+      "source_location": "L34"
+    },
+    {
+      "caller_nid": "services_graphify_creategraphifyrun",
+      "callee": "prepare",
+      "is_member_call": true,
+      "source_file": "src\\services\\graphify.js",
+      "source_location": "L34"
+    },
+    {
+      "caller_nid": "services_graphify_creategraphifyrun",
+      "callee": "join",
+      "is_member_call": true,
+      "source_file": "src\\services\\graphify.js",
+      "source_location": "L39"
+    },
+    {
+      "caller_nid": "services_graphify_creategraphifyrun",
+      "callee": "existsSync",
+      "is_member_call": true,
+      "source_file": "src\\services\\graphify.js",
+      "source_location": "L40"
+    },
+    {
+      "caller_nid": "services_graphify_creategraphifyrun",
+      "callee": "join",
+      "is_member_call": true,
+      "source_file": "src\\services\\graphify.js",
+      "source_location": "L42"
+    },
+    {
+      "caller_nid": "services_graphify_creategraphifyrun",
+      "callee": "existsSync",
+      "is_member_call": true,
+      "source_file": "src\\services\\graphify.js",
+      "source_location": "L43"
+    },
+    {
+      "caller_nid": "services_graphify_creategraphifyrun",
+      "callee": "substring",
+      "is_member_call": true,
+      "source_file": "src\\services\\graphify.js",
+      "source_location": "L44"
+    },
+    {
+      "caller_nid": "services_graphify_creategraphifyrun",
+      "callee": "readFileSync",
+      "is_member_call": true,
+      "source_file": "src\\services\\graphify.js",
+      "source_location": "L44"
+    },
+    {
+      "caller_nid": "services_graphify_creategraphifyrun",
+      "callee": "run",
+      "is_member_call": true,
+      "source_file": "src\\services\\graphify.js",
+      "source_location": "L49"
+    },
+    {
+      "caller_nid": "services_graphify_creategraphifyrun",
+      "callee": "prepare",
+      "is_member_call": true,
+      "source_file": "src\\services\\graphify.js",
+      "source_location": "L49"
+    },
+    {
+      "caller_nid": "services_graphify_creategraphifyrun",
+      "callee": "run",
+      "is_member_call": true,
+      "source_file": "src\\services\\graphify.js",
+      "source_location": "L53"
+    },
+    {
+      "caller_nid": "services_graphify_creategraphifyrun",
+      "callee": "prepare",
+      "is_member_call": true,
+      "source_file": "src\\services\\graphify.js",
+      "source_location": "L53"
+    },
+    {
+      "caller_nid": "services_graphify_creategraphifyrun",
+      "callee": "get",
+      "is_member_call": true,
+      "source_file": "src\\services\\graphify.js",
+      "source_location": "L58"
+    },
+    {
+      "caller_nid": "services_graphify_creategraphifyrun",
+      "callee": "prepare",
+      "is_member_call": true,
+      "source_file": "src\\services\\graphify.js",
+      "source_location": "L58"
+    },
+    {
+      "caller_nid": "services_graphify_listgraphifyruns",
+      "callee": "all",
+      "is_member_call": true,
+      "source_file": "src\\services\\graphify.js",
+      "source_location": "L62"
+    },
+    {
+      "caller_nid": "services_graphify_listgraphifyruns",
+      "callee": "prepare",
+      "is_member_call": true,
+      "source_file": "src\\services\\graphify.js",
+      "source_location": "L62"
+    },
+    {
+      "caller_nid": "services_graphify_querygraphify",
+      "callee": "all",
+      "is_member_call": true,
+      "source_file": "src\\services\\graphify.js",
+      "source_location": "L70"
+    },
+    {
+      "caller_nid": "services_graphify_querygraphify",
+      "callee": "prepare",
+      "is_member_call": true,
+      "source_file": "src\\services\\graphify.js",
+      "source_location": "L70"
+    },
+    {
+      "caller_nid": "services_graphify_querygraphify",
+      "callee": "map",
+      "is_member_call": true,
+      "source_file": "src\\services\\graphify.js",
+      "source_location": "L76"
+    }
+  ]
+}

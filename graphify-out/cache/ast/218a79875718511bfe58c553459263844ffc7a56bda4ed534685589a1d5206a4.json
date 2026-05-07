@@ -1,0 +1,151 @@
+{
+  "nodes": [
+    {
+      "id": "src_routes_alignment_sessions_js",
+      "label": "alignment_sessions.js",
+      "file_type": "code",
+      "source_file": "src\\routes\\alignment_sessions.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "routes_alignment_sessions_express",
+      "label": "express",
+      "file_type": "code",
+      "source_file": "src\\routes\\alignment_sessions.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "routes_alignment_sessions_generateid",
+      "label": "{ generateId }",
+      "file_type": "code",
+      "source_file": "src\\routes\\alignment_sessions.js",
+      "source_location": "L2"
+    },
+    {
+      "id": "routes_alignment_sessions_leadership_roles",
+      "label": "LEADERSHIP_ROLES",
+      "file_type": "code",
+      "source_file": "src\\routes\\alignment_sessions.js",
+      "source_location": "L4"
+    },
+    {
+      "id": "routes_alignment_sessions_createalignmentsessionsrouter",
+      "label": "createAlignmentSessionsRouter()",
+      "file_type": "code",
+      "source_file": "src\\routes\\alignment_sessions.js",
+      "source_location": "L6"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_routes_alignment_sessions_js",
+      "target": "express",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\alignment_sessions.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_alignment_sessions_js",
+      "target": "routes_alignment_sessions_express",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\alignment_sessions.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_alignment_sessions_js",
+      "target": "src_db_helpers_js",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\alignment_sessions.js",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_alignment_sessions_js",
+      "target": "db_helpers_generateid",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\alignment_sessions.js",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_alignment_sessions_js",
+      "target": "routes_alignment_sessions_generateid",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\alignment_sessions.js",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_alignment_sessions_js",
+      "target": "routes_alignment_sessions_leadership_roles",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\alignment_sessions.js",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_alignment_sessions_js",
+      "target": "routes_alignment_sessions_createalignmentsessionsrouter",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\alignment_sessions.js",
+      "source_location": "L6",
+      "weight": 1.0
+    }
+  ],
+  "raw_calls": [
+    {
+      "caller_nid": "routes_alignment_sessions_createalignmentsessionsrouter",
+      "callee": "Router",
+      "is_member_call": true,
+      "source_file": "src\\routes\\alignment_sessions.js",
+      "source_location": "L7"
+    },
+    {
+      "caller_nid": "routes_alignment_sessions_createalignmentsessionsrouter",
+      "callee": "use",
+      "is_member_call": true,
+      "source_file": "src\\routes\\alignment_sessions.js",
+      "source_location": "L8"
+    },
+    {
+      "caller_nid": "routes_alignment_sessions_createalignmentsessionsrouter",
+      "callee": "post",
+      "is_member_call": true,
+      "source_file": "src\\routes\\alignment_sessions.js",
+      "source_location": "L11"
+    },
+    {
+      "caller_nid": "routes_alignment_sessions_createalignmentsessionsrouter",
+      "callee": "get",
+      "is_member_call": true,
+      "source_file": "src\\routes\\alignment_sessions.js",
+      "source_location": "L80"
+    },
+    {
+      "caller_nid": "routes_alignment_sessions_createalignmentsessionsrouter",
+      "callee": "get",
+      "is_member_call": true,
+      "source_file": "src\\routes\\alignment_sessions.js",
+      "source_location": "L88"
+    },
+    {
+      "caller_nid": "routes_alignment_sessions_createalignmentsessionsrouter",
+      "callee": "patch",
+      "is_member_call": true,
+      "source_file": "src\\routes\\alignment_sessions.js",
+      "source_location": "L106"
+    }
+  ]
+}

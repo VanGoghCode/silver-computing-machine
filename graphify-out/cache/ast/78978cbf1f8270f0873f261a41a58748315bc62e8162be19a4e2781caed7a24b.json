@@ -1,0 +1,94 @@
+{
+  "nodes": [
+    {
+      "id": "src_db_helpers_js",
+      "label": "helpers.js",
+      "file_type": "code",
+      "source_file": "src\\db\\helpers.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "db_helpers_crypto",
+      "label": "crypto",
+      "file_type": "code",
+      "source_file": "src\\db\\helpers.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "db_helpers_generateid",
+      "label": "generateId()",
+      "file_type": "code",
+      "source_file": "src\\db\\helpers.js",
+      "source_location": "L3"
+    },
+    {
+      "id": "db_helpers_withtransaction",
+      "label": "withTransaction()",
+      "file_type": "code",
+      "source_file": "src\\db\\helpers.js",
+      "source_location": "L7"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_db_helpers_js",
+      "target": "crypto",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\db\\helpers.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_db_helpers_js",
+      "target": "db_helpers_crypto",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\db\\helpers.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_db_helpers_js",
+      "target": "db_helpers_generateid",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\db\\helpers.js",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_db_helpers_js",
+      "target": "db_helpers_withtransaction",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\db\\helpers.js",
+      "source_location": "L7",
+      "weight": 1.0
+    }
+  ],
+  "raw_calls": [
+    {
+      "caller_nid": "db_helpers_generateid",
+      "callee": "randomUUID",
+      "is_member_call": true,
+      "source_file": "src\\db\\helpers.js",
+      "source_location": "L4"
+    },
+    {
+      "caller_nid": "db_helpers_withtransaction",
+      "callee": "db.transaction(fn)",
+      "is_member_call": false,
+      "source_file": "src\\db\\helpers.js",
+      "source_location": "L8"
+    },
+    {
+      "caller_nid": "db_helpers_withtransaction",
+      "callee": "transaction",
+      "is_member_call": true,
+      "source_file": "src\\db\\helpers.js",
+      "source_location": "L8"
+    }
+  ]
+}

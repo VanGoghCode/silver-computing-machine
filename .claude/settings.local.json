@@ -16,7 +16,24 @@
       "Bash(ls:*)",
       "Bash(python3:*)",
       "Bash(npx eslint:*)",
-      "Bash(node -e ':*)"
+      "Bash(node -e ':*)",
+      "Bash(grep -E \"^-.*\\\\.js$\")",
+      "Bash(awk '{print $9}')",
+      "Bash(npm create:*)",
+      "Bash(npx vite:*)",
+      "Bash(timeout 5 node server.js)",
+      "Bash(where python:*)",
+      "Bash(where python3:*)",
+      "Bash(where py:*)",
+      "Bash(py -c \"from graphify.watch import _rebuild_code; from pathlib import Path; _rebuild_code\\(Path\\('.'\\)\\)\")",
+      "Bash(py -m pip list)",
+      "Bash(where graphify:*)",
+      "Bash(graphify)",
+      "Bash(graphify build:*)",
+      "Bash(graphify --help)",
+      "Bash(py -c \"import graphify\")",
+      "Bash(py -m pip install graphifyy -q)",
+      "Bash(py -c ':*)"
     ]
   }
 }

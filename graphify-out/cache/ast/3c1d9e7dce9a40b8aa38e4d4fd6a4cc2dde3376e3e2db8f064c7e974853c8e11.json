@@ -1,0 +1,304 @@
+{
+  "nodes": [
+    {
+      "id": "src_routes_agents_js",
+      "label": "agents.js",
+      "file_type": "code",
+      "source_file": "src\\routes\\agents.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "routes_agents_express",
+      "label": "express",
+      "file_type": "code",
+      "source_file": "src\\routes\\agents.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "routes_agents_updateheartbeat",
+      "label": "{ updateHeartbeat }",
+      "file_type": "code",
+      "source_file": "src\\routes\\agents.js",
+      "source_location": "L2"
+    },
+    {
+      "id": "routes_agents_createagent_rotateagenttoken_revokeagent_listagents_getagent",
+      "label": "{\n  createAgent,\n  rotateAgentToken,\n  revokeAgent,\n  listAgents,\n  getAgent,\n}",
+      "file_type": "code",
+      "source_file": "src\\routes\\agents.js",
+      "source_location": "L3"
+    },
+    {
+      "id": "routes_agents_assembleprompt",
+      "label": "{ assemblePrompt }",
+      "file_type": "code",
+      "source_file": "src\\routes\\agents.js",
+      "source_location": "L10"
+    },
+    {
+      "id": "routes_agents_valid_worker_statuses",
+      "label": "{ VALID_WORKER_STATUSES }",
+      "file_type": "code",
+      "source_file": "src\\routes\\agents.js",
+      "source_location": "L11"
+    },
+    {
+      "id": "routes_agents_createagentsrouter",
+      "label": "createAgentsRouter()",
+      "file_type": "code",
+      "source_file": "src\\routes\\agents.js",
+      "source_location": "L13"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_routes_agents_js",
+      "target": "express",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\agents.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_agents_js",
+      "target": "routes_agents_express",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\agents.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_agents_js",
+      "target": "src_services_agents_js",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\agents.js",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_agents_js",
+      "target": "services_agents_updateheartbeat",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\agents.js",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_agents_js",
+      "target": "routes_agents_updateheartbeat",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\agents.js",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_agents_js",
+      "target": "src_services_agent_tokens_js",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\agents.js",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_agents_js",
+      "target": "services_agent_tokens_createagent",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\agents.js",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_agents_js",
+      "target": "services_agent_tokens_rotateagenttoken",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\agents.js",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_agents_js",
+      "target": "services_agent_tokens_revokeagent",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\agents.js",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_agents_js",
+      "target": "services_agent_tokens_listagents",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\agents.js",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_agents_js",
+      "target": "services_agent_tokens_getagent",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\agents.js",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_agents_js",
+      "target": "routes_agents_createagent_rotateagenttoken_revokeagent_listagents_getagent",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\agents.js",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_agents_js",
+      "target": "src_services_prompt_assembler_js",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\agents.js",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_agents_js",
+      "target": "services_prompt_assembler_assembleprompt",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\agents.js",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_agents_js",
+      "target": "routes_agents_assembleprompt",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\agents.js",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_agents_js",
+      "target": "src_services_heartbeat_js",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\agents.js",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_agents_js",
+      "target": "services_heartbeat_valid_worker_statuses",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\agents.js",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_agents_js",
+      "target": "routes_agents_valid_worker_statuses",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\agents.js",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_agents_js",
+      "target": "routes_agents_createagentsrouter",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\agents.js",
+      "source_location": "L13",
+      "weight": 1.0
+    }
+  ],
+  "raw_calls": [
+    {
+      "caller_nid": "routes_agents_createagentsrouter",
+      "callee": "Router",
+      "is_member_call": true,
+      "source_file": "src\\routes\\agents.js",
+      "source_location": "L14"
+    },
+    {
+      "caller_nid": "routes_agents_createagentsrouter",
+      "callee": "post",
+      "is_member_call": true,
+      "source_file": "src\\routes\\agents.js",
+      "source_location": "L18"
+    },
+    {
+      "caller_nid": "routes_agents_createagentsrouter",
+      "callee": "get",
+      "is_member_call": true,
+      "source_file": "src\\routes\\agents.js",
+      "source_location": "L37"
+    },
+    {
+      "caller_nid": "routes_agents_createagentsrouter",
+      "callee": "get",
+      "is_member_call": true,
+      "source_file": "src\\routes\\agents.js",
+      "source_location": "L42"
+    },
+    {
+      "caller_nid": "routes_agents_createagentsrouter",
+      "callee": "get",
+      "is_member_call": true,
+      "source_file": "src\\routes\\agents.js",
+      "source_location": "L65"
+    },
+    {
+      "caller_nid": "routes_agents_createagentsrouter",
+      "callee": "post",
+      "is_member_call": true,
+      "source_file": "src\\routes\\agents.js",
+      "source_location": "L74"
+    },
+    {
+      "caller_nid": "routes_agents_createagentsrouter",
+      "callee": "post",
+      "is_member_call": true,
+      "source_file": "src\\routes\\agents.js",
+      "source_location": "L89"
+    },
+    {
+      "caller_nid": "routes_agents_createagentsrouter",
+      "callee": "post",
+      "is_member_call": true,
+      "source_file": "src\\routes\\agents.js",
+      "source_location": "L99"
+    },
+    {
+      "caller_nid": "routes_agents_createagentsrouter",
+      "callee": "get",
+      "is_member_call": true,
+      "source_file": "src\\routes\\agents.js",
+      "source_location": "L119"
+    }
+  ]
+}

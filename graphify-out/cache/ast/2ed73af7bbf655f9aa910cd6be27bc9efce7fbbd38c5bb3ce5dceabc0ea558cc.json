@@ -1,0 +1,236 @@
+{
+  "nodes": [
+    {
+      "id": "src_services_prompt_assembler_js",
+      "label": "prompt_assembler.js",
+      "file_type": "code",
+      "source_file": "src\\services\\prompt_assembler.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "services_prompt_assembler_global_section_order",
+      "label": "GLOBAL_SECTION_ORDER",
+      "file_type": "code",
+      "source_file": "src\\services\\prompt_assembler.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "services_prompt_assembler_role_section_order",
+      "label": "ROLE_SECTION_ORDER",
+      "file_type": "code",
+      "source_file": "src\\services\\prompt_assembler.js",
+      "source_location": "L11"
+    },
+    {
+      "id": "services_prompt_assembler_assembleprompt",
+      "label": "assemblePrompt()",
+      "file_type": "code",
+      "source_file": "src\\services\\prompt_assembler.js",
+      "source_location": "L15"
+    },
+    {
+      "id": "services_prompt_assembler_assembledynamiccontext",
+      "label": "assembleDynamicContext()",
+      "file_type": "code",
+      "source_file": "src\\services\\prompt_assembler.js",
+      "source_location": "L114"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_services_prompt_assembler_js",
+      "target": "services_prompt_assembler_global_section_order",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\prompt_assembler.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_prompt_assembler_js",
+      "target": "services_prompt_assembler_role_section_order",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\prompt_assembler.js",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_prompt_assembler_js",
+      "target": "services_prompt_assembler_assembleprompt",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\prompt_assembler.js",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_prompt_assembler_js",
+      "target": "services_prompt_assembler_assembledynamiccontext",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\prompt_assembler.js",
+      "source_location": "L114",
+      "weight": 1.0
+    },
+    {
+      "source": "services_prompt_assembler_assembleprompt",
+      "target": "services_prompt_assembler_assembledynamiccontext",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\prompt_assembler.js",
+      "source_location": "L104",
+      "weight": 1.0
+    }
+  ],
+  "raw_calls": [
+    {
+      "caller_nid": "services_prompt_assembler_assembleprompt",
+      "callee": "get",
+      "is_member_call": true,
+      "source_file": "src\\services\\prompt_assembler.js",
+      "source_location": "L17"
+    },
+    {
+      "caller_nid": "services_prompt_assembler_assembleprompt",
+      "callee": "prepare",
+      "is_member_call": true,
+      "source_file": "src\\services\\prompt_assembler.js",
+      "source_location": "L17"
+    },
+    {
+      "caller_nid": "services_prompt_assembler_assembleprompt",
+      "callee": "all",
+      "is_member_call": true,
+      "source_file": "src\\services\\prompt_assembler.js",
+      "source_location": "L40"
+    },
+    {
+      "caller_nid": "services_prompt_assembler_assembleprompt",
+      "callee": "prepare",
+      "is_member_call": true,
+      "source_file": "src\\services\\prompt_assembler.js",
+      "source_location": "L40"
+    },
+    {
+      "caller_nid": "services_prompt_assembler_assembleprompt",
+      "callee": "all",
+      "is_member_call": true,
+      "source_file": "src\\services\\prompt_assembler.js",
+      "source_location": "L45"
+    },
+    {
+      "caller_nid": "services_prompt_assembler_assembleprompt",
+      "callee": "prepare",
+      "is_member_call": true,
+      "source_file": "src\\services\\prompt_assembler.js",
+      "source_location": "L45"
+    },
+    {
+      "caller_nid": "services_prompt_assembler_assembleprompt",
+      "callee": "find",
+      "is_member_call": true,
+      "source_file": "src\\services\\prompt_assembler.js",
+      "source_location": "L53"
+    },
+    {
+      "caller_nid": "services_prompt_assembler_assembleprompt",
+      "callee": "push",
+      "is_member_call": true,
+      "source_file": "src\\services\\prompt_assembler.js",
+      "source_location": "L55"
+    },
+    {
+      "caller_nid": "services_prompt_assembler_assembleprompt",
+      "callee": "find",
+      "is_member_call": true,
+      "source_file": "src\\services\\prompt_assembler.js",
+      "source_location": "L65"
+    },
+    {
+      "caller_nid": "services_prompt_assembler_assembleprompt",
+      "callee": "push",
+      "is_member_call": true,
+      "source_file": "src\\services\\prompt_assembler.js",
+      "source_location": "L67"
+    },
+    {
+      "caller_nid": "services_prompt_assembler_assembleprompt",
+      "callee": "get",
+      "is_member_call": true,
+      "source_file": "src\\services\\prompt_assembler.js",
+      "source_location": "L78"
+    },
+    {
+      "caller_nid": "services_prompt_assembler_assembleprompt",
+      "callee": "prepare",
+      "is_member_call": true,
+      "source_file": "src\\services\\prompt_assembler.js",
+      "source_location": "L78"
+    },
+    {
+      "caller_nid": "services_prompt_assembler_assembleprompt",
+      "callee": "parse",
+      "is_member_call": true,
+      "source_file": "src\\services\\prompt_assembler.js",
+      "source_location": "L85"
+    },
+    {
+      "caller_nid": "services_prompt_assembler_assembledynamiccontext",
+      "callee": "push",
+      "is_member_call": true,
+      "source_file": "src\\services\\prompt_assembler.js",
+      "source_location": "L130"
+    },
+    {
+      "caller_nid": "services_prompt_assembler_assembledynamiccontext",
+      "callee": "all",
+      "is_member_call": true,
+      "source_file": "src\\services\\prompt_assembler.js",
+      "source_location": "L132"
+    },
+    {
+      "caller_nid": "services_prompt_assembler_assembledynamiccontext",
+      "callee": "prepare",
+      "is_member_call": true,
+      "source_file": "src\\services\\prompt_assembler.js",
+      "source_location": "L132"
+    },
+    {
+      "caller_nid": "services_prompt_assembler_assembledynamiccontext",
+      "callee": "get",
+      "is_member_call": true,
+      "source_file": "src\\services\\prompt_assembler.js",
+      "source_location": "L137"
+    },
+    {
+      "caller_nid": "services_prompt_assembler_assembledynamiccontext",
+      "callee": "set",
+      "is_member_call": true,
+      "source_file": "src\\services\\prompt_assembler.js",
+      "source_location": "L139"
+    },
+    {
+      "caller_nid": "services_prompt_assembler_assembledynamiccontext",
+      "callee": "map",
+      "is_member_call": true,
+      "source_file": "src\\services\\prompt_assembler.js",
+      "source_location": "L143"
+    },
+    {
+      "caller_nid": "services_prompt_assembler_assembledynamiccontext",
+      "callee": "from",
+      "is_member_call": true,
+      "source_file": "src\\services\\prompt_assembler.js",
+      "source_location": "L143"
+    },
+    {
+      "caller_nid": "services_prompt_assembler_assembledynamiccontext",
+      "callee": "values",
+      "is_member_call": true,
+      "source_file": "src\\services\\prompt_assembler.js",
+      "source_location": "L143"
+    }
+  ]
+}

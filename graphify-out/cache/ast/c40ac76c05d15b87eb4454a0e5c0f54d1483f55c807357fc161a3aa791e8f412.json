@@ -1,0 +1,38 @@
+{
+  "nodes": [
+    {
+      "id": "src_migrations_002_humans_js",
+      "label": "002_humans.js",
+      "file_type": "code",
+      "source_file": "src\\migrations\\002_humans.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "migrations_002_humans_up",
+      "label": "up()",
+      "file_type": "code",
+      "source_file": "src\\migrations\\002_humans.js",
+      "source_location": "L3"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_migrations_002_humans_js",
+      "target": "migrations_002_humans_up",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\migrations\\002_humans.js",
+      "source_location": "L3",
+      "weight": 1.0
+    }
+  ],
+  "raw_calls": [
+    {
+      "caller_nid": "migrations_002_humans_up",
+      "callee": "exec",
+      "is_member_call": true,
+      "source_file": "src\\migrations\\002_humans.js",
+      "source_location": "L4"
+    }
+  ]
+}

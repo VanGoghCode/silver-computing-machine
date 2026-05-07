@@ -1,0 +1,86 @@
+{
+  "nodes": [
+    {
+      "id": "tests_health_test_js",
+      "label": "health.test.js",
+      "file_type": "code",
+      "source_file": "tests\\health.test.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "tests_health_test_request",
+      "label": "request",
+      "file_type": "code",
+      "source_file": "tests\\health.test.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "tests_health_test_createtestdb_createtestapp",
+      "label": "{ createTestDb, createTestApp }",
+      "file_type": "code",
+      "source_file": "tests\\health.test.js",
+      "source_location": "L2"
+    }
+  ],
+  "edges": [
+    {
+      "source": "tests_health_test_js",
+      "target": "supertest",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests\\health.test.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_health_test_js",
+      "target": "tests_health_test_request",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests\\health.test.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_health_test_js",
+      "target": "tests_helpers_js",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests\\health.test.js",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_health_test_js",
+      "target": "tests_helpers_createtestdb",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests\\health.test.js",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_health_test_js",
+      "target": "tests_helpers_createtestapp",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests\\health.test.js",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_health_test_js",
+      "target": "tests_health_test_createtestdb_createtestapp",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests\\health.test.js",
+      "source_location": "L2",
+      "weight": 1.0
+    }
+  ],
+  "raw_calls": []
+}

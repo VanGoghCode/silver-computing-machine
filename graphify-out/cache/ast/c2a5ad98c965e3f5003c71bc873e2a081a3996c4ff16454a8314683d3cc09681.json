@@ -1,0 +1,97 @@
+{
+  "nodes": [
+    {
+      "id": "src_seeds_role_templates_js",
+      "label": "role_templates.js",
+      "file_type": "code",
+      "source_file": "src\\seeds\\role_templates.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "seeds_role_templates_generateid",
+      "label": "{ generateId }",
+      "file_type": "code",
+      "source_file": "src\\seeds\\role_templates.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "seeds_role_templates_roles",
+      "label": "ROLES",
+      "file_type": "code",
+      "source_file": "src\\seeds\\role_templates.js",
+      "source_location": "L3"
+    },
+    {
+      "id": "seeds_role_templates_run",
+      "label": "run()",
+      "file_type": "code",
+      "source_file": "src\\seeds\\role_templates.js",
+      "source_location": "L69"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_seeds_role_templates_js",
+      "target": "src_db_helpers_js",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\seeds\\role_templates.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_seeds_role_templates_js",
+      "target": "db_helpers_generateid",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\seeds\\role_templates.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_seeds_role_templates_js",
+      "target": "seeds_role_templates_generateid",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\seeds\\role_templates.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_seeds_role_templates_js",
+      "target": "seeds_role_templates_roles",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\seeds\\role_templates.js",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_seeds_role_templates_js",
+      "target": "seeds_role_templates_run",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\seeds\\role_templates.js",
+      "source_location": "L69",
+      "weight": 1.0
+    }
+  ],
+  "raw_calls": [
+    {
+      "caller_nid": "seeds_role_templates_run",
+      "callee": "prepare",
+      "is_member_call": true,
+      "source_file": "src\\seeds\\role_templates.js",
+      "source_location": "L70"
+    },
+    {
+      "caller_nid": "seeds_role_templates_run",
+      "callee": "generateId",
+      "is_member_call": false,
+      "source_file": "src\\seeds\\role_templates.js",
+      "source_location": "L76"
+    }
+  ]
+}

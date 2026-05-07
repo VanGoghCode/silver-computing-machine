@@ -24,6 +24,8 @@ const migrations = [
   require('../src/migrations/015_conversations'),
   require('../src/migrations/016_local_prs'),
   require('../src/migrations/017_runtime_status'),
+  require('../src/migrations/018_graphify_runs'),
+  require('../src/migrations/019_audit_runs'),
 ];
 
 const seeds = [

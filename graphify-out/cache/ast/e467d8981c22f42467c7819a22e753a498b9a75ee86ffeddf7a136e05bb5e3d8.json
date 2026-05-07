@@ -1,0 +1,38 @@
+{
+  "nodes": [
+    {
+      "id": "src_migrations_004_model_profiles_js",
+      "label": "004_model_profiles.js",
+      "file_type": "code",
+      "source_file": "src\\migrations\\004_model_profiles.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "migrations_004_model_profiles_up",
+      "label": "up()",
+      "file_type": "code",
+      "source_file": "src\\migrations\\004_model_profiles.js",
+      "source_location": "L3"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_migrations_004_model_profiles_js",
+      "target": "migrations_004_model_profiles_up",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\migrations\\004_model_profiles.js",
+      "source_location": "L3",
+      "weight": 1.0
+    }
+  ],
+  "raw_calls": [
+    {
+      "caller_nid": "migrations_004_model_profiles_up",
+      "callee": "exec",
+      "is_member_call": true,
+      "source_file": "src\\migrations\\004_model_profiles.js",
+      "source_location": "L4"
+    }
+  ]
+}

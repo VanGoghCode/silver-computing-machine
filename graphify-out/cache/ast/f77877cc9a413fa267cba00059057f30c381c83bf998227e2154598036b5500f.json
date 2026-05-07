@@ -1,0 +1,186 @@
+{
+  "nodes": [
+    {
+      "id": "src_seeds_default_role_edges_js",
+      "label": "default_role_edges.js",
+      "file_type": "code",
+      "source_file": "src\\seeds\\default_role_edges.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "seeds_default_role_edges_generateid",
+      "label": "{ generateId }",
+      "file_type": "code",
+      "source_file": "src\\seeds\\default_role_edges.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "seeds_default_role_edges_run",
+      "label": "run()",
+      "file_type": "code",
+      "source_file": "src\\seeds\\default_role_edges.js",
+      "source_location": "L25"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_seeds_default_role_edges_js",
+      "target": "src_db_helpers_js",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\seeds\\default_role_edges.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_seeds_default_role_edges_js",
+      "target": "db_helpers_generateid",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\seeds\\default_role_edges.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_seeds_default_role_edges_js",
+      "target": "seeds_default_role_edges_generateid",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\seeds\\default_role_edges.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_seeds_default_role_edges_js",
+      "target": "seeds_default_role_edges_run",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\seeds\\default_role_edges.js",
+      "source_location": "L25",
+      "weight": 1.0
+    }
+  ],
+  "raw_calls": [
+    {
+      "caller_nid": "seeds_default_role_edges_run",
+      "callee": "all",
+      "is_member_call": true,
+      "source_file": "src\\seeds\\default_role_edges.js",
+      "source_location": "L26"
+    },
+    {
+      "caller_nid": "seeds_default_role_edges_run",
+      "callee": "prepare",
+      "is_member_call": true,
+      "source_file": "src\\seeds\\default_role_edges.js",
+      "source_location": "L26"
+    },
+    {
+      "caller_nid": "seeds_default_role_edges_run",
+      "callee": "prepare",
+      "is_member_call": true,
+      "source_file": "src\\seeds\\default_role_edges.js",
+      "source_location": "L40"
+    },
+    {
+      "caller_nid": "seeds_default_role_edges_run",
+      "callee": "edge",
+      "is_member_call": false,
+      "source_file": "src\\seeds\\default_role_edges.js",
+      "source_location": "L67"
+    },
+    {
+      "caller_nid": "seeds_default_role_edges_run",
+      "callee": "edge",
+      "is_member_call": false,
+      "source_file": "src\\seeds\\default_role_edges.js",
+      "source_location": "L76"
+    },
+    {
+      "caller_nid": "seeds_default_role_edges_run",
+      "callee": "edge",
+      "is_member_call": false,
+      "source_file": "src\\seeds\\default_role_edges.js",
+      "source_location": "L85"
+    },
+    {
+      "caller_nid": "seeds_default_role_edges_run",
+      "callee": "edge",
+      "is_member_call": false,
+      "source_file": "src\\seeds\\default_role_edges.js",
+      "source_location": "L94"
+    },
+    {
+      "caller_nid": "seeds_default_role_edges_run",
+      "callee": "edge",
+      "is_member_call": false,
+      "source_file": "src\\seeds\\default_role_edges.js",
+      "source_location": "L101"
+    },
+    {
+      "caller_nid": "seeds_default_role_edges_run",
+      "callee": "edge",
+      "is_member_call": false,
+      "source_file": "src\\seeds\\default_role_edges.js",
+      "source_location": "L108"
+    },
+    {
+      "caller_nid": "seeds_default_role_edges_run",
+      "callee": "edge",
+      "is_member_call": false,
+      "source_file": "src\\seeds\\default_role_edges.js",
+      "source_location": "L115"
+    },
+    {
+      "caller_nid": "seeds_default_role_edges_run",
+      "callee": "edge",
+      "is_member_call": false,
+      "source_file": "src\\seeds\\default_role_edges.js",
+      "source_location": "L122"
+    },
+    {
+      "caller_nid": "seeds_default_role_edges_run",
+      "callee": "edge",
+      "is_member_call": false,
+      "source_file": "src\\seeds\\default_role_edges.js",
+      "source_location": "L130"
+    },
+    {
+      "caller_nid": "seeds_default_role_edges_run",
+      "callee": "edge",
+      "is_member_call": false,
+      "source_file": "src\\seeds\\default_role_edges.js",
+      "source_location": "L138"
+    },
+    {
+      "caller_nid": "seeds_default_role_edges_run",
+      "callee": "edge",
+      "is_member_call": false,
+      "source_file": "src\\seeds\\default_role_edges.js",
+      "source_location": "L146"
+    },
+    {
+      "caller_nid": "seeds_default_role_edges_run",
+      "callee": "edge",
+      "is_member_call": false,
+      "source_file": "src\\seeds\\default_role_edges.js",
+      "source_location": "L152"
+    },
+    {
+      "caller_nid": "seeds_default_role_edges_run",
+      "callee": "edge",
+      "is_member_call": false,
+      "source_file": "src\\seeds\\default_role_edges.js",
+      "source_location": "L157"
+    },
+    {
+      "caller_nid": "seeds_default_role_edges_run",
+      "callee": "edge",
+      "is_member_call": false,
+      "source_file": "src\\seeds\\default_role_edges.js",
+      "source_location": "L162"
+    }
+  ]
+}

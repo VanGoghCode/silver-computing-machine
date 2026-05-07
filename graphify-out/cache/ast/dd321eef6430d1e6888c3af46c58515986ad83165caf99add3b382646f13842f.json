@@ -1,0 +1,129 @@
+{
+  "nodes": [
+    {
+      "id": "src_services_agents_js",
+      "label": "agents.js",
+      "file_type": "code",
+      "source_file": "src\\services\\agents.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "services_agents_crypto",
+      "label": "crypto",
+      "file_type": "code",
+      "source_file": "src\\services\\agents.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "services_agents_findagentbytokenhash",
+      "label": "findAgentByTokenHash()",
+      "file_type": "code",
+      "source_file": "src\\services\\agents.js",
+      "source_location": "L3"
+    },
+    {
+      "id": "services_agents_updateheartbeat",
+      "label": "updateHeartbeat()",
+      "file_type": "code",
+      "source_file": "src\\services\\agents.js",
+      "source_location": "L20"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_services_agents_js",
+      "target": "crypto",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\agents.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_agents_js",
+      "target": "services_agents_crypto",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\agents.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_agents_js",
+      "target": "services_agents_findagentbytokenhash",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\agents.js",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_agents_js",
+      "target": "services_agents_updateheartbeat",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\agents.js",
+      "source_location": "L20",
+      "weight": 1.0
+    }
+  ],
+  "raw_calls": [
+    {
+      "caller_nid": "services_agents_findagentbytokenhash",
+      "callee": "get",
+      "is_member_call": true,
+      "source_file": "src\\services\\agents.js",
+      "source_location": "L4"
+    },
+    {
+      "caller_nid": "services_agents_findagentbytokenhash",
+      "callee": "prepare",
+      "is_member_call": true,
+      "source_file": "src\\services\\agents.js",
+      "source_location": "L4"
+    },
+    {
+      "caller_nid": "services_agents_updateheartbeat",
+      "callee": "toISOString",
+      "is_member_call": true,
+      "source_file": "src\\services\\agents.js",
+      "source_location": "L21"
+    },
+    {
+      "caller_nid": "services_agents_updateheartbeat",
+      "callee": "run",
+      "is_member_call": true,
+      "source_file": "src\\services\\agents.js",
+      "source_location": "L22"
+    },
+    {
+      "caller_nid": "services_agents_updateheartbeat",
+      "callee": "prepare",
+      "is_member_call": true,
+      "source_file": "src\\services\\agents.js",
+      "source_location": "L22"
+    },
+    {
+      "caller_nid": "services_agents_updateheartbeat",
+      "callee": "randomUUID",
+      "is_member_call": true,
+      "source_file": "src\\services\\agents.js",
+      "source_location": "L25"
+    },
+    {
+      "caller_nid": "services_agents_updateheartbeat",
+      "callee": "run",
+      "is_member_call": true,
+      "source_file": "src\\services\\agents.js",
+      "source_location": "L27"
+    },
+    {
+      "caller_nid": "services_agents_updateheartbeat",
+      "callee": "prepare",
+      "is_member_call": true,
+      "source_file": "src\\services\\agents.js",
+      "source_location": "L27"
+    }
+  ]
+}

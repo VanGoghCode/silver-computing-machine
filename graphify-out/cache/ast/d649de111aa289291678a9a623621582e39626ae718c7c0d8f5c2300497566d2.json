@@ -1,0 +1,292 @@
+{
+  "nodes": [
+    {
+      "id": "src_services_runtime_manager_js",
+      "label": "runtime_manager.js",
+      "file_type": "code",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "services_runtime_manager_mockruntimemanager",
+      "label": "MockRuntimeManager",
+      "file_type": "code",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L8"
+    },
+    {
+      "id": "services_runtime_manager_mockruntimemanager_constructor",
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L9"
+    },
+    {
+      "id": "services_runtime_manager_mockruntimemanager_createprojectruntime",
+      "label": ".createProjectRuntime()",
+      "file_type": "code",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L14"
+    },
+    {
+      "id": "services_runtime_manager_mockruntimemanager_startprojectruntime",
+      "label": ".startProjectRuntime()",
+      "file_type": "code",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L22"
+    },
+    {
+      "id": "services_runtime_manager_mockruntimemanager_stopprojectruntime",
+      "label": ".stopProjectRuntime()",
+      "file_type": "code",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L31"
+    },
+    {
+      "id": "services_runtime_manager_mockruntimemanager_getprojectruntimestatus",
+      "label": ".getProjectRuntimeStatus()",
+      "file_type": "code",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L45"
+    },
+    {
+      "id": "services_runtime_manager_mockruntimemanager_spawnworker",
+      "label": ".spawnWorker()",
+      "file_type": "code",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L58"
+    },
+    {
+      "id": "services_runtime_manager_mockruntimemanager_stopworker",
+      "label": ".stopWorker()",
+      "file_type": "code",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L77"
+    },
+    {
+      "id": "services_runtime_manager_mockruntimemanager_getworkerlogs",
+      "label": ".getWorkerLogs()",
+      "file_type": "code",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L91"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_services_runtime_manager_js",
+      "target": "services_runtime_manager_mockruntimemanager",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "services_runtime_manager_mockruntimemanager",
+      "target": "services_runtime_manager_mockruntimemanager_constructor",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "services_runtime_manager_mockruntimemanager",
+      "target": "services_runtime_manager_mockruntimemanager_createprojectruntime",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "services_runtime_manager_mockruntimemanager",
+      "target": "services_runtime_manager_mockruntimemanager_startprojectruntime",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L22",
+      "weight": 1.0
+    },
+    {
+      "source": "services_runtime_manager_mockruntimemanager",
+      "target": "services_runtime_manager_mockruntimemanager_stopprojectruntime",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L31",
+      "weight": 1.0
+    },
+    {
+      "source": "services_runtime_manager_mockruntimemanager",
+      "target": "services_runtime_manager_mockruntimemanager_getprojectruntimestatus",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L45",
+      "weight": 1.0
+    },
+    {
+      "source": "services_runtime_manager_mockruntimemanager",
+      "target": "services_runtime_manager_mockruntimemanager_spawnworker",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L58",
+      "weight": 1.0
+    },
+    {
+      "source": "services_runtime_manager_mockruntimemanager",
+      "target": "services_runtime_manager_mockruntimemanager_stopworker",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L77",
+      "weight": 1.0
+    },
+    {
+      "source": "services_runtime_manager_mockruntimemanager",
+      "target": "services_runtime_manager_mockruntimemanager_getworkerlogs",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L91",
+      "weight": 1.0
+    }
+  ],
+  "raw_calls": [
+    {
+      "caller_nid": "services_runtime_manager_mockruntimemanager_createprojectruntime",
+      "callee": "set",
+      "is_member_call": true,
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L15"
+    },
+    {
+      "caller_nid": "services_runtime_manager_mockruntimemanager_startprojectruntime",
+      "callee": "get",
+      "is_member_call": true,
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L23"
+    },
+    {
+      "caller_nid": "services_runtime_manager_mockruntimemanager_stopprojectruntime",
+      "callee": "get",
+      "is_member_call": true,
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L32"
+    },
+    {
+      "caller_nid": "services_runtime_manager_mockruntimemanager_stopprojectruntime",
+      "callee": "values",
+      "is_member_call": true,
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L37"
+    },
+    {
+      "caller_nid": "services_runtime_manager_mockruntimemanager_stopprojectruntime",
+      "callee": "push",
+      "is_member_call": true,
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L39"
+    },
+    {
+      "caller_nid": "services_runtime_manager_mockruntimemanager_stopprojectruntime",
+      "callee": "toISOString",
+      "is_member_call": true,
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L39"
+    },
+    {
+      "caller_nid": "services_runtime_manager_mockruntimemanager_getprojectruntimestatus",
+      "callee": "get",
+      "is_member_call": true,
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L46"
+    },
+    {
+      "caller_nid": "services_runtime_manager_mockruntimemanager_getprojectruntimestatus",
+      "callee": "map",
+      "is_member_call": true,
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L51"
+    },
+    {
+      "caller_nid": "services_runtime_manager_mockruntimemanager_getprojectruntimestatus",
+      "callee": "from",
+      "is_member_call": true,
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L51"
+    },
+    {
+      "caller_nid": "services_runtime_manager_mockruntimemanager_getprojectruntimestatus",
+      "callee": "values",
+      "is_member_call": true,
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L51"
+    },
+    {
+      "caller_nid": "services_runtime_manager_mockruntimemanager_spawnworker",
+      "callee": "get",
+      "is_member_call": true,
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L59"
+    },
+    {
+      "caller_nid": "services_runtime_manager_mockruntimemanager_spawnworker",
+      "callee": "toISOString",
+      "is_member_call": true,
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L71"
+    },
+    {
+      "caller_nid": "services_runtime_manager_mockruntimemanager_spawnworker",
+      "callee": "set",
+      "is_member_call": true,
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L73"
+    },
+    {
+      "caller_nid": "services_runtime_manager_mockruntimemanager_stopworker",
+      "callee": "get",
+      "is_member_call": true,
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L78"
+    },
+    {
+      "caller_nid": "services_runtime_manager_mockruntimemanager_stopworker",
+      "callee": "get",
+      "is_member_call": true,
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L82"
+    },
+    {
+      "caller_nid": "services_runtime_manager_mockruntimemanager_stopworker",
+      "callee": "push",
+      "is_member_call": true,
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L87"
+    },
+    {
+      "caller_nid": "services_runtime_manager_mockruntimemanager_stopworker",
+      "callee": "toISOString",
+      "is_member_call": true,
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L87"
+    },
+    {
+      "caller_nid": "services_runtime_manager_mockruntimemanager_getworkerlogs",
+      "callee": "get",
+      "is_member_call": true,
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L92"
+    },
+    {
+      "caller_nid": "services_runtime_manager_mockruntimemanager_getworkerlogs",
+      "callee": "get",
+      "is_member_call": true,
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L96"
+    }
+  ]
+}

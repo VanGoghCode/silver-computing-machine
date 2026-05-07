@@ -1,0 +1,38 @@
+{
+  "nodes": [
+    {
+      "id": "src_migrations_018_graphify_runs_js",
+      "label": "018_graphify_runs.js",
+      "file_type": "code",
+      "source_file": "src\\migrations\\018_graphify_runs.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "migrations_018_graphify_runs_up",
+      "label": "up()",
+      "file_type": "code",
+      "source_file": "src\\migrations\\018_graphify_runs.js",
+      "source_location": "L3"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_migrations_018_graphify_runs_js",
+      "target": "migrations_018_graphify_runs_up",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\migrations\\018_graphify_runs.js",
+      "source_location": "L3",
+      "weight": 1.0
+    }
+  ],
+  "raw_calls": [
+    {
+      "caller_nid": "migrations_018_graphify_runs_up",
+      "callee": "exec",
+      "is_member_call": true,
+      "source_file": "src\\migrations\\018_graphify_runs.js",
+      "source_location": "L4"
+    }
+  ]
+}

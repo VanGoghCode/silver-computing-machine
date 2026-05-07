@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const { createHealthRouter } = require('./routes/health');
 const { createFilesRouter } = require('./routes/files');
 const { createAgentsRouter } = require('./routes/agents');
@@ -19,6 +20,9 @@ const { createLocalPrsRouter } = require('./routes/local_prs');
 const { createModelProfilesRouter } = require('./routes/model_profiles');
 const { createPermissionProfilesRouter } = require('./routes/permission_profiles');
 const { createProjectsRouter } = require('./routes/projects');
+const { createGraphifyRouter } = require('./routes/graphify');
+const { createAuditsRouter } = require('./routes/audits');
+const { createReportsRouter } = require('./routes/reports');
 const { bearerAuth } = require('./middleware/auth');
 
 function createApp(db, config) {
@@ -66,6 +70,25 @@ function createApp(db, config) {
 
   // Project management routes — all authenticated
   app.use(createProjectsRouter(db, config, auth));
+
+  // Graphify integration — authenticated
+  app.use(createGraphifyRouter(db, config, auth));
+
+  // Audit routes — authenticated
+  app.use(createAuditsRouter(db, auth));
+
+  // Report routes — authenticated
+  app.use(createReportsRouter(db, auth));
+
+  // Serve frontend dashboard (production)
+  const clientDist = path.join(__dirname, '..', 'client', 'dist');
+  app.use(express.static(clientDist));
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api')) return next();
+    res.sendFile(path.join(clientDist, 'index.html'), (err) => {
+      if (err) next();
+    });
+  });
 
   return app;
 }

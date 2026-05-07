@@ -1,0 +1,118 @@
+{
+  "nodes": [
+    {
+      "id": "src_routes_graphify_js",
+      "label": "graphify.js",
+      "file_type": "code",
+      "source_file": "src\\routes\\graphify.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "routes_graphify_express",
+      "label": "express",
+      "file_type": "code",
+      "source_file": "src\\routes\\graphify.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "routes_graphify_graphifyservice",
+      "label": "graphifyService",
+      "file_type": "code",
+      "source_file": "src\\routes\\graphify.js",
+      "source_location": "L2"
+    },
+    {
+      "id": "routes_graphify_creategraphifyrouter",
+      "label": "createGraphifyRouter()",
+      "file_type": "code",
+      "source_file": "src\\routes\\graphify.js",
+      "source_location": "L4"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_routes_graphify_js",
+      "target": "express",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\graphify.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_graphify_js",
+      "target": "routes_graphify_express",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\graphify.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_graphify_js",
+      "target": "src_services_graphify_js",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\graphify.js",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_graphify_js",
+      "target": "routes_graphify_graphifyservice",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\graphify.js",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_graphify_js",
+      "target": "routes_graphify_creategraphifyrouter",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\graphify.js",
+      "source_location": "L4",
+      "weight": 1.0
+    }
+  ],
+  "raw_calls": [
+    {
+      "caller_nid": "routes_graphify_creategraphifyrouter",
+      "callee": "Router",
+      "is_member_call": true,
+      "source_file": "src\\routes\\graphify.js",
+      "source_location": "L5"
+    },
+    {
+      "caller_nid": "routes_graphify_creategraphifyrouter",
+      "callee": "use",
+      "is_member_call": true,
+      "source_file": "src\\routes\\graphify.js",
+      "source_location": "L6"
+    },
+    {
+      "caller_nid": "routes_graphify_creategraphifyrouter",
+      "callee": "post",
+      "is_member_call": true,
+      "source_file": "src\\routes\\graphify.js",
+      "source_location": "L9"
+    },
+    {
+      "caller_nid": "routes_graphify_creategraphifyrouter",
+      "callee": "get",
+      "is_member_call": true,
+      "source_file": "src\\routes\\graphify.js",
+      "source_location": "L29"
+    },
+    {
+      "caller_nid": "routes_graphify_creategraphifyrouter",
+      "callee": "get",
+      "is_member_call": true,
+      "source_file": "src\\routes\\graphify.js",
+      "source_location": "L36"
+    }
+  ]
+}

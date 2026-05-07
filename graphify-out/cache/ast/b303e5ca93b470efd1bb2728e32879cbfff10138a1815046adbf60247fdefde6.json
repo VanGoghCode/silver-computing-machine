@@ -1,0 +1,211 @@
+{
+  "nodes": [
+    {
+      "id": "src_routes_role_templates_js",
+      "label": "role_templates.js",
+      "file_type": "code",
+      "source_file": "src\\routes\\role_templates.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "routes_role_templates_express",
+      "label": "express",
+      "file_type": "code",
+      "source_file": "src\\routes\\role_templates.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "routes_role_templates_path",
+      "label": "path",
+      "file_type": "code",
+      "source_file": "src\\routes\\role_templates.js",
+      "source_location": "L2"
+    },
+    {
+      "id": "routes_role_templates_generateid",
+      "label": "{ generateId }",
+      "file_type": "code",
+      "source_file": "src\\routes\\role_templates.js",
+      "source_location": "L3"
+    },
+    {
+      "id": "routes_role_templates_importrolelibrary",
+      "label": "{ importRoleLibrary }",
+      "file_type": "code",
+      "source_file": "src\\routes\\role_templates.js",
+      "source_location": "L4"
+    },
+    {
+      "id": "routes_role_templates_createroletemplatesrouter",
+      "label": "createRoleTemplatesRouter()",
+      "file_type": "code",
+      "source_file": "src\\routes\\role_templates.js",
+      "source_location": "L6"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_routes_role_templates_js",
+      "target": "express",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\role_templates.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_role_templates_js",
+      "target": "routes_role_templates_express",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\role_templates.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_role_templates_js",
+      "target": "path",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\role_templates.js",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_role_templates_js",
+      "target": "routes_role_templates_path",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\role_templates.js",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_role_templates_js",
+      "target": "src_db_helpers_js",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\role_templates.js",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_role_templates_js",
+      "target": "db_helpers_generateid",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\role_templates.js",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_role_templates_js",
+      "target": "routes_role_templates_generateid",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\role_templates.js",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_role_templates_js",
+      "target": "src_services_role_library_import_js",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\role_templates.js",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_role_templates_js",
+      "target": "services_role_library_import_importrolelibrary",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\role_templates.js",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_role_templates_js",
+      "target": "routes_role_templates_importrolelibrary",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\role_templates.js",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_role_templates_js",
+      "target": "routes_role_templates_createroletemplatesrouter",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\role_templates.js",
+      "source_location": "L6",
+      "weight": 1.0
+    }
+  ],
+  "raw_calls": [
+    {
+      "caller_nid": "routes_role_templates_createroletemplatesrouter",
+      "callee": "Router",
+      "is_member_call": true,
+      "source_file": "src\\routes\\role_templates.js",
+      "source_location": "L7"
+    },
+    {
+      "caller_nid": "routes_role_templates_createroletemplatesrouter",
+      "callee": "use",
+      "is_member_call": true,
+      "source_file": "src\\routes\\role_templates.js",
+      "source_location": "L8"
+    },
+    {
+      "caller_nid": "routes_role_templates_createroletemplatesrouter",
+      "callee": "get",
+      "is_member_call": true,
+      "source_file": "src\\routes\\role_templates.js",
+      "source_location": "L11"
+    },
+    {
+      "caller_nid": "routes_role_templates_createroletemplatesrouter",
+      "callee": "get",
+      "is_member_call": true,
+      "source_file": "src\\routes\\role_templates.js",
+      "source_location": "L17"
+    },
+    {
+      "caller_nid": "routes_role_templates_createroletemplatesrouter",
+      "callee": "get",
+      "is_member_call": true,
+      "source_file": "src\\routes\\role_templates.js",
+      "source_location": "L24"
+    },
+    {
+      "caller_nid": "routes_role_templates_createroletemplatesrouter",
+      "callee": "post",
+      "is_member_call": true,
+      "source_file": "src\\routes\\role_templates.js",
+      "source_location": "L37"
+    },
+    {
+      "caller_nid": "routes_role_templates_createroletemplatesrouter",
+      "callee": "patch",
+      "is_member_call": true,
+      "source_file": "src\\routes\\role_templates.js",
+      "source_location": "L53"
+    },
+    {
+      "caller_nid": "routes_role_templates_createroletemplatesrouter",
+      "callee": "post",
+      "is_member_call": true,
+      "source_file": "src\\routes\\role_templates.js",
+      "source_location": "L81"
+    }
+  ]
+}

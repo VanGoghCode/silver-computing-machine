@@ -841,7 +841,14 @@ Silver-Computing-Machine/
 │   └── utils/
 │       └── tokens.js      — Token generation and hashing
 ├── tests/                 — Jest + Supertest tests
+├── client/                — React/Vite dashboard (v1)
+│   ├── src/
+│   │   ├── api/           — API client module
+│   │   ├── components/    — Layout, sidebar
+│   │   └── pages/         — All dashboard pages
+│   └── dist/              — Production build (served by backend)
 ├── Projects/              — Isolated project directories
+├── graphify-out/          — Graphify knowledge graph output
 └── data/                  — SQLite database files (gitignored)
 ```
 
@@ -854,18 +861,178 @@ Silver-Computing-Machine/
 | `PROJECTS_DIR`             | `$WORKSPACE_DIR/Projects` | Project directories            |
 | `SQLITE_DB_PATH`           | `./data/silver.db`        | SQLite database path           |
 | `AGENT_HEARTBEAT_STALE_MS` | `60000`                   | Stale heartbeat threshold (ms) |
+| `GRAPHIFY_COMMAND`         | `graphify`                | Graphify CLI command           |
 
 ## Commands
 
 ```bash
+# Backend
 npm install           # Install dependencies
-npm start             # Start server
-npm test              # Run tests
+npm start             # Start server (port 4000)
+npm test              # Run all tests (285+ tests)
 npm run lint          # Check linting
 npm run lint:fix      # Fix linting issues
 npm run format        # Format with Prettier
 npm run format:check  # Check formatting
+
+# Frontend (dashboard)
+cd client
+npm install           # Install frontend dependencies
+npm run dev           # Start dev server with proxy to backend
+npm run build         # Production build → client/dist/
 ```
+
+The backend serves the frontend dashboard automatically when `client/dist/` exists. In development, run both the backend (`npm start`) and the frontend dev server (`cd client && npm run dev`) separately.
+
+## Dashboard (React/Vite)
+
+Silver v1 includes a full web dashboard for human-AI interaction.
+
+### Pages
+
+| Page                | Path             | Description                                          |
+| ------------------- | ---------------- | ---------------------------------------------------- |
+| Projects            | `/`              | List and create projects                             |
+| Project Detail      | `/project/:id`   | Project overview: alignment status, artifacts, tasks |
+| Human Intake        | `/intake`        | Submit problem statements, start brainstorming       |
+| Alignment Sessions  | `/alignment`     | View and start alignment sessions                    |
+| Questions & Answers | `/questions`     | View AI questions, answer them                       |
+| Documents           | `/documents`     | View/approve/reject context artifacts                |
+| Document Sets       | `/document-sets` | Create/approve MVP/v1/v2 document sets               |
+| Agents              | `/agents`        | List all worker agents                               |
+| Kanban              | `/kanban`        | Task board with lifecycle columns                    |
+| Role Canvas         | `/role-canvas`   | Visual role graph: nodes, edges, permissions         |
+| Conversations       | `/conversations` | Message threads between roles                        |
+| Local PRs           | `/local-prs`     | Review/test/merge local PRs                          |
+| Reports             | `/reports`       | Daily reports and weekly audit runs                  |
+| Graphify            | `/graphify`      | Run graphify, view run history                       |
+| Settings            | `/settings`      | Model profiles, permission profiles, role templates  |
+
+### Human Intake Workflow
+
+1. Human creates a project on the Projects page
+2. Navigates to Human Intake, selects the project, submits a problem statement
+3. Starts an alignment session from the Alignment Sessions page
+4. AI leadership (CEO, CTO, Product Manager) auto-joins the session
+5. AI asks clarification questions visible on the Questions page
+6. Human answers questions (MCQ, yes/no, free text)
+7. AI creates research notes during the process
+8. Alignment reviews determine if more questions are needed
+9. When ready, draft context artifacts are generated
+10. Human approves artifacts on the Documents page
+11. Human creates and approves an MVP Document Set
+12. Engineering tasks can now be created on the Kanban page
+
+## Graphify Integration
+
+Silver integrates with Graphify for automated knowledge graph generation.
+
+### APIs
+
+| Method | Path                                     | Description              |
+| ------ | ---------------------------------------- | ------------------------ |
+| POST   | `/api/projects/:projectId/graphify/run`  | Run graphify for project |
+| GET    | `/api/projects/:projectId/graphify/runs` | List graphify runs       |
+| GET    | `/api/graphify/query?q=`                 | Search graph summaries   |
+
+### Configuration
+
+- `GRAPHIFY_COMMAND` env var (default: `graphify`)
+- Handles missing command gracefully — marks run as `error` instead of crashing
+- Reads `graphify-out/GRAPH_REPORT.md` and `graphify-out/graph.json` when available
+- Stores run records in `graphify_runs` table with status, output path, summary
+
+### Run Triggers
+
+- Manual: Dashboard Graphify page or API call
+- Post-merge: Trigger after local PR marked as merged
+- Pre-architecture: Before large architecture tasks
+
+## Weekly Audit Flow
+
+The weekly audit agent reviews project health without directly fixing code.
+
+### APIs
+
+| Method | Path                                  | Description     |
+| ------ | ------------------------------------- | --------------- |
+| POST   | `/api/projects/:projectId/audits/run` | Run audit       |
+| GET    | `/api/projects/:projectId/audits`     | List audit runs |
+
+### Behavior
+
+1. Creates an `audit_report` context artifact
+2. Includes task summary, agent count, artifact count
+3. Sends notification message to the Tech Lead role
+4. Stores run in `audit_runs` table
+
+## Daily Report Generation
+
+CEO/CTO/PM receive daily reports with project status.
+
+### APIs
+
+| Method | Path                                     | Description     |
+| ------ | ---------------------------------------- | --------------- |
+| POST   | `/api/projects/:projectId/reports/daily` | Generate report |
+| GET    | `/api/projects/:projectId/reports`       | List reports    |
+
+### Report Sections
+
+- Yesterday completed tasks
+- Today planned tasks
+- Blockers
+- Risks (placeholder)
+- Questions for customer
+- Team morale (placeholder)
+- Budget/cost (placeholder)
+- Security concerns
+- Documentation/version changes
+- Open alignment issues
+- Task statistics by status
+
+## Additional Database Tables
+
+### graphify_runs
+
+| Column                | Type | Description                     |
+| --------------------- | ---- | ------------------------------- |
+| id                    | TEXT | Primary key                     |
+| project_id            | TEXT | FK to projects                  |
+| triggered_by_agent_id | TEXT | FK to agents                    |
+| trigger_reason        | TEXT | manual/post-merge               |
+| status                | TEXT | pending/running/completed/error |
+| output_path           | TEXT | Path to graphify-out            |
+| summary_md            | TEXT | Truncated summary               |
+| started_at            | TEXT | ISO timestamp                   |
+| finished_at           | TEXT | ISO timestamp                   |
+| error_md              | TEXT | Error message if failed         |
+
+### audit_runs
+
+| Column             | Type | Description                     |
+| ------------------ | ---- | ------------------------------- |
+| id                 | TEXT | Primary key                     |
+| project_id         | TEXT | FK to projects                  |
+| department_id      | TEXT | FK to departments               |
+| audit_agent_id     | TEXT | FK to agents                    |
+| status             | TEXT | pending/running/completed/error |
+| report_artifact_id | TEXT | FK to context_artifacts         |
+| started_at         | TEXT | ISO timestamp                   |
+| finished_at        | TEXT | ISO timestamp                   |
+| error_md           | TEXT | Error message                   |
+
+## Current Limitations
+
+- Human auth uses simple local-owner mode (no OAuth/JWT for v1)
+- Frontend does not have authentication — API calls require Bearer tokens from agent creation
+- Graphify runs synchronously — may timeout for large projects
+- Role Canvas is a basic list/box view — no drag-and-drop positioning
+- No real LLM integration — AI responses must be triggered manually via API
+- No Docker Compose for backend + frontend
+- No WebSocket/SSE for real-time updates
+- Pipeline iteration limit is hardcoded at 2
+- Worker runtime management uses MockRuntimeManager (ProcessRuntimeManager not yet implemented)
 
 ## Docker
 

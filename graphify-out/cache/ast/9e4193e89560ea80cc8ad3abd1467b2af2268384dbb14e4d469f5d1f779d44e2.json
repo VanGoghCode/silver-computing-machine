@@ -1,0 +1,401 @@
+{
+  "nodes": [
+    {
+      "id": "src_services_agent_tokens_js",
+      "label": "agent_tokens.js",
+      "file_type": "code",
+      "source_file": "src\\services\\agent_tokens.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "services_agent_tokens_generateid",
+      "label": "{ generateId }",
+      "file_type": "code",
+      "source_file": "src\\services\\agent_tokens.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "services_agent_tokens_generatetoken_hashtoken",
+      "label": "{ generateToken, hashToken }",
+      "file_type": "code",
+      "source_file": "src\\services\\agent_tokens.js",
+      "source_location": "L2"
+    },
+    {
+      "id": "services_agent_tokens_createagent",
+      "label": "createAgent()",
+      "file_type": "code",
+      "source_file": "src\\services\\agent_tokens.js",
+      "source_location": "L8"
+    },
+    {
+      "id": "services_agent_tokens_rotateagenttoken",
+      "label": "rotateAgentToken()",
+      "file_type": "code",
+      "source_file": "src\\services\\agent_tokens.js",
+      "source_location": "L65"
+    },
+    {
+      "id": "services_agent_tokens_revokeagent",
+      "label": "revokeAgent()",
+      "file_type": "code",
+      "source_file": "src\\services\\agent_tokens.js",
+      "source_location": "L90"
+    },
+    {
+      "id": "services_agent_tokens_listagents",
+      "label": "listAgents()",
+      "file_type": "code",
+      "source_file": "src\\services\\agent_tokens.js",
+      "source_location": "L103"
+    },
+    {
+      "id": "services_agent_tokens_getagent",
+      "label": "getAgent()",
+      "file_type": "code",
+      "source_file": "src\\services\\agent_tokens.js",
+      "source_location": "L117"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_services_agent_tokens_js",
+      "target": "src_db_helpers_js",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\agent_tokens.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_agent_tokens_js",
+      "target": "db_helpers_generateid",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\agent_tokens.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_agent_tokens_js",
+      "target": "services_agent_tokens_generateid",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\agent_tokens.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_agent_tokens_js",
+      "target": "src_utils_tokens_js",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\agent_tokens.js",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_agent_tokens_js",
+      "target": "utils_tokens_generatetoken",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\agent_tokens.js",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_agent_tokens_js",
+      "target": "utils_tokens_hashtoken",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\agent_tokens.js",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_agent_tokens_js",
+      "target": "services_agent_tokens_generatetoken_hashtoken",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\agent_tokens.js",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_agent_tokens_js",
+      "target": "services_agent_tokens_createagent",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\agent_tokens.js",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_agent_tokens_js",
+      "target": "services_agent_tokens_rotateagenttoken",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\agent_tokens.js",
+      "source_location": "L65",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_agent_tokens_js",
+      "target": "services_agent_tokens_revokeagent",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\agent_tokens.js",
+      "source_location": "L90",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_agent_tokens_js",
+      "target": "services_agent_tokens_listagents",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\agent_tokens.js",
+      "source_location": "L103",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_agent_tokens_js",
+      "target": "services_agent_tokens_getagent",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\agent_tokens.js",
+      "source_location": "L117",
+      "weight": 1.0
+    }
+  ],
+  "raw_calls": [
+    {
+      "caller_nid": "services_agent_tokens_createagent",
+      "callee": "get",
+      "is_member_call": true,
+      "source_file": "src\\services\\agent_tokens.js",
+      "source_location": "L10"
+    },
+    {
+      "caller_nid": "services_agent_tokens_createagent",
+      "callee": "prepare",
+      "is_member_call": true,
+      "source_file": "src\\services\\agent_tokens.js",
+      "source_location": "L10"
+    },
+    {
+      "caller_nid": "services_agent_tokens_createagent",
+      "callee": "get",
+      "is_member_call": true,
+      "source_file": "src\\services\\agent_tokens.js",
+      "source_location": "L17"
+    },
+    {
+      "caller_nid": "services_agent_tokens_createagent",
+      "callee": "prepare",
+      "is_member_call": true,
+      "source_file": "src\\services\\agent_tokens.js",
+      "source_location": "L17"
+    },
+    {
+      "caller_nid": "services_agent_tokens_createagent",
+      "callee": "get",
+      "is_member_call": true,
+      "source_file": "src\\services\\agent_tokens.js",
+      "source_location": "L28"
+    },
+    {
+      "caller_nid": "services_agent_tokens_createagent",
+      "callee": "prepare",
+      "is_member_call": true,
+      "source_file": "src\\services\\agent_tokens.js",
+      "source_location": "L28"
+    },
+    {
+      "caller_nid": "services_agent_tokens_createagent",
+      "callee": "generateId",
+      "is_member_call": false,
+      "source_file": "src\\services\\agent_tokens.js",
+      "source_location": "L39"
+    },
+    {
+      "caller_nid": "services_agent_tokens_createagent",
+      "callee": "generateToken",
+      "is_member_call": false,
+      "source_file": "src\\services\\agent_tokens.js",
+      "source_location": "L40"
+    },
+    {
+      "caller_nid": "services_agent_tokens_createagent",
+      "callee": "hashToken",
+      "is_member_call": false,
+      "source_file": "src\\services\\agent_tokens.js",
+      "source_location": "L41"
+    },
+    {
+      "caller_nid": "services_agent_tokens_createagent",
+      "callee": "toISOString",
+      "is_member_call": true,
+      "source_file": "src\\services\\agent_tokens.js",
+      "source_location": "L42"
+    },
+    {
+      "caller_nid": "services_agent_tokens_createagent",
+      "callee": "run",
+      "is_member_call": true,
+      "source_file": "src\\services\\agent_tokens.js",
+      "source_location": "L44"
+    },
+    {
+      "caller_nid": "services_agent_tokens_createagent",
+      "callee": "prepare",
+      "is_member_call": true,
+      "source_file": "src\\services\\agent_tokens.js",
+      "source_location": "L44"
+    },
+    {
+      "caller_nid": "services_agent_tokens_createagent",
+      "callee": "get",
+      "is_member_call": true,
+      "source_file": "src\\services\\agent_tokens.js",
+      "source_location": "L58"
+    },
+    {
+      "caller_nid": "services_agent_tokens_createagent",
+      "callee": "prepare",
+      "is_member_call": true,
+      "source_file": "src\\services\\agent_tokens.js",
+      "source_location": "L58"
+    },
+    {
+      "caller_nid": "services_agent_tokens_rotateagenttoken",
+      "callee": "get",
+      "is_member_call": true,
+      "source_file": "src\\services\\agent_tokens.js",
+      "source_location": "L66"
+    },
+    {
+      "caller_nid": "services_agent_tokens_rotateagenttoken",
+      "callee": "prepare",
+      "is_member_call": true,
+      "source_file": "src\\services\\agent_tokens.js",
+      "source_location": "L66"
+    },
+    {
+      "caller_nid": "services_agent_tokens_rotateagenttoken",
+      "callee": "generateToken",
+      "is_member_call": false,
+      "source_file": "src\\services\\agent_tokens.js",
+      "source_location": "L74"
+    },
+    {
+      "caller_nid": "services_agent_tokens_rotateagenttoken",
+      "callee": "hashToken",
+      "is_member_call": false,
+      "source_file": "src\\services\\agent_tokens.js",
+      "source_location": "L75"
+    },
+    {
+      "caller_nid": "services_agent_tokens_rotateagenttoken",
+      "callee": "toISOString",
+      "is_member_call": true,
+      "source_file": "src\\services\\agent_tokens.js",
+      "source_location": "L76"
+    },
+    {
+      "caller_nid": "services_agent_tokens_rotateagenttoken",
+      "callee": "run",
+      "is_member_call": true,
+      "source_file": "src\\services\\agent_tokens.js",
+      "source_location": "L78"
+    },
+    {
+      "caller_nid": "services_agent_tokens_rotateagenttoken",
+      "callee": "prepare",
+      "is_member_call": true,
+      "source_file": "src\\services\\agent_tokens.js",
+      "source_location": "L78"
+    },
+    {
+      "caller_nid": "services_agent_tokens_revokeagent",
+      "callee": "get",
+      "is_member_call": true,
+      "source_file": "src\\services\\agent_tokens.js",
+      "source_location": "L91"
+    },
+    {
+      "caller_nid": "services_agent_tokens_revokeagent",
+      "callee": "prepare",
+      "is_member_call": true,
+      "source_file": "src\\services\\agent_tokens.js",
+      "source_location": "L91"
+    },
+    {
+      "caller_nid": "services_agent_tokens_revokeagent",
+      "callee": "toISOString",
+      "is_member_call": true,
+      "source_file": "src\\services\\agent_tokens.js",
+      "source_location": "L94"
+    },
+    {
+      "caller_nid": "services_agent_tokens_revokeagent",
+      "callee": "run",
+      "is_member_call": true,
+      "source_file": "src\\services\\agent_tokens.js",
+      "source_location": "L95"
+    },
+    {
+      "caller_nid": "services_agent_tokens_revokeagent",
+      "callee": "prepare",
+      "is_member_call": true,
+      "source_file": "src\\services\\agent_tokens.js",
+      "source_location": "L95"
+    },
+    {
+      "caller_nid": "services_agent_tokens_listagents",
+      "callee": "all",
+      "is_member_call": true,
+      "source_file": "src\\services\\agent_tokens.js",
+      "source_location": "L110"
+    },
+    {
+      "caller_nid": "services_agent_tokens_listagents",
+      "callee": "prepare",
+      "is_member_call": true,
+      "source_file": "src\\services\\agent_tokens.js",
+      "source_location": "L110"
+    },
+    {
+      "caller_nid": "services_agent_tokens_listagents",
+      "callee": "all",
+      "is_member_call": true,
+      "source_file": "src\\services\\agent_tokens.js",
+      "source_location": "L110"
+    },
+    {
+      "caller_nid": "services_agent_tokens_listagents",
+      "callee": "prepare",
+      "is_member_call": true,
+      "source_file": "src\\services\\agent_tokens.js",
+      "source_location": "L110"
+    },
+    {
+      "caller_nid": "services_agent_tokens_getagent",
+      "callee": "get",
+      "is_member_call": true,
+      "source_file": "src\\services\\agent_tokens.js",
+      "source_location": "L118"
+    },
+    {
+      "caller_nid": "services_agent_tokens_getagent",
+      "callee": "prepare",
+      "is_member_call": true,
+      "source_file": "src\\services\\agent_tokens.js",
+      "source_location": "L118"
+    }
+  ]
+}
