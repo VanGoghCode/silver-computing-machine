@@ -15,7 +15,7 @@ function createRoleNodesRouter(db, auth) {
          WHERE pri.project_id = ? AND pri.is_active = 1
          ORDER BY pri.display_name`,
       )
-      .all(req.params.projectId);
+      .all(req.agent.project_id);
     res.json({ nodes });
   });
 
@@ -40,7 +40,7 @@ function createRoleNodesRouter(db, auth) {
     // Validate department belongs to this project
     const dept = db
       .prepare(`SELECT * FROM departments WHERE id = ? AND project_id = ?`)
-      .get(department_id, req.params.projectId);
+      .get(department_id, req.agent.project_id);
     if (!dept) {
       return res.status(400).json({ error: 'Department not found in this project' });
     }
@@ -58,7 +58,7 @@ function createRoleNodesRouter(db, auth) {
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     ).run(
       id,
-      req.params.projectId,
+      req.agent.project_id,
       department_id,
       role_template_id,
       display_name,
@@ -83,7 +83,7 @@ function createRoleNodesRouter(db, auth) {
   router.patch('/api/projects/:projectId/role-nodes/:nodeId', (req, res) => {
     const node = db
       .prepare(`SELECT * FROM project_role_instances WHERE id = ? AND project_id = ?`)
-      .get(req.params.nodeId, req.params.projectId);
+      .get(req.params.nodeId, req.agent.project_id);
     if (!node) return res.status(404).json({ error: 'Node not found' });
 
     const allowed = [
@@ -129,7 +129,7 @@ function createRoleNodesRouter(db, auth) {
   router.delete('/api/projects/:projectId/role-nodes/:nodeId', (req, res) => {
     const node = db
       .prepare(`SELECT * FROM project_role_instances WHERE id = ? AND project_id = ?`)
-      .get(req.params.nodeId, req.params.projectId);
+      .get(req.params.nodeId, req.agent.project_id);
     if (!node) return res.status(404).json({ error: 'Node not found' });
 
     db.prepare(

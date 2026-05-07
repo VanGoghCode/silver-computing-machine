@@ -1,7 +1,6 @@
 const express = require('express');
 const path = require('path');
 const { createHealthRouter } = require('./routes/health');
-const { createFilesRouter } = require('./routes/files');
 const { createAgentsRouter } = require('./routes/agents');
 const { createTasksRouter } = require('./routes/tasks');
 const { createRoleTemplatesRouter } = require('./routes/role_templates');
@@ -31,7 +30,6 @@ function createApp(db, config) {
 
   // Public routes
   app.use(createHealthRouter(config));
-  app.use(createFilesRouter(config));
 
   // Protected routes
   const auth = bearerAuth(db);

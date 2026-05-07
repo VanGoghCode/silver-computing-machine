@@ -189,11 +189,12 @@ describe('Project Creation Workflow', () => {
       const proj = await request(app)
         .post('/api/projects')
         .set('Authorization', `Bearer ${token}`)
-        .send({ name: 'My App', slug: 'my-app' });
+        .send({ name: 'My App', slug: 'my-app', create_agents: true });
+      const projectToken = proj.body.tokens[0].token;
 
       const res = await request(app)
         .post(`/api/projects/${proj.body.project.id}/start-runtime`)
-        .set('Authorization', `Bearer ${token}`);
+        .set('Authorization', `Bearer ${projectToken}`);
       expect(res.status).toBe(200);
       expect(res.body.status).toBe('running');
 
@@ -214,14 +215,15 @@ describe('Project Creation Workflow', () => {
       const proj = await request(app)
         .post('/api/projects')
         .set('Authorization', `Bearer ${token}`)
-        .send({ name: 'My App', slug: 'my-app' });
+        .send({ name: 'My App', slug: 'my-app', create_agents: true });
+      const projectToken = proj.body.tokens[0].token;
       await request(app)
         .post(`/api/projects/${proj.body.project.id}/start-runtime`)
-        .set('Authorization', `Bearer ${token}`);
+        .set('Authorization', `Bearer ${projectToken}`);
 
       const res = await request(app)
         .post(`/api/projects/${proj.body.project.id}/stop-runtime`)
-        .set('Authorization', `Bearer ${token}`);
+        .set('Authorization', `Bearer ${projectToken}`);
       expect(res.status).toBe(200);
       expect(res.body.status).toBe('stopped');
     });
@@ -233,13 +235,14 @@ describe('Project Creation Workflow', () => {
         .post('/api/projects')
         .set('Authorization', `Bearer ${token}`)
         .send({ name: 'My App', slug: 'my-app', create_agents: true });
+      const projectToken = proj.body.tokens[0].token;
       await request(app)
         .post(`/api/projects/${proj.body.project.id}/start-runtime`)
-        .set('Authorization', `Bearer ${token}`);
+        .set('Authorization', `Bearer ${projectToken}`);
 
       const res = await request(app)
         .post(`/api/projects/${proj.body.project.id}/spawn-workers`)
-        .set('Authorization', `Bearer ${token}`);
+        .set('Authorization', `Bearer ${projectToken}`);
       expect(res.status).toBe(200);
       expect(res.body.spawned).toBe(11);
     });
@@ -249,10 +252,11 @@ describe('Project Creation Workflow', () => {
         .post('/api/projects')
         .set('Authorization', `Bearer ${token}`)
         .send({ name: 'My App', slug: 'my-app', create_agents: true });
+      const projectToken = proj.body.tokens[0].token;
 
       const res = await request(app)
         .post(`/api/projects/${proj.body.project.id}/spawn-workers`)
-        .set('Authorization', `Bearer ${token}`);
+        .set('Authorization', `Bearer ${projectToken}`);
       expect(res.status).toBe(400);
     });
   });

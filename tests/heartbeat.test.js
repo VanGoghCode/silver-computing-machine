@@ -3,7 +3,7 @@ const { createTestDb, createTestApp, insertTestAgent } = require('./helpers');
 const { detectStaleAgents, VALID_WORKER_STATUSES } = require('../src/services/heartbeat');
 
 describe('Worker Heartbeat and Status', () => {
-  let db, app, token, agentId;
+  let db, app, token, agentId, projectId, departmentId;
 
   beforeEach(() => {
     db = createTestDb();
@@ -11,6 +11,8 @@ describe('Worker Heartbeat and Status', () => {
     const result = insertTestAgent(db);
     token = result.token;
     agentId = result.agentId;
+    projectId = result.projectId;
+    departmentId = result.departmentId;
   });
 
   afterEach(() => {
@@ -94,6 +96,11 @@ describe('Worker Heartbeat and Status', () => {
 
   describe('Heartbeat creates heartbeat record', () => {
     test('heartbeat inserts into agent_heartbeats table', async () => {
+      db.prepare(
+        `INSERT INTO tasks (id, project_id, department_id, assigned_agent_id, title)
+         VALUES ('task-1', ?, ?, ?, 'Heartbeat task')`,
+      ).run(projectId, departmentId, agentId);
+
       await request(app)
         .post('/api/agents/heartbeat')
         .set('Authorization', `Bearer ${token}`)

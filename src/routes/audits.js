@@ -7,7 +7,7 @@ function createAuditsRouter(db, auth) {
 
   // POST /api/projects/:projectId/audits/run
   router.post('/api/projects/:projectId/audits/run', (req, res) => {
-    const { projectId } = req.params;
+    const projectId = req.agent.project_id;
     const project = db.prepare('SELECT * FROM projects WHERE id = ?').get(projectId);
     if (!project) return res.status(404).json({ error: 'Project not found' });
 
@@ -26,7 +26,7 @@ function createAuditsRouter(db, auth) {
 
   // GET /api/projects/:projectId/audits
   router.get('/api/projects/:projectId/audits', (req, res) => {
-    const { projectId } = req.params;
+    const projectId = req.agent.project_id;
     const runs = auditService.listAuditRuns(db, projectId);
     res.json({ audit_runs: runs });
   });

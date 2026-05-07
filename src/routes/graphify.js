@@ -7,7 +7,7 @@ function createGraphifyRouter(db, config, auth) {
 
   // POST /api/projects/:projectId/graphify/run
   router.post('/api/projects/:projectId/graphify/run', (req, res) => {
-    const { projectId } = req.params;
+    const projectId = req.agent.project_id;
     const project = db.prepare('SELECT * FROM projects WHERE id = ?').get(projectId);
     if (!project) return res.status(404).json({ error: 'Project not found' });
 
@@ -27,14 +27,14 @@ function createGraphifyRouter(db, config, auth) {
 
   // GET /api/projects/:projectId/graphify/runs
   router.get('/api/projects/:projectId/graphify/runs', (req, res) => {
-    const { projectId } = req.params;
+    const projectId = req.agent.project_id;
     const runs = graphifyService.listGraphifyRuns(db, projectId);
     res.json({ graphify_runs: runs });
   });
 
   // GET /api/graphify/query?q=
   router.get('/api/graphify/query', (req, res) => {
-    const results = graphifyService.queryGraphify(db, req.query.q);
+    const results = graphifyService.queryGraphify(db, req.query.q, req.agent.project_id);
     res.json({ results });
   });
 

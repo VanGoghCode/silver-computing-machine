@@ -1,11 +1,37 @@
 const API_BASE = '/api';
+const TOKEN_STORAGE_KEY = 'silver_agent_token';
+
+export function getAuthToken() {
+  return (
+    localStorage.getItem(TOKEN_STORAGE_KEY) ||
+    import.meta.env.VITE_SILVER_AGENT_TOKEN ||
+    ''
+  ).trim();
+}
+
+export function setAuthToken(token) {
+  const normalized = (token || '').trim();
+  if (normalized) {
+    localStorage.setItem(TOKEN_STORAGE_KEY, normalized);
+  } else {
+    localStorage.removeItem(TOKEN_STORAGE_KEY);
+  }
+}
 
 async function request(path, options = {}) {
+  const token = getAuthToken();
+  const headers = {
+    'Content-Type': 'application/json',
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...options.headers,
+  };
+
   const res = await fetch(`${API_BASE}${path}`, {
-    headers: { 'Content-Type': 'application/json', ...options.headers },
     ...options,
+    headers,
   });
-  const data = await res.json();
+  const contentType = res.headers.get('content-type') || '';
+  const data = contentType.includes('application/json') ? await res.json() : {};
   if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
   return data;
 }
@@ -114,19 +140,19 @@ export const api = {
   listAgents: () => request('/agents'),
 
   // Tasks
-  listTasks: (projectId) => request(`/tasks?project_id=${projectId}`),
+  listTasks: () => request('/tasks'),
   createTask: (data) => request('/tasks', { method: 'POST', body: JSON.stringify(data) }),
   getTask: (id) => request(`/tasks/${id}`),
   moveTask: (id, data) =>
     request(`/tasks/${id}/move`, { method: 'PATCH', body: JSON.stringify(data) }),
 
   // Conversations
-  listConversations: (projectId) => request(`/conversations?project_id=${projectId}`),
+  listConversations: () => request('/conversations'),
   getMessages: (conversationId) => request(`/conversations/${conversationId}/messages`),
   sendMessage: (data) => request('/messages', { method: 'POST', body: JSON.stringify(data) }),
 
   // Local PRs
-  listLocalPrs: (projectId) => request(`/local-prs?project_id=${projectId}`),
+  listLocalPrs: () => request('/local-prs'),
   getLocalPr: (id) => request(`/local-prs/${id}`),
   createLocalPr: (data) => request('/local-prs', { method: 'POST', body: JSON.stringify(data) }),
   updateLocalPr: (id, data) =>

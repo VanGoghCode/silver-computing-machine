@@ -1,30 +1,58 @@
 import { useState, useEffect } from 'react';
-import { api } from '../api/client';
+import { api, getAuthToken, setAuthToken } from '../api/client';
 
 export default function Settings() {
   const [modelProfiles, setModelProfiles] = useState([]);
   const [permissionProfiles, setPermissionProfiles] = useState([]);
   const [roleTemplates, setRoleTemplates] = useState([]);
+  const [token, setToken] = useState(getAuthToken());
   const [error, setError] = useState('');
 
   useEffect(() => {
     Promise.all([
-      api.listModelProfiles().catch(() => ({ model_profiles: [] })),
-      api.listPermissionProfiles().catch(() => ({ permission_profiles: [] })),
-      api.listRoleTemplates().catch(() => ({ role_templates: [] })),
+      api.listModelProfiles().catch(() => ({ profiles: [] })),
+      api.listPermissionProfiles().catch(() => ({ profiles: [] })),
+      api.listRoleTemplates().catch(() => ({ templates: [] })),
     ])
       .then(([mp, pp, rt]) => {
-        setModelProfiles(mp.model_profiles || []);
-        setPermissionProfiles(pp.permission_profiles || []);
-        setRoleTemplates(rt.role_templates || []);
+        setModelProfiles(mp.profiles || mp.model_profiles || []);
+        setPermissionProfiles(pp.profiles || pp.permission_profiles || []);
+        setRoleTemplates(rt.templates || rt.role_templates || []);
       })
       .catch((e) => setError(e.message));
   }, []);
+
+  const saveToken = (e) => {
+    e.preventDefault();
+    setAuthToken(token);
+    window.location.reload();
+  };
 
   return (
     <div>
       <h2>Settings / Model Profiles / Role Library</h2>
       {error && <p className="error">{error}</p>}
+
+      <h3>Agent Token</h3>
+      <form onSubmit={saveToken} className="form-row">
+        <input
+          value={token}
+          onChange={(e) => setToken(e.target.value)}
+          placeholder="Bearer token"
+          type="password"
+        />
+        <button type="submit">Save Token</button>
+        <button
+          type="button"
+          onClick={() => {
+            setToken('');
+            setAuthToken('');
+            window.location.reload();
+          }}
+        >
+          Clear
+        </button>
+      </form>
 
       <h3>Model Profiles</h3>
       <table className="data-table">
@@ -41,7 +69,7 @@ export default function Settings() {
             <tr key={m.id}>
               <td>{m.key}</td>
               <td>{m.provider}</td>
-              <td>{m.model_name}</td>
+              <td>{m.model}</td>
               <td>{m.purpose}</td>
             </tr>
           ))}

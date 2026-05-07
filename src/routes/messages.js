@@ -7,9 +7,9 @@ function createMessagesRouter(db, auth) {
 
   // POST /api/messages
   router.post('/api/messages', (req, res) => {
-    const { project_id, content_md } = req.body;
-    if (!project_id || !content_md) {
-      return res.status(400).json({ error: 'project_id and content_md are required' });
+    const { content_md } = req.body;
+    if (!content_md) {
+      return res.status(400).json({ error: 'content_md is required' });
     }
     try {
       const message = messageService.sendMessage(db, req.body, req.agent.id);
@@ -24,17 +24,17 @@ function createMessagesRouter(db, auth) {
 
   // GET /api/conversations
   router.get('/api/conversations', (req, res) => {
-    const projectId = req.query.project_id;
-    if (!projectId) {
-      return res.status(400).json({ error: 'project_id query parameter required' });
-    }
-    const conversations = messageService.listConversations(db, projectId);
+    const conversations = messageService.listConversations(db, req.agent.project_id);
     res.json({ conversations });
   });
 
   // GET /api/conversations/:id/messages
   router.get('/api/conversations/:id/messages', (req, res) => {
-    const messages = messageService.getConversationMessages(db, req.params.id);
+    const messages = messageService.getConversationMessages(
+      db,
+      req.params.id,
+      req.agent.project_id,
+    );
     res.json({ messages });
   });
 

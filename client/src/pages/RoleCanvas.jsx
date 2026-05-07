@@ -18,7 +18,7 @@ export default function RoleCanvas() {
       .catch(() => {});
     api
       .listRoleTemplates()
-      .then((d) => setTemplates(d.role_templates || []))
+      .then((d) => setTemplates(d.templates || d.role_templates || []))
       .catch(() => {});
   }, []);
 
@@ -34,8 +34,8 @@ export default function RoleCanvas() {
         api.listRoleNodes(projectId),
         api.listRoleEdges(projectId),
       ]);
-      setNodes(n.role_nodes || []);
-      setEdges(e.role_edges || []);
+      setNodes(n.nodes || n.role_nodes || []);
+      setEdges(e.edges || e.role_edges || []);
     } catch (err) {
       setError(err.message);
     }
@@ -43,12 +43,16 @@ export default function RoleCanvas() {
 
   const addNode = async () => {
     const tmpl = templates[0];
-    if (!tmpl) return;
+    const departmentId = nodes[0]?.department_id;
+    if (!tmpl || !departmentId) {
+      setError('At least one existing role node is required to infer the department.');
+      return;
+    }
     try {
       await api.createRoleNode(selectedProject, {
         role_template_id: tmpl.id,
         display_name: tmpl.display_name,
-        department_id: nodes[0]?.department_id,
+        department_id: departmentId,
         canvas_x: Math.random() * 400,
         canvas_y: Math.random() * 400,
       });
@@ -81,8 +85,8 @@ export default function RoleCanvas() {
     if (nodes.length < 2) return;
     try {
       await api.createRoleEdge(selectedProject, {
-        from_node_id: nodes[0].id,
-        to_node_id: nodes[1].id,
+        from_role_instance_id: nodes[0].id,
+        to_role_instance_id: nodes[1].id,
         direction: 'bidirectional',
         can_message: 1,
         can_assign_task: 0,
@@ -196,8 +200,8 @@ export default function RoleCanvas() {
         <tbody>
           {edges.map((e) => (
             <tr key={e.id}>
-              <td>{e.from_node_id?.substring(0, 8)}</td>
-              <td>{e.to_node_id?.substring(0, 8)}</td>
+              <td>{e.from_role_instance_id?.substring(0, 8)}</td>
+              <td>{e.to_role_instance_id?.substring(0, 8)}</td>
               <td>{e.direction}</td>
               <td>
                 {editEdge === e.id ? (

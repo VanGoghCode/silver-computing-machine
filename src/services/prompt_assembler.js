@@ -121,13 +121,15 @@ function assembleDynamicContext(db, projectId, options = {}) {
   const params = [projectId];
 
   if (!includeDraft) {
-    query += ` AND status IN ('approved', 'needs_review')`;
+    query += ` AND status = 'approved'`;
   } else {
     query += ` AND status IN ('approved', 'needs_review', 'draft')`;
   }
 
   query += ` AND lifecycle_stage = ?`;
   params.push(lifecycleStage);
+
+  query += ` ORDER BY artifact_type ASC, version DESC, updated_at DESC, id DESC`;
 
   const artifacts = db.prepare(query).all(...params);
 

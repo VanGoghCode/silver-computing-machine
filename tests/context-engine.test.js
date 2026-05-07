@@ -4,11 +4,15 @@ const { generateId } = require('../src/db/helpers');
 
 function setupAuthApp(db) {
   const app = createTestApp(db);
-  const { token } = insertTestAgent(db);
-  return { app, token };
+  const { token, projectId } = insertTestAgent(db, { role_key: 'ceo', agent_name: 'CEO' });
+  return { app, token, projectId };
 }
 
 function insertTestProject(db, slug) {
+  if (!slug) {
+    const existing = db.prepare('SELECT id FROM projects ORDER BY created_at LIMIT 1').get();
+    if (existing) return existing.id;
+  }
   const projectId = generateId();
   db.prepare(`INSERT INTO projects (id, name, slug, root_path, status) VALUES (?, ?, ?, ?, ?)`).run(
     projectId,
@@ -42,8 +46,8 @@ function insertTestAlignmentSession(db, projectId, humanId) {
   return sessionId;
 }
 
-function setupFull(db) {
-  const projectId = insertTestProject(db);
+function setupFull(db, projectIdOverride) {
+  const projectId = projectIdOverride || insertTestProject(db);
   const humanId = insertTestHuman(db);
   const sessionId = insertTestAlignmentSession(db, projectId, humanId);
   return { projectId, humanId, sessionId };
@@ -779,15 +783,18 @@ describe('Context Search', () => {
   });
 
   test('search artifacts by query scoped to agent project', async () => {
-    await createArtifactViaApi(app, token, projectId, {
-      title: 'Product Requirements for Todo App',
-      content_md: 'Build a todo application with CRUD.',
-    });
-    await createArtifactViaApi(app, token, projectId, {
-      title: 'Architecture Spec',
-      content_md: 'Use microservices architecture for the todo app.',
-      artifact_type: 'architecture_spec',
-    });
+    db.prepare(
+      `INSERT INTO context_artifacts
+       (id, project_id, artifact_type, title, content_md, status, lifecycle_stage, version)
+       VALUES (?, ?, 'product_requirements', 'Product Requirements for Todo App',
+               'Build a todo application with CRUD.', 'approved', 'mvp', 1)`,
+    ).run(generateId(), projectId);
+    db.prepare(
+      `INSERT INTO context_artifacts
+       (id, project_id, artifact_type, title, content_md, status, lifecycle_stage, version)
+       VALUES (?, ?, 'architecture_spec', 'Architecture Spec',
+               'Use microservices architecture for the todo app.', 'approved', 'mvp', 1)`,
+    ).run(generateId(), projectId);
 
     const res = await request(app)
       .get('/api/context?q=todo')

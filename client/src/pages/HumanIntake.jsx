@@ -34,7 +34,7 @@ export default function HumanIntake() {
       await api.createProblemStatement(selectedProject, {
         title,
         content_md: content,
-        human_id: 'local-owner',
+        human_id: 'human_local_owner',
       });
       setMessage('Problem statement submitted');
       setTitle('');

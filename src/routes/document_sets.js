@@ -1,5 +1,6 @@
 const express = require('express');
 const { generateId } = require('../db/helpers');
+const { canApproveArtifact } = require('../services/permissions');
 
 function createDocumentSetsRouter(db, auth) {
   const router = express.Router();
@@ -7,7 +8,7 @@ function createDocumentSetsRouter(db, auth) {
 
   // POST /api/projects/:projectId/document-sets
   router.post('/api/projects/:projectId/document-sets', (req, res) => {
-    const { projectId } = req.params;
+    const projectId = req.agent.project_id;
     const { name, stage, alignment_session_id } = req.body;
 
     if (!name) {
@@ -28,17 +29,26 @@ function createDocumentSetsRouter(db, auth) {
   router.get('/api/projects/:projectId/document-sets', (req, res) => {
     const documentSets = db
       .prepare('SELECT * FROM document_sets WHERE project_id = ? ORDER BY created_at')
-      .all(req.params.projectId);
+      .all(req.agent.project_id);
     res.json({ document_sets: documentSets });
   });
 
   // GET /api/document-sets/:id
   router.get('/api/document-sets/:id', (req, res) => {
-    const documentSet = db.prepare('SELECT * FROM document_sets WHERE id = ?').get(req.params.id);
+    const documentSet = db
+      .prepare('SELECT * FROM document_sets WHERE id = ? AND project_id = ?')
+      .get(req.params.id, req.agent.project_id);
     if (!documentSet) return res.status(404).json({ error: 'Document set not found' });
 
     const items = db
-      .prepare('SELECT * FROM document_set_items WHERE document_set_id = ? ORDER BY created_at')
+      .prepare(
+        `SELECT dsi.*, ca.version as artifact_current_version, ca.status as artifact_status,
+                ca.lifecycle_stage as artifact_lifecycle_stage, ca.title as artifact_title
+         FROM document_set_items dsi
+         JOIN context_artifacts ca ON ca.id = dsi.artifact_id
+         WHERE dsi.document_set_id = ?
+         ORDER BY dsi.created_at`,
+      )
       .all(req.params.id);
 
     res.json({ document_set: documentSet, items });
@@ -46,8 +56,13 @@ function createDocumentSetsRouter(db, auth) {
 
   // POST /api/document-sets/:id/items
   router.post('/api/document-sets/:id/items', (req, res) => {
-    const documentSet = db.prepare('SELECT * FROM document_sets WHERE id = ?').get(req.params.id);
+    const documentSet = db
+      .prepare('SELECT * FROM document_sets WHERE id = ? AND project_id = ?')
+      .get(req.params.id, req.agent.project_id);
     if (!documentSet) return res.status(404).json({ error: 'Document set not found' });
+    if (documentSet.status === 'approved') {
+      return res.status(400).json({ error: 'Cannot mutate an approved document set' });
+    }
 
     const { artifact_ids } = req.body;
     if (!artifact_ids || !Array.isArray(artifact_ids) || artifact_ids.length === 0) {
@@ -72,9 +87,19 @@ function createDocumentSetsRouter(db, auth) {
     const items = [];
     for (const artifactId of artifact_ids) {
       const id = generateId();
+      const artifact = db
+        .prepare(
+          `SELECT ca.version, cr.id as revision_id
+           FROM context_artifacts ca
+           LEFT JOIN context_revisions cr ON cr.artifact_id = ca.id AND cr.version = ca.version
+           WHERE ca.id = ?`,
+        )
+        .get(artifactId);
       db.prepare(
-        'INSERT INTO document_set_items (id, document_set_id, artifact_id, required) VALUES (?, ?, ?, 1)',
-      ).run(id, req.params.id, artifactId);
+        `INSERT INTO document_set_items
+         (id, document_set_id, artifact_id, artifact_version, artifact_revision_id, required)
+         VALUES (?, ?, ?, ?, ?, 1)`,
+      ).run(id, req.params.id, artifactId, artifact.version, artifact.revision_id || null);
       items.push(db.prepare('SELECT * FROM document_set_items WHERE id = ?').get(id));
     }
 
@@ -83,10 +108,16 @@ function createDocumentSetsRouter(db, auth) {
 
   // PATCH /api/document-sets/:id
   router.patch('/api/document-sets/:id', (req, res) => {
-    const documentSet = db.prepare('SELECT * FROM document_sets WHERE id = ?').get(req.params.id);
+    const documentSet = db
+      .prepare('SELECT * FROM document_sets WHERE id = ? AND project_id = ?')
+      .get(req.params.id, req.agent.project_id);
     if (!documentSet) return res.status(404).json({ error: 'Document set not found' });
 
-    const allowed = ['name', 'stage', 'status'];
+    if (documentSet.status === 'approved') {
+      return res.status(400).json({ error: 'Cannot mutate an approved document set' });
+    }
+
+    const allowed = ['name', 'stage'];
     const updates = [];
     const values = [];
 
@@ -109,11 +140,17 @@ function createDocumentSetsRouter(db, auth) {
 
   // POST /api/document-sets/:id/approve
   router.post('/api/document-sets/:id/approve', (req, res) => {
-    const documentSet = db.prepare('SELECT * FROM document_sets WHERE id = ?').get(req.params.id);
+    const documentSet = db
+      .prepare('SELECT * FROM document_sets WHERE id = ? AND project_id = ?')
+      .get(req.params.id, req.agent.project_id);
     if (!documentSet) return res.status(404).json({ error: 'Document set not found' });
 
+    if (!canApproveArtifact(db, req.agent.id)) {
+      return res.status(403).json({ error: 'Agent is not allowed to approve document sets' });
+    }
+
     db.prepare(
-      "UPDATE document_sets SET status = 'approved', updated_at = datetime('now') WHERE id = ?",
+      "UPDATE document_sets SET status = 'approved', approved_at = datetime('now'), updated_at = datetime('now') WHERE id = ?",
     ).run(req.params.id);
 
     const updated = db.prepare('SELECT * FROM document_sets WHERE id = ?').get(req.params.id);

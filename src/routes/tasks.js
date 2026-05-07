@@ -7,26 +7,22 @@ function createTasksRouter(db, auth) {
 
   // GET /api/tasks
   router.get('/api/tasks', (req, res) => {
-    const projectId = req.query.project_id;
-    if (!projectId) {
-      return res.status(400).json({ error: 'project_id query parameter required' });
-    }
-    const tasks = taskService.listTasks(db, projectId);
+    const tasks = taskService.listTasks(db, req.agent.project_id);
     res.json({ tasks });
   });
 
   // GET /api/tasks/:id
   router.get('/api/tasks/:id', (req, res) => {
-    const task = taskService.getTask(db, req.params.id);
+    const task = taskService.getTask(db, req.params.id, req.agent.project_id);
     if (!task) return res.status(404).json({ error: 'Task not found' });
     res.json({ task });
   });
 
   // POST /api/tasks
   router.post('/api/tasks', (req, res) => {
-    const { project_id, title } = req.body;
-    if (!project_id || !title) {
-      return res.status(400).json({ error: 'project_id and title are required' });
+    const { title } = req.body;
+    if (!title) {
+      return res.status(400).json({ error: 'title is required' });
     }
     try {
       const task = taskService.createTask(db, req.body, req.agent.id);
@@ -85,6 +81,8 @@ function createTasksRouter(db, auth) {
   // PATCH /api/tasks/:id/todos/:todoId
   router.patch('/api/tasks/:id/todos/:todoId', (req, res) => {
     try {
+      const task = taskService.getTask(db, req.params.id, req.agent.project_id);
+      if (!task) return res.status(404).json({ error: 'Task not found' });
       const todo = taskService.updateTodo(db, req.params.id, req.params.todoId, req.body);
       res.json({ todo });
     } catch (err) {
@@ -114,6 +112,9 @@ function createTasksRouter(db, auth) {
       if (err.message === 'Task not found') {
         return res.status(404).json({ error: err.message });
       }
+      if (err.message.includes('Cannot complete task')) {
+        return res.status(403).json({ error: err.message });
+      }
       return res.status(400).json({ error: err.message });
     }
   });
@@ -121,7 +122,12 @@ function createTasksRouter(db, auth) {
   // POST /api/tasks/:id/complete
   router.post('/api/tasks/:id/complete', (req, res) => {
     try {
-      const task = taskService.completeTask(db, req.params.id, req.agent.id, req.body.result);
+      const task = taskService.completeTask(
+        db,
+        req.params.id,
+        req.agent.id,
+        req.body.result || req.body,
+      );
       res.json({ task });
     } catch (err) {
       if (err.message === 'Task not found') {
@@ -138,8 +144,8 @@ function createTasksRouter(db, auth) {
         db,
         req.params.id,
         req.agent.id,
-        req.body.reason,
-        req.body.result,
+        req.body.reason || req.body.error,
+        req.body.result || req.body,
       );
       res.json({ task });
     } catch (err) {

@@ -7,7 +7,7 @@ function createReportsRouter(db, auth) {
 
   // POST /api/projects/:projectId/reports/daily
   router.post('/api/projects/:projectId/reports/daily', (req, res) => {
-    const { projectId } = req.params;
+    const projectId = req.agent.project_id;
     const project = db.prepare('SELECT * FROM projects WHERE id = ?').get(projectId);
     if (!project) return res.status(404).json({ error: 'Project not found' });
 
@@ -25,7 +25,7 @@ function createReportsRouter(db, auth) {
 
   // GET /api/projects/:projectId/reports
   router.get('/api/projects/:projectId/reports', (req, res) => {
-    const { projectId } = req.params;
+    const projectId = req.agent.project_id;
     const reports = reportService.listReports(db, projectId);
     res.json({ reports });
   });

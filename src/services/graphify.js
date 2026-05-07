@@ -64,14 +64,16 @@ function listGraphifyRuns(db, projectId) {
     .all(projectId);
 }
 
-function queryGraphify(db, query) {
+function queryGraphify(db, query, projectId) {
   if (!query) return [];
 
   const runs = db
     .prepare(
-      `SELECT * FROM graphify_runs WHERE status = 'completed' AND summary_md LIKE ? ORDER BY started_at DESC`,
+      `SELECT * FROM graphify_runs
+       WHERE status = 'completed' AND project_id = ? AND summary_md LIKE ?
+       ORDER BY started_at DESC`,
     )
-    .all(`%${query}%`);
+    .all(projectId, `%${query}%`);
 
   return runs.map((r) => ({
     id: r.id,

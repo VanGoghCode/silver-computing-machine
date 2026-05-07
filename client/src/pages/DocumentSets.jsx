@@ -42,7 +42,7 @@ export default function DocumentSets() {
   const viewSet = async (id) => {
     try {
       const d = await api.getDocumentSet(id);
-      setSelectedSet(d.document_set);
+      setSelectedSet({ ...d.document_set, items: d.items || [] });
     } catch (e) {
       setError(e.message);
     }
@@ -88,7 +88,9 @@ export default function DocumentSets() {
             <ul>
               {selectedSet.items.map((item) => (
                 <li key={item.id}>
-                  {item.artifact_id} (required: {item.required ? 'yes' : 'no'})
+                  {item.artifact_title || item.artifact_id} v{item.artifact_version || '?'} (
+                  current v{item.artifact_current_version || '?'}, required:{' '}
+                  {item.required ? 'yes' : 'no'})
                 </li>
               ))}
             </ul>

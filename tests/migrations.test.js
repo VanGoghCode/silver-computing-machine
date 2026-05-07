@@ -47,7 +47,7 @@ describe('Migrations', () => {
 
   test('_migrations table tracks applied migrations', () => {
     const applied = db.prepare('SELECT name FROM _migrations ORDER BY name').all();
-    expect(applied.length).toBe(19);
+    expect(applied.length).toBe(20);
     expect(applied[0].name).toBe('001_projects');
     expect(applied[10].name).toBe('011_agent_heartbeats');
     expect(applied[11].name).toBe('012_alignment_intake');
@@ -58,6 +58,7 @@ describe('Migrations', () => {
     expect(applied[16].name).toBe('017_runtime_status');
     expect(applied[17].name).toBe('018_graphify_runs');
     expect(applied[18].name).toBe('019_audit_runs');
+    expect(applied[19].name).toBe('020_hardening_snapshots');
   });
 
   test('projects table has correct columns', () => {

@@ -43,7 +43,6 @@ export default function Conversations() {
     e.preventDefault();
     try {
       await api.sendMessage({
-        project_id: selectedProject,
         conversation_id: selectedConv,
         content_md: newMsg,
         message_type: 'notification',

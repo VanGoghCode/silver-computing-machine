@@ -74,7 +74,8 @@ Context engine tables:
 - `context_revisions` — revision history for each artifact
 - `context_links` — directed links between artifacts (references, drives, etc.)
 - `document_sets` — grouped sets of aligned documents per lifecycle stage
-- `document_set_items` — artifacts belonging to a document set
+- `document_set_items` — artifact snapshots belonging to a document set
+- `research_note_revisions` — revision history for research notes
 
 Collaboration and execution tables:
 
@@ -206,6 +207,8 @@ Question statuses: `open` → `answered` → `superseded` → `archived`
 
 AI agents document research findings during alignment.
 
+Research note body edits create `research_note_revisions` rows and increment the note version; previous research content is preserved.
+
 | Method | Path                                         | Description          |
 | ------ | -------------------------------------------- | -------------------- |
 | POST   | `/api/alignment-sessions/:id/research-notes` | Create research note |
@@ -260,6 +263,7 @@ Rules:
 
 - Only **approved** artifacts are used as default task source-of-truth
 - Draft artifacts can be previewed but do not drive engineering tasks
+- Editing artifact body content creates a new `context_revisions` row; metadata-only updates may use PATCH without replacing content history
 - Superseding creates a new artifact and marks the old one `superseded`
 - Archiving soft-hides from prompts but preserves audit history
 - No hard deletes — only archive or supersede
@@ -284,6 +288,8 @@ Query parameters for listing: `?artifact_type=product_requirements&lifecycle_sta
 ### Document Sets
 
 Document sets group aligned artifacts for a lifecycle stage. For example, an MVP document set might include a customer brief, product requirements, acceptance criteria, and architecture spec.
+
+Document set items store the artifact ID plus the artifact version and revision ID at the time the item is added. Approved document sets are immutable snapshots; later artifact revisions do not silently change an approved MVP/v1/v2 set.
 
 | Method | Path                                     | Description          |
 | ------ | ---------------------------------------- | -------------------- |
@@ -408,11 +414,11 @@ The `pipeline_iteration` counter tracks how many times a task enters the review/
 
 Tasks are always created in `backlog` status. Moving to `ready` requires approved linked context artifacts (source-of-truth validation).
 
-| Method | Path                    | Description           |
-| ------ | ----------------------- | --------------------- |
-| POST   | `/api/tasks`            | Create task (backlog) |
-| GET    | `/api/tasks?project_id` | List project tasks    |
-| GET    | `/api/tasks/:id`        | Get task with todos   |
+| Method | Path             | Description                                          |
+| ------ | ---------------- | ---------------------------------------------------- |
+| POST   | `/api/tasks`     | Create task (backlog, project inferred from token)   |
+| GET    | `/api/tasks`     | List authenticated project tasks                     |
+| GET    | `/api/tasks/:id` | Get task with todos, scoped to authenticated project |
 
 ## Worker Task APIs
 
@@ -444,23 +450,31 @@ Rules:
 
 ```json
 {
-  "agent": { "agent_id": "...", "agent_name": "..." },
-  "role": { "role_key": "engineer", "role_display_name": "Engineer", "role_instance_id": "..." },
-  "project": { "project_id": "...", "project_name": "...", "project_slug": "..." },
-  "department": { "department_id": "...", "department_key": "...", "department_name": "..." },
-  "task": { "id": "...", "title": "...", "status": "in_progress", "priority": "high" },
-  "lifecycle_stage": "mvp",
-  "todos": [...],
-  "acceptance_criteria_md": "- Criteria...",
-  "branch_info": { "base_branch": "main", "branch_name": "feature/auth" },
-  "static_prompt": [...],
-  "dynamic_context": [...],
-  "recent_messages": [...],
-  "local_pr": null,
-  "allowed_tools": ["read", "write", "edit", "search", "bash", "glob", "grep"],
-  "forbidden_actions": ["delete_project", "modify_permissions", "escalate_without_approval"],
-  "dopamine_info": { "placeholder": true },
-  "source_artifacts": [{ "artifact_id": "...", "artifact_type": "product_requirements", "version": 1, "status": "approved" }]
+  "taskId": "...",
+  "title": "Implement auth flow",
+  "description": "Build the approved login workflow",
+  "branch": "feature/auth",
+  "baseBranch": "main",
+  "todoList": [{ "id": "...", "text": "Add tests", "status": "pending" }],
+  "acceptanceCriteria": ["Login succeeds", "Invalid token is rejected"],
+  "staticContext": ["...role prompt markdown..."],
+  "dynamicContext": ["...approved artifact content..."],
+  "codebaseContext": [],
+  "recentMessages": [],
+  "allowedTools": ["read", "write", "edit", "search", "bash", "glob", "grep"],
+  "forbiddenActions": ["delete_project", "modify_permissions", "escalate_without_approval"],
+  "requiredOutputFormat": "Return structured task result JSON...",
+  "dopamineInfo": { "placeholder": true },
+  "sourceArtifacts": [
+    {
+      "artifactId": "...",
+      "artifactType": "product_requirements",
+      "version": 2,
+      "status": "approved",
+      "lifecycleStage": "mvp"
+    }
+  ],
+  "lifecycleStage": "mvp"
 }
 ```
 
@@ -469,10 +483,12 @@ Rules:
 The execution context pulls from multiple sources:
 
 - **Static prompt**: Global and role-specific markdown from `role_prompt_files`
-- **Dynamic context**: Approved artifacts linked to the task
+- **Dynamic context**: Latest approved, non-archived, non-superseded artifacts for the task lifecycle stage
 - **Source artifacts**: IDs and versions of all linked approved documents
 - **Recent messages**: Last 10 messages relevant to the task's project
 - **Local PR**: If a PR exists for this task, included automatically
+
+Engineering execution contexts use approved context only. Review, alignment, research, and document-review tasks may include `needs_review` artifacts so reviewers can inspect drafts.
 
 ## Messaging and Hierarchy Edges
 
@@ -484,15 +500,16 @@ Messages flow through the role graph. Every message is validated against `role_e
 
 ### APIs
 
-| Method | Path                              | Description              |
-| ------ | --------------------------------- | ------------------------ |
-| POST   | `/api/messages`                   | Send a message           |
-| GET    | `/api/conversations?project_id=`  | List conversations       |
-| GET    | `/api/conversations/:id/messages` | Get conversation history |
+| Method | Path                              | Description                              |
+| ------ | --------------------------------- | ---------------------------------------- |
+| POST   | `/api/messages`                   | Send a message                           |
+| GET    | `/api/conversations`              | List authenticated project conversations |
+| GET    | `/api/conversations/:id/messages` | Get conversation history                 |
 
 ### Permission Rules
 
 - Messages between roles require a `can_message` edge (direct or bidirectional)
+- Sender project, agent, and role are always derived from the Bearer token
 - Human communication is only allowed through CEO, CTO, or Product Manager roles
 - Same-role cross-department communication requires an explicit edge
 - Messages are stored permanently and can link to tasks or alignment sessions
@@ -516,12 +533,12 @@ Each escalation creates a message with `message_type: 'escalation'` and links to
 
 Silver tracks pull requests locally without GitHub integration. Local PRs are created by agents and go through a review/test workflow.
 
-| Method | Path                        | Description |
-| ------ | --------------------------- | ----------- |
-| POST   | `/api/local-prs`            | Create PR   |
-| GET    | `/api/local-prs?project_id` | List PRs    |
-| GET    | `/api/local-prs/:id`        | Get PR      |
-| PATCH  | `/api/local-prs/:id`        | Update PR   |
+| Method | Path                 | Description                    |
+| ------ | -------------------- | ------------------------------ |
+| POST   | `/api/local-prs`     | Create PR                      |
+| GET    | `/api/local-prs`     | List authenticated project PRs |
+| GET    | `/api/local-prs/:id` | Get PR                         |
+| PATCH  | `/api/local-prs/:id` | Update PR                      |
 
 ### PR Fields
 
@@ -578,7 +595,7 @@ All worker API endpoints require `Authorization: Bearer <token>`.
 
 ### Human Auth (Local-Owner MVP)
 
-The dashboard uses a simple local-owner mode for v1. A `humans` record with `role: 'local_owner'` is seeded by default. Real authentication (OAuth, JWT, etc.) can be added later without schema changes.
+Human records still use a simple local-owner model for v1. The dashboard itself authenticates API calls with an agent Bearer token saved on the Settings page. Real human authentication (OAuth, JWT, etc.) can be added later without changing the worker token model.
 
 ### Worker Status Lifecycle
 
@@ -664,7 +681,7 @@ The `ProjectRuntimeManager` interface supports:
 Two adapters:
 
 - `MockRuntimeManager` — for tests
-- `ProcessRuntimeManager` — for MVP local development (future)
+- `ProcessRuntimeManager` — MVP local adapter that spawns worker processes with `cwd` set to the project root and passes only the worker token, project root, model profile JSON, project ID, and agent ID through environment variables
 
 ## Project Creation Workflow
 
@@ -686,6 +703,8 @@ Workers are not started automatically. Use the runtime management APIs:
 | POST   | `/api/projects/:id/stop-runtime`  | Stop project runtime     |
 | POST   | `/api/projects/:id/spawn-workers` | Spawn workers for agents |
 
+`ProcessRuntimeManager` requires per-agent tokens in the `agent_tokens` request map when spawning workers because Silver stores only token hashes after agent creation.
+
 ### Project Isolation
 
 Path safety ensures:
@@ -694,6 +713,9 @@ Path safety ensures:
 - Paths are resolved and verified to stay within `Projects/<slug>`
 - Path traversal (`../`, null bytes, absolute paths) is blocked
 - `safePath()` and `isWithinProject()` enforce boundaries at the service layer
+- Authenticated APIs derive `project_id`, sender agent, sender role, and department from the Bearer token. Workers should not send trusted identity fields in request bodies.
+- Cross-project task, artifact, message, document set, local PR, graphify, audit, report, role node, and role edge access is rejected server-side.
+- The old public `/api/files` workspace file API is no longer mounted. Workers must operate through their isolated project runtime, not through Silver workspace file routes.
 
 ## API Endpoints
 
@@ -703,15 +725,9 @@ Path safety ensures:
 | ------ | ------------- | ------------------- |
 | GET    | `/api/health` | Server health check |
 
-### Workspace File Operations
-
-| Method | Path                  | Description             |
-| ------ | --------------------- | ----------------------- |
-| GET    | `/api/files?dir=path` | List files in workspace |
-| GET    | `/api/files/:path`    | Read file content       |
-| PUT    | `/api/files/:path`    | Write file content      |
-
 ### Protected (requires Bearer token)
+
+Protected routes are scoped to the authenticated agent's project. `project_id`, `department_id`, `from_agent_id`, and `from_role_instance_id` in request bodies are ignored for ownership decisions.
 
 | Method | Path                                  | Description              |
 | ------ | ------------------------------------- | ------------------------ |
@@ -748,12 +764,13 @@ Path safety ensures:
 
 ### Project Management
 
-| Method | Path                              | Description    |
-| ------ | --------------------------------- | -------------- |
-| POST   | `/api/projects`                   | Create project |
-| POST   | `/api/projects/:id/start-runtime` | Start runtime  |
-| POST   | `/api/projects/:id/stop-runtime`  | Stop runtime   |
-| POST   | `/api/projects/:id/spawn-workers` | Spawn workers  |
+| Method | Path                              | Description                |
+| ------ | --------------------------------- | -------------------------- |
+| GET    | `/api/projects`                   | List authenticated project |
+| POST   | `/api/projects`                   | Create project             |
+| POST   | `/api/projects/:id/start-runtime` | Start runtime              |
+| POST   | `/api/projects/:id/stop-runtime`  | Stop runtime               |
+| POST   | `/api/projects/:id/spawn-workers` | Spawn workers              |
 
 ### Role Templates
 
@@ -800,13 +817,13 @@ Silver-Computing-Machine/
 │   │   ├── migrate.js     — Migration runner
 │   │   ├── seed.js        — Seed runner
 │   │   └── helpers.js     — generateId, withTransaction
-│   ├── migrations/        — 001 through 017 table migrations
+│   ├── migrations/        — 001 through 020 table migrations
 │   ├── seeds/             — Role templates, model profiles, permission profiles, default edges
 │   ├── middleware/
 │   │   └── auth.js        — Bearer token authentication (rejects revoked agents)
 │   ├── routes/
 │   │   ├── health.js      — Public health endpoint
-│   │   ├── files.js       — Workspace file CRUD
+│   │   ├── files.js       — Legacy file CRUD router, not mounted
 │   │   ├── agents.js      — Agent identity, heartbeat, token management, prompt preview
 │   │   ├── tasks.js       — Task CRUD, lifecycle, worker APIs, execution context
 │   │   ├── messages.js    — Messaging with role edge enforcement
@@ -830,7 +847,7 @@ Silver-Computing-Machine/
 │   │   ├── agent_tokens.js — Agent token CRUD (generate, rotate, revoke)
 │   │   ├── heartbeat.js   — Valid statuses, stale detection
 │   │   ├── projects.js    — Project creation workflow
-│   │   ├── runtime_manager.js — Runtime manager interface + MockRuntimeManager
+│   │   ├── runtime_manager.js — Runtime manager interface + Mock/Process adapters
 │   │   ├── tasks.js       — Task lifecycle, execution context, todos, events
 │   │   ├── messages.js    — Message sending, role edge checks, conversations
 │   │   ├── local_prs.js   — Local PR CRUD
@@ -854,14 +871,15 @@ Silver-Computing-Machine/
 
 ## Environment Variables
 
-| Variable                   | Default                   | Description                    |
-| -------------------------- | ------------------------- | ------------------------------ |
-| `PORT`                     | `4000`                    | Server port                    |
-| `WORKSPACE_DIR`            | `/workspace`              | Workspace root                 |
-| `PROJECTS_DIR`             | `$WORKSPACE_DIR/Projects` | Project directories            |
-| `SQLITE_DB_PATH`           | `./data/silver.db`        | SQLite database path           |
-| `AGENT_HEARTBEAT_STALE_MS` | `60000`                   | Stale heartbeat threshold (ms) |
-| `GRAPHIFY_COMMAND`         | `graphify`                | Graphify CLI command           |
+| Variable                   | Default                   | Description                          |
+| -------------------------- | ------------------------- | ------------------------------------ |
+| `PORT`                     | `4000`                    | Server port                          |
+| `WORKSPACE_DIR`            | `/workspace`              | Workspace root                       |
+| `PROJECTS_DIR`             | `$WORKSPACE_DIR/Projects` | Project directories                  |
+| `SQLITE_DB_PATH`           | `./data/silver.db`        | SQLite database path                 |
+| `AGENT_HEARTBEAT_STALE_MS` | `60000`                   | Stale heartbeat threshold (ms)       |
+| `GRAPHIFY_COMMAND`         | `graphify`                | Graphify CLI command                 |
+| `VITE_SILVER_AGENT_TOKEN`  | unset                     | Optional dashboard Bearer token seed |
 
 ## Commands
 
@@ -869,7 +887,7 @@ Silver-Computing-Machine/
 # Backend
 npm install           # Install dependencies
 npm start             # Start server (port 4000)
-npm test              # Run all tests (285+ tests)
+npm test              # Run all tests (299+ tests)
 npm run lint          # Check linting
 npm run lint:fix      # Fix linting issues
 npm run format        # Format with Prettier
@@ -888,25 +906,27 @@ The backend serves the frontend dashboard automatically when `client/dist/` exis
 
 Silver v1 includes a full web dashboard for human-AI interaction.
 
+The dashboard API client sends `Authorization: Bearer <token>` when a token is saved on the Settings page or provided through `VITE_SILVER_AGENT_TOKEN`. Most pages show only the authenticated agent's project because the backend enforces project scoping.
+
 ### Pages
 
-| Page                | Path             | Description                                          |
-| ------------------- | ---------------- | ---------------------------------------------------- |
-| Projects            | `/`              | List and create projects                             |
-| Project Detail      | `/project/:id`   | Project overview: alignment status, artifacts, tasks |
-| Human Intake        | `/intake`        | Submit problem statements, start brainstorming       |
-| Alignment Sessions  | `/alignment`     | View and start alignment sessions                    |
-| Questions & Answers | `/questions`     | View AI questions, answer them                       |
-| Documents           | `/documents`     | View/approve/reject context artifacts                |
-| Document Sets       | `/document-sets` | Create/approve MVP/v1/v2 document sets               |
-| Agents              | `/agents`        | List all worker agents                               |
-| Kanban              | `/kanban`        | Task board with lifecycle columns                    |
-| Role Canvas         | `/role-canvas`   | Visual role graph: nodes, edges, permissions         |
-| Conversations       | `/conversations` | Message threads between roles                        |
-| Local PRs           | `/local-prs`     | Review/test/merge local PRs                          |
-| Reports             | `/reports`       | Daily reports and weekly audit runs                  |
-| Graphify            | `/graphify`      | Run graphify, view run history                       |
-| Settings            | `/settings`      | Model profiles, permission profiles, role templates  |
+| Page                | Path             | Description                                                      |
+| ------------------- | ---------------- | ---------------------------------------------------------------- |
+| Projects            | `/`              | List and create projects                                         |
+| Project Detail      | `/project/:id`   | Project overview: alignment status, artifacts, tasks             |
+| Human Intake        | `/intake`        | Submit problem statements, start brainstorming                   |
+| Alignment Sessions  | `/alignment`     | View and start alignment sessions                                |
+| Questions & Answers | `/questions`     | View AI questions, answer them                                   |
+| Documents           | `/documents`     | View/approve/reject context artifacts                            |
+| Document Sets       | `/document-sets` | Create/approve MVP/v1/v2 document sets                           |
+| Agents              | `/agents`        | List all worker agents                                           |
+| Kanban              | `/kanban`        | Task board with lifecycle columns                                |
+| Role Canvas         | `/role-canvas`   | Visual role graph: nodes, edges, permissions                     |
+| Conversations       | `/conversations` | Message threads between roles                                    |
+| Local PRs           | `/local-prs`     | Review/test/merge local PRs                                      |
+| Reports             | `/reports`       | Daily reports and weekly audit runs                              |
+| Graphify            | `/graphify`      | Run graphify, view run history                                   |
+| Settings            | `/settings`      | Agent token, model profiles, permission profiles, role templates |
 
 ### Human Intake Workflow
 
@@ -1025,14 +1045,15 @@ CEO/CTO/PM receive daily reports with project status.
 ## Current Limitations
 
 - Human auth uses simple local-owner mode (no OAuth/JWT for v1)
-- Frontend does not have authentication — API calls require Bearer tokens from agent creation
+- Frontend supports a saved Bearer token but still has no human OAuth/JWT flow
 - Graphify runs synchronously — may timeout for large projects
 - Role Canvas is a basic list/box view — no drag-and-drop positioning
 - No real LLM integration — AI responses must be triggered manually via API
 - No Docker Compose for backend + frontend
 - No WebSocket/SSE for real-time updates
 - Pipeline iteration limit is hardcoded at 2
-- Worker runtime management uses MockRuntimeManager (ProcessRuntimeManager not yet implemented)
+- Worker runtime management has Mock and local Process adapters; Docker/container isolation is still future work
+- Full real Crispy Adventure process end-to-end testing is not automated yet; current coverage verifies Silver's Crispy-compatible API contract shape and server-side hardening.
 
 ## Docker
 

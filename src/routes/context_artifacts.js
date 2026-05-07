@@ -1,5 +1,6 @@
 const express = require('express');
 const { generateId } = require('../db/helpers');
+const { canApproveArtifact } = require('../services/permissions');
 
 const VALID_ARTIFACT_TYPES = [
   'customer_brief',
@@ -30,12 +31,11 @@ function createContextArtifactsRouter(db, auth) {
 
   // POST /api/context-artifacts
   router.post('/api/context-artifacts', (req, res) => {
-    const { project_id, artifact_type, title, content_md } = req.body;
+    const { artifact_type, title, content_md } = req.body;
+    const project_id = req.agent.project_id;
 
-    if (!project_id || !artifact_type || !title || !content_md) {
-      return res
-        .status(400)
-        .json({ error: 'project_id, artifact_type, title, and content_md are required' });
+    if (!artifact_type || !title || !content_md) {
+      return res.status(400).json({ error: 'artifact_type, title, and content_md are required' });
     }
 
     if (!VALID_ARTIFACT_TYPES.includes(artifact_type)) {
@@ -44,11 +44,31 @@ function createContextArtifactsRouter(db, auth) {
       });
     }
 
-    const lifecycleStage = req.body.lifecycle_stage || 'discovery';
+    const sourceTaskId = req.body.source_task_id || req.body.task_id || null;
+    let lifecycleStage = req.body.lifecycle_stage || 'discovery';
+    if (sourceTaskId) {
+      const task = db
+        .prepare(
+          'SELECT id, department_id, lifecycle_stage FROM tasks WHERE id = ? AND project_id = ?',
+        )
+        .get(sourceTaskId, project_id);
+      if (!task) return res.status(400).json({ error: 'Task not found in this project' });
+      if (!req.body.lifecycle_stage) lifecycleStage = task.lifecycle_stage;
+      if (!req.body.department_id) req.body.department_id = task.department_id;
+    }
+
     if (!VALID_LIFECYCLE_STAGES.includes(lifecycleStage)) {
       return res.status(400).json({
         error: `Invalid lifecycle_stage. Must be one of: ${VALID_LIFECYCLE_STAGES.join(', ')}`,
       });
+    }
+
+    const departmentId = req.body.department_id || req.agent.department_id || null;
+    if (departmentId) {
+      const dept = db
+        .prepare('SELECT id FROM departments WHERE id = ? AND project_id = ?')
+        .get(departmentId, project_id);
+      if (!dept) return res.status(400).json({ error: 'Department not found in this project' });
     }
 
     const id = generateId();
@@ -77,14 +97,14 @@ function createContextArtifactsRouter(db, auth) {
     ).run(
       id,
       project_id,
-      req.body.department_id || null,
+      departmentId,
       req.body.alignment_session_id || null,
       artifact_type,
       title,
       content_md,
-      req.body.author_agent_id || null,
-      req.body.author_human_id || null,
-      req.body.source_task_id || null,
+      req.agent.id,
+      null,
+      sourceTaskId,
       lifecycleStage,
       supersedesId,
     );
@@ -94,13 +114,7 @@ function createContextArtifactsRouter(db, auth) {
     db.prepare(
       `INSERT INTO context_revisions (id, artifact_id, version, content_md, change_summary_md, created_by_agent_id, created_by_human_id)
        VALUES (?, ?, 1, ?, 'Initial version', ?, ?)`,
-    ).run(
-      revisionId,
-      id,
-      content_md,
-      req.body.author_agent_id || null,
-      req.body.author_human_id || null,
-    );
+    ).run(revisionId, id, content_md, req.agent.id, null);
 
     const artifact = db.prepare('SELECT * FROM context_artifacts WHERE id = ?').get(id);
     res.status(201).json({ artifact });
@@ -108,17 +122,49 @@ function createContextArtifactsRouter(db, auth) {
 
   // GET /api/context-artifacts/:id
   router.get('/api/context-artifacts/:id', (req, res) => {
-    const artifact = db.prepare('SELECT * FROM context_artifacts WHERE id = ?').get(req.params.id);
+    const artifact = db
+      .prepare('SELECT * FROM context_artifacts WHERE id = ? AND project_id = ?')
+      .get(req.params.id, req.agent.project_id);
     if (!artifact) return res.status(404).json({ error: 'Artifact not found' });
     res.json({ artifact });
   });
 
   // PATCH /api/context-artifacts/:id
   router.patch('/api/context-artifacts/:id', (req, res) => {
-    const artifact = db.prepare('SELECT * FROM context_artifacts WHERE id = ?').get(req.params.id);
+    const artifact = db
+      .prepare('SELECT * FROM context_artifacts WHERE id = ? AND project_id = ?')
+      .get(req.params.id, req.agent.project_id);
     if (!artifact) return res.status(404).json({ error: 'Artifact not found' });
 
-    const allowed = ['title', 'content_md', 'artifact_type', 'lifecycle_stage', 'visibility_scope'];
+    if (req.body.content_md !== undefined) {
+      if (artifact.is_archived) {
+        return res.status(400).json({ error: 'Cannot revise an archived artifact' });
+      }
+      if (artifact.status === 'superseded') {
+        return res.status(400).json({ error: 'Cannot revise a superseded artifact' });
+      }
+      const newVersion = artifact.version + 1;
+      const revisionId = generateId();
+      db.prepare(
+        `INSERT INTO context_revisions
+         (id, artifact_id, version, content_md, change_summary_md, created_by_agent_id)
+         VALUES (?, ?, ?, ?, ?, ?)`,
+      ).run(
+        revisionId,
+        artifact.id,
+        newVersion,
+        req.body.content_md,
+        req.body.change_summary_md || 'Updated content',
+        req.agent.id,
+      );
+      db.prepare(
+        `UPDATE context_artifacts
+         SET content_md = ?, version = ?, updated_at = datetime('now')
+         WHERE id = ?`,
+      ).run(req.body.content_md, newVersion, artifact.id);
+    }
+
+    const allowed = ['title', 'artifact_type', 'lifecycle_stage', 'visibility_scope'];
     const updates = [];
     const values = [];
 
@@ -137,17 +183,23 @@ function createContextArtifactsRouter(db, auth) {
 
     if (updates.length > 0) {
       updates.push("updated_at = datetime('now')");
-      values.push(req.params.id);
-      db.prepare(`UPDATE context_artifacts SET ${updates.join(', ')} WHERE id = ?`).run(...values);
+      values.push(req.params.id, req.agent.project_id);
+      db.prepare(
+        `UPDATE context_artifacts SET ${updates.join(', ')} WHERE id = ? AND project_id = ?`,
+      ).run(...values);
     }
 
-    const updated = db.prepare('SELECT * FROM context_artifacts WHERE id = ?').get(req.params.id);
+    const updated = db
+      .prepare('SELECT * FROM context_artifacts WHERE id = ? AND project_id = ?')
+      .get(req.params.id, req.agent.project_id);
     res.json({ artifact: updated });
   });
 
   // POST /api/context-artifacts/:id/revise
   router.post('/api/context-artifacts/:id/revise', (req, res) => {
-    const artifact = db.prepare('SELECT * FROM context_artifacts WHERE id = ?').get(req.params.id);
+    const artifact = db
+      .prepare('SELECT * FROM context_artifacts WHERE id = ? AND project_id = ?')
+      .get(req.params.id, req.agent.project_id);
     if (!artifact) return res.status(404).json({ error: 'Artifact not found' });
 
     if (artifact.is_archived) {
@@ -175,8 +227,8 @@ function createContextArtifactsRouter(db, auth) {
       newVersion,
       content_md,
       change_summary_md || null,
-      req.body.created_by_agent_id || null,
-      req.body.created_by_human_id || null,
+      req.agent.id,
+      null,
     );
 
     // Update artifact
@@ -191,8 +243,14 @@ function createContextArtifactsRouter(db, auth) {
 
   // POST /api/context-artifacts/:id/approve
   router.post('/api/context-artifacts/:id/approve', (req, res) => {
-    const artifact = db.prepare('SELECT * FROM context_artifacts WHERE id = ?').get(req.params.id);
+    const artifact = db
+      .prepare('SELECT * FROM context_artifacts WHERE id = ? AND project_id = ?')
+      .get(req.params.id, req.agent.project_id);
     if (!artifact) return res.status(404).json({ error: 'Artifact not found' });
+
+    if (!canApproveArtifact(db, req.agent.id)) {
+      return res.status(403).json({ error: 'Agent is not allowed to approve artifacts' });
+    }
 
     if (artifact.status === 'approved') {
       return res.json({ artifact });
@@ -214,7 +272,9 @@ function createContextArtifactsRouter(db, auth) {
 
   // POST /api/context-artifacts/:id/reject
   router.post('/api/context-artifacts/:id/reject', (req, res) => {
-    const artifact = db.prepare('SELECT * FROM context_artifacts WHERE id = ?').get(req.params.id);
+    const artifact = db
+      .prepare('SELECT * FROM context_artifacts WHERE id = ? AND project_id = ?')
+      .get(req.params.id, req.agent.project_id);
     if (!artifact) return res.status(404).json({ error: 'Artifact not found' });
 
     if (artifact.status === 'rejected') {
@@ -234,7 +294,9 @@ function createContextArtifactsRouter(db, auth) {
 
   // POST /api/context-artifacts/:id/archive
   router.post('/api/context-artifacts/:id/archive', (req, res) => {
-    const artifact = db.prepare('SELECT * FROM context_artifacts WHERE id = ?').get(req.params.id);
+    const artifact = db
+      .prepare('SELECT * FROM context_artifacts WHERE id = ? AND project_id = ?')
+      .get(req.params.id, req.agent.project_id);
     if (!artifact) return res.status(404).json({ error: 'Artifact not found' });
 
     if (artifact.is_archived) {
@@ -251,7 +313,9 @@ function createContextArtifactsRouter(db, auth) {
 
   // GET /api/context-artifacts/:id/revisions
   router.get('/api/context-artifacts/:id/revisions', (req, res) => {
-    const artifact = db.prepare('SELECT * FROM context_artifacts WHERE id = ?').get(req.params.id);
+    const artifact = db
+      .prepare('SELECT * FROM context_artifacts WHERE id = ? AND project_id = ?')
+      .get(req.params.id, req.agent.project_id);
     if (!artifact) return res.status(404).json({ error: 'Artifact not found' });
 
     const revisions = db
@@ -265,7 +329,9 @@ function createContextArtifactsRouter(db, auth) {
     const fromArtifact = db
       .prepare('SELECT * FROM context_artifacts WHERE id = ?')
       .get(req.params.id);
-    if (!fromArtifact) return res.status(404).json({ error: 'Source artifact not found' });
+    if (!fromArtifact || fromArtifact.project_id !== req.agent.project_id) {
+      return res.status(404).json({ error: 'Source artifact not found' });
+    }
 
     const { to_artifact_id, link_type } = req.body;
     if (!to_artifact_id) return res.status(400).json({ error: 'to_artifact_id is required' });
@@ -274,6 +340,9 @@ function createContextArtifactsRouter(db, auth) {
       .prepare('SELECT * FROM context_artifacts WHERE id = ?')
       .get(to_artifact_id);
     if (!toArtifact) return res.status(404).json({ error: 'Target artifact not found' });
+    if (toArtifact.project_id !== req.agent.project_id) {
+      return res.status(403).json({ error: 'Cannot link artifact from another project' });
+    }
 
     const id = generateId();
     db.prepare(
@@ -287,6 +356,11 @@ function createContextArtifactsRouter(db, auth) {
 
   // GET /api/context-artifacts/:id/links
   router.get('/api/context-artifacts/:id/links', (req, res) => {
+    const artifact = db
+      .prepare('SELECT id FROM context_artifacts WHERE id = ? AND project_id = ?')
+      .get(req.params.id, req.agent.project_id);
+    if (!artifact) return res.status(404).json({ error: 'Artifact not found' });
+
     const links = db
       .prepare('SELECT * FROM context_links WHERE from_artifact_id = ? ORDER BY created_at')
       .all(req.params.id);
@@ -295,7 +369,7 @@ function createContextArtifactsRouter(db, auth) {
 
   // GET /api/projects/:projectId/context-artifacts
   router.get('/api/projects/:projectId/context-artifacts', (req, res) => {
-    const { projectId } = req.params;
+    const projectId = req.agent.project_id;
     let query = 'SELECT * FROM context_artifacts WHERE project_id = ?';
     const params = [projectId];
 
@@ -332,6 +406,7 @@ function createContextArtifactsRouter(db, auth) {
       .prepare(
         `SELECT * FROM context_artifacts
        WHERE project_id = ? AND (title LIKE ? OR content_md LIKE ?) AND is_archived = 0
+       AND status = 'approved'
        ORDER BY created_at DESC`,
       )
       .all(agent.project_id, `%${q}%`, `%${q}%`);
@@ -340,7 +415,7 @@ function createContextArtifactsRouter(db, auth) {
 
   // POST /api/projects/:projectId/validate-source-of-truth
   router.post('/api/projects/:projectId/validate-source-of-truth', (req, res) => {
-    const { projectId } = req.params;
+    const projectId = req.agent.project_id;
     const lifecycleStage = req.body.lifecycle_stage || 'mvp';
 
     const requiredTypes = ['product_requirements', 'acceptance_criteria'];

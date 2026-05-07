@@ -47,7 +47,7 @@ export default function Questions() {
     try {
       await api.answerQuestion(questionId, {
         answer_md: answerMd,
-        answered_by_human_id: 'local-owner',
+        answered_by_human_id: 'human_local_owner',
       });
       if (selectedSession) loadQuestions(selectedSession);
       setAnswers((prev) => {

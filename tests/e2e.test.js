@@ -332,8 +332,8 @@ describe('End-to-end integration', () => {
       .get(`/api/tasks/${taskId}/execution-context`)
       .set('Authorization', `Bearer ${engineerToken}`);
     if (ctxRes.status === 200) {
-      expect(ctxRes.body.task).toBeDefined();
-      expect(ctxRes.body.agent).toBeDefined();
+      expect(ctxRes.body.taskId).toBe(taskId);
+      expect(ctxRes.body.description).toBeDefined();
     }
 
     // 21. Worker completes task
@@ -370,9 +370,12 @@ describe('End-to-end integration', () => {
       .set('Authorization', `Bearer ${engineerToken}`)
       .send({ test_status: 'passed' });
 
+    const gitManagerTokenEntry = result.tokens.find((t) => t.role_key === 'git_manager');
+    const gitManagerToken = gitManagerTokenEntry ? gitManagerTokenEntry.token : ceoToken;
+
     const mergeRes = await request(app)
       .patch(`/api/local-prs/${prId}`)
-      .set('Authorization', `Bearer ${engineerToken}`)
+      .set('Authorization', `Bearer ${gitManagerToken}`)
       .send({ status: 'merged' });
     expect(mergeRes.status).toBe(200);
 

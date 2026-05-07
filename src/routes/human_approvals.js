@@ -12,6 +12,21 @@ function createHumanApprovalsRouter(db, auth) {
       return res.status(400).json({ error: 'human_id and approval_type are required' });
     }
 
+    const projectId = req.agent.project_id;
+    if (alignment_session_id) {
+      const session = db
+        .prepare('SELECT id FROM alignment_sessions WHERE id = ? AND project_id = ?')
+        .get(alignment_session_id, projectId);
+      if (!session)
+        return res.status(400).json({ error: 'Alignment session not found in this project' });
+    }
+    if (artifact_id) {
+      const artifact = db
+        .prepare('SELECT id FROM context_artifacts WHERE id = ? AND project_id = ?')
+        .get(artifact_id, projectId);
+      if (!artifact) return res.status(400).json({ error: 'Artifact not found in this project' });
+    }
+
     const id = generateId();
     db.prepare(
       `INSERT INTO human_approvals
@@ -19,7 +34,7 @@ function createHumanApprovalsRouter(db, auth) {
        VALUES (?, ?, ?, ?, ?, ?, 'pending')`,
     ).run(
       id,
-      req.params.projectId,
+      projectId,
       alignment_session_id || null,
       artifact_id || null,
       human_id,
@@ -32,14 +47,15 @@ function createHumanApprovalsRouter(db, auth) {
 
   // GET /api/projects/:projectId/alignment-status
   router.get('/api/projects/:projectId/alignment-status', (req, res) => {
+    const projectId = req.agent.project_id;
     // Check if project has approved alignment sessions
     const approvedSession = db
       .prepare(`SELECT * FROM alignment_sessions WHERE project_id = ? AND status = 'approved'`)
-      .get(req.params.projectId);
+      .get(projectId);
 
     const alignedPs = db
       .prepare(`SELECT * FROM problem_statements WHERE project_id = ? AND status = 'aligned'`)
-      .all(req.params.projectId);
+      .all(projectId);
 
     const canCreateTasks = !!(approvedSession || alignedPs.length > 0);
 
@@ -50,9 +66,19 @@ function createHumanApprovalsRouter(db, auth) {
     });
   });
 
+  // GET /api/projects/:projectId/approvals
+  router.get('/api/projects/:projectId/approvals', (req, res) => {
+    const approvals = db
+      .prepare('SELECT * FROM human_approvals WHERE project_id = ? ORDER BY created_at DESC')
+      .all(req.agent.project_id);
+    res.json({ approvals });
+  });
+
   // PATCH /api/approvals/:id
   router.patch('/api/approvals/:id', (req, res) => {
-    const approval = db.prepare(`SELECT * FROM human_approvals WHERE id = ?`).get(req.params.id);
+    const approval = db
+      .prepare(`SELECT * FROM human_approvals WHERE id = ? AND project_id = ?`)
+      .get(req.params.id, req.agent.project_id);
     if (!approval) return res.status(404).json({ error: 'Approval not found' });
 
     const allowed = ['status', 'notes_md'];

@@ -545,11 +545,11 @@ describe('Execution context', () => {
       .get(`/api/tasks/${taskId}/execution-context`)
       .set('Authorization', `Bearer ${agent.token}`);
     expect(res.status).toBe(200);
-    expect(res.body.agent).toBeDefined();
-    expect(res.body.agent.agent_id).toBe(agent.agentId);
-    expect(res.body.role).toBeDefined();
-    expect(res.body.project).toBeDefined();
-    expect(res.body.task).toBeDefined();
+    expect(res.body.taskId).toBe(taskId);
+    expect(res.body.assignedAgentName).toBe('Test Agent');
+    expect(res.body.roleInstanceId).toBeDefined();
+    expect(res.body.projectId).toBe(projectId);
+    expect(res.body.staticContext).toBeDefined();
   });
 
   test('execution-context includes approved dynamic context', async () => {
@@ -563,8 +563,8 @@ describe('Execution context', () => {
       .get(`/api/tasks/${taskId}/execution-context`)
       .set('Authorization', `Bearer ${agent.token}`);
     expect(res.status).toBe(200);
-    expect(res.body.dynamic_context).toBeDefined();
-    const found = res.body.dynamic_context.find((c) => c.artifact_id === artId);
+    expect(res.body.dynamicContext).toContain('Content for product_requirements');
+    const found = res.body.sourceArtifacts.find((c) => c.artifactId === artId);
     expect(found).toBeDefined();
     expect(found.status).toBe('approved');
   });
@@ -580,9 +580,9 @@ describe('Execution context', () => {
       .get(`/api/tasks/${taskId}/execution-context`)
       .set('Authorization', `Bearer ${agent.token}`);
     expect(res.status).toBe(200);
-    expect(res.body.source_artifacts).toBeDefined();
-    expect(res.body.source_artifacts.length).toBeGreaterThanOrEqual(1);
-    const src = res.body.source_artifacts.find((s) => s.artifact_id === artId);
+    expect(res.body.sourceArtifacts).toBeDefined();
+    expect(res.body.sourceArtifacts.length).toBeGreaterThanOrEqual(1);
+    const src = res.body.sourceArtifacts.find((s) => s.artifactId === artId);
     expect(src).toBeDefined();
     expect(src.version).toBe(1);
   });
@@ -612,6 +612,18 @@ describe('Messaging', () => {
     for (const role of ['ceo', 'cto', 'product_manager', 'tech_lead', 'engineer', 'reviewer']) {
       agents[role] = insertAgentForRole(db, projectId, deptId, role);
     }
+
+    const agentRole = (role) =>
+      db.prepare('SELECT role_instance_id FROM agents WHERE id = ?').get(agents[role].agentId)
+        .role_instance_id;
+    const edgeInsert = db.prepare(`
+      INSERT INTO role_edges (id, project_id, from_role_instance_id, to_role_instance_id,
+        edge_type, direction, can_message, can_assign_task, can_escalate, can_share_context,
+        can_request_approval, requires_approval, policy_json)
+      VALUES (?, ?, ?, ?, 'hierarchy', 'bidirectional', 1, 0, 1, 1, 0, 0, '{}')
+    `);
+    edgeInsert.run(generateId(), projectId, agentRole('tech_lead'), agentRole('engineer'));
+    edgeInsert.run(generateId(), projectId, agentRole('tech_lead'), agentRole('reviewer'));
   });
 
   afterEach(() => db.close());
@@ -864,34 +876,19 @@ describe('Execution context full contract', () => {
     expect(res.status).toBe(200);
 
     const ctx = res.body;
-    // Agent identity
-    expect(ctx.agent).toBeDefined();
-    expect(ctx.agent.agent_id).toBe(agent.agentId);
-    // Role identity
-    expect(ctx.role).toBeDefined();
-    // Project identity
-    expect(ctx.project).toBeDefined();
-    // Department identity
-    expect(ctx.department).toBeDefined();
-    // Current task
-    expect(ctx.task).toBeDefined();
-    expect(ctx.task.id).toBe(taskId);
-    // Lifecycle stage
-    expect(ctx.lifecycle_stage).toBeDefined();
-    // Todos
-    expect(ctx.todos).toBeDefined();
-    // Acceptance criteria
-    expect(ctx.acceptance_criteria_md).toBe('- Auth works\n- Tests pass');
-    // Branch info
-    expect(ctx.branch_info).toBeDefined();
-    expect(ctx.branch_info.branch_name).toBe('feature/auth');
-    // Allowed tools placeholder
-    expect(ctx.allowed_tools).toBeDefined();
-    // Forbidden actions placeholder
-    expect(ctx.forbidden_actions).toBeDefined();
-    // Dopamine info placeholder
-    expect(ctx.dopamine_info).toBeDefined();
-    // Source artifacts
-    expect(ctx.source_artifacts).toBeDefined();
+    expect(ctx.taskId).toBe(taskId);
+    expect(ctx.description).toBeDefined();
+    expect(ctx.projectId).toBe(projectId);
+    expect(ctx.departmentId).toBeDefined();
+    expect(ctx.roleInstanceId).toBeDefined();
+    expect(ctx.lifecycleStage).toBeDefined();
+    expect(ctx.todoList).toBeDefined();
+    expect(ctx.acceptanceCriteria).toEqual(['Auth works', 'Tests pass']);
+    expect(ctx.branch).toBe('feature/auth');
+    expect(ctx.baseBranch).toBe('main');
+    expect(ctx.allowedTools).toBeDefined();
+    expect(ctx.forbiddenActions).toBeDefined();
+    expect(ctx.dopamineInfo).toBeDefined();
+    expect(ctx.sourceArtifacts).toBeDefined();
   });
 });

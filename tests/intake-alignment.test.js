@@ -4,11 +4,15 @@ const { generateId } = require('../src/db/helpers');
 
 function setupAuthApp(db) {
   const app = createTestApp(db);
-  const { token } = insertTestAgent(db);
-  return { app, token };
+  const { token, projectId } = insertTestAgent(db, { role_key: 'ceo', agent_name: 'CEO' });
+  return { app, token, projectId };
 }
 
 function insertTestProject(db, slug) {
+  if (!slug) {
+    const existing = db.prepare('SELECT id FROM projects ORDER BY created_at LIMIT 1').get();
+    if (existing) return existing.id;
+  }
   const projectId = generateId();
   db.prepare(`INSERT INTO projects (id, name, slug, root_path, status) VALUES (?, ?, ?, ?, ?)`).run(
     projectId,
@@ -21,6 +25,11 @@ function insertTestProject(db, slug) {
 }
 
 function insertTestDepartment(db, projectId, key) {
+  const existing = db
+    .prepare(`SELECT id FROM departments WHERE project_id = ? AND key = ?`)
+    .get(projectId, key);
+  if (existing) return existing.id;
+
   const deptId = generateId();
   db.prepare(`INSERT INTO departments (id, project_id, key, display_name) VALUES (?, ?, ?, ?)`).run(
     deptId,
@@ -611,6 +620,12 @@ describe('Human Approval API', () => {
 
   test('POST creates a pending approval for an artifact', async () => {
     const artifactId = generateId();
+    db.prepare(
+      `INSERT INTO context_artifacts
+       (id, project_id, artifact_type, title, content_md, status, lifecycle_stage, version)
+       VALUES (?, ?, 'customer_brief', 'Brief', 'Brief content', 'draft', 'mvp', 1)`,
+    ).run(artifactId, projectId);
+
     const res = await request(app)
       .post(`/api/projects/${projectId}/approvals`)
       .set('Authorization', `Bearer ${token}`)
@@ -700,12 +715,19 @@ describe('Context Artifact Integration', () => {
     ];
 
     for (const type of artifactTypes) {
+      const artifactId = generateId();
+      db.prepare(
+        `INSERT INTO context_artifacts
+         (id, project_id, artifact_type, title, content_md, status, lifecycle_stage, version)
+         VALUES (?, ?, ?, ?, 'Draft content', 'draft', 'mvp', 1)`,
+      ).run(artifactId, projectId, type, type);
+
       const res = await request(app)
         .post(`/api/projects/${projectId}/approvals`)
         .set('Authorization', `Bearer ${token}`)
         .send({
           alignment_session_id: sessionId,
-          artifact_id: generateId(),
+          artifact_id: artifactId,
           human_id: humanId,
           approval_type: type,
         });

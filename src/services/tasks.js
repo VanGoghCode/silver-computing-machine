@@ -17,6 +17,31 @@ const ALLOWED_TRANSITIONS = {
   done: [],
 };
 
+function normalizeLinkedArtifactIds(raw) {
+  if (!raw) return [];
+  if (Array.isArray(raw)) return raw;
+  if (typeof raw === 'string') {
+    try {
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return raw
+        .split(',')
+        .map((id) => id.trim())
+        .filter(Boolean);
+    }
+  }
+  return [];
+}
+
+function parseMarkdownList(markdown) {
+  if (!markdown) return [];
+  return String(markdown)
+    .split(/\r?\n/)
+    .map((line) => line.replace(/^\s*[-*]\s*/, '').trim())
+    .filter(Boolean);
+}
+
 /**
  * Check whether moving from->to is a pipeline-incrementing transition.
  * Review/test loops increment pipeline_iteration.
@@ -40,8 +65,10 @@ function validateSourceOfTruth(db, projectId, linkedArtifactIds) {
 
   for (const artId of linkedArtifactIds) {
     const art = db
-      .prepare('SELECT id, status FROM context_artifacts WHERE id = ? AND is_archived = 0')
-      .get(artId);
+      .prepare(
+        'SELECT id, project_id, status FROM context_artifacts WHERE id = ? AND project_id = ? AND is_archived = 0',
+      )
+      .get(artId, projectId);
     if (!art) {
       return { valid: false, reason: `Artifact ${artId} not found` };
     }
@@ -55,6 +82,40 @@ function validateSourceOfTruth(db, projectId, linkedArtifactIds) {
 
 function createTask(db, data, agentId) {
   const id = generateId();
+  const agent = db.prepare('SELECT * FROM agents WHERE id = ?').get(agentId);
+  if (!agent) throw new Error('Agent not found');
+  const projectId = agent.project_id;
+  const departmentId = data.department_id || agent.department_id || null;
+
+  if (departmentId) {
+    const dept = db
+      .prepare('SELECT id FROM departments WHERE id = ? AND project_id = ?')
+      .get(departmentId, projectId);
+    if (!dept) throw new Error('Department not found in this project');
+  }
+
+  if (data.assigned_agent_id) {
+    const assigned = db
+      .prepare('SELECT id, role_instance_id FROM agents WHERE id = ? AND project_id = ?')
+      .get(data.assigned_agent_id, projectId);
+    if (!assigned) throw new Error('Assigned agent not found in this project');
+  }
+
+  if (data.assigned_role_instance_id) {
+    const role = db
+      .prepare('SELECT id FROM project_role_instances WHERE id = ? AND project_id = ?')
+      .get(data.assigned_role_instance_id, projectId);
+    if (!role) throw new Error('Assigned role not found in this project');
+  }
+
+  const linkedArtifactIds = normalizeLinkedArtifactIds(data.linked_artifact_ids_json);
+  for (const artifactId of linkedArtifactIds) {
+    const artifact = db
+      .prepare('SELECT id FROM context_artifacts WHERE id = ? AND project_id = ?')
+      .get(artifactId, projectId);
+    if (!artifact) throw new Error(`Linked artifact ${artifactId} not found in this project`);
+  }
+
   db.prepare(
     `INSERT INTO tasks (id, project_id, department_id, lifecycle_stage, created_by_agent_id,
      assigned_agent_id, assigned_role_instance_id, title, description_md, status, priority,
@@ -62,8 +123,8 @@ function createTask(db, data, agentId) {
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
   ).run(
     id,
-    data.project_id,
-    data.department_id || null,
+    projectId,
+    departmentId,
     data.lifecycle_stage || 'discovery',
     agentId,
     data.assigned_agent_id || null,
@@ -76,7 +137,7 @@ function createTask(db, data, agentId) {
     data.branch_name || null,
     data.todo_md || null,
     data.acceptance_criteria_md || null,
-    data.linked_artifact_ids_json || '[]',
+    JSON.stringify(linkedArtifactIds),
     0,
   );
 
@@ -90,8 +151,10 @@ function createTask(db, data, agentId) {
   return db.prepare('SELECT * FROM tasks WHERE id = ?').get(id);
 }
 
-function getTask(db, taskId) {
-  const task = db.prepare('SELECT * FROM tasks WHERE id = ?').get(taskId);
+function getTask(db, taskId, projectId) {
+  const task = projectId
+    ? db.prepare('SELECT * FROM tasks WHERE id = ? AND project_id = ?').get(taskId, projectId)
+    : db.prepare('SELECT * FROM tasks WHERE id = ?').get(taskId);
   if (!task) return null;
 
   const todos = db
@@ -114,7 +177,11 @@ function getMyTasks(db, agentId) {
 }
 
 function moveTask(db, taskId, newStatus, agentId, reason) {
-  const task = db.prepare('SELECT * FROM tasks WHERE id = ?').get(taskId);
+  const agent = db.prepare('SELECT * FROM agents WHERE id = ?').get(agentId);
+  if (!agent) throw new Error('Agent not found');
+  const task = db
+    .prepare('SELECT * FROM tasks WHERE id = ? AND project_id = ?')
+    .get(taskId, agent.project_id);
   if (!task) throw new Error('Task not found');
 
   const currentStatus = task.status;
@@ -132,6 +199,10 @@ function moveTask(db, taskId, newStatus, agentId, reason) {
     if (!validation.valid) {
       throw new Error(`Cannot move to ready: ${validation.reason}`);
     }
+  }
+
+  if (currentStatus === 'ready' && newStatus === 'assigned' && !task.assigned_agent_id) {
+    throw new Error('Cannot move to assigned: assigned_agent_id is required');
   }
 
   // Pipeline iteration check
@@ -170,7 +241,11 @@ function moveTask(db, taskId, newStatus, agentId, reason) {
 }
 
 function claimTask(db, taskId, agentId) {
-  const task = db.prepare('SELECT * FROM tasks WHERE id = ?').get(taskId);
+  const agent = db.prepare('SELECT * FROM agents WHERE id = ?').get(agentId);
+  if (!agent) throw new Error('Agent not found');
+  const task = db
+    .prepare('SELECT * FROM tasks WHERE id = ? AND project_id = ?')
+    .get(taskId, agent.project_id);
   if (!task) throw new Error('Task not found');
 
   if (task.assigned_agent_id !== agentId) {
@@ -195,7 +270,11 @@ function claimTask(db, taskId, agentId) {
 }
 
 function completeTask(db, taskId, agentId, result) {
-  const task = db.prepare('SELECT * FROM tasks WHERE id = ?').get(taskId);
+  const agent = db.prepare('SELECT * FROM agents WHERE id = ?').get(agentId);
+  if (!agent) throw new Error('Agent not found');
+  const task = db
+    .prepare('SELECT * FROM tasks WHERE id = ? AND project_id = ?')
+    .get(taskId, agent.project_id);
   if (!task) throw new Error('Task not found');
 
   // Finish current attempt
@@ -211,28 +290,19 @@ function completeTask(db, taskId, agentId, result) {
     ).run(JSON.stringify(result || {}), attempt.id);
   }
 
-  // Move to done via the proper chain: testing -> done
-  // If task is in testing, move to done directly
-  if (task.status === 'testing') {
-    return moveTask(db, taskId, 'done', agentId, 'Task completed');
+  if (task.status !== 'testing') {
+    throw new Error(`Cannot complete task in status: ${task.status}`);
   }
 
-  // Otherwise update and create event
-  db.prepare(`UPDATE tasks SET status = 'done', updated_at = datetime('now') WHERE id = ?`).run(
-    taskId,
-  );
-
-  const eventId = generateId();
-  db.prepare(
-    `INSERT INTO task_events (id, task_id, agent_id, event_type, content_md, metadata_json)
-     VALUES (?, ?, ?, 'completed', ?, ?)`,
-  ).run(eventId, taskId, agentId, 'Task completed', JSON.stringify(result || {}));
-
-  return db.prepare('SELECT * FROM tasks WHERE id = ?').get(taskId);
+  return moveTask(db, taskId, 'done', agentId, 'Task completed');
 }
 
 function failTask(db, taskId, agentId, reason, result) {
-  const task = db.prepare('SELECT * FROM tasks WHERE id = ?').get(taskId);
+  const agent = db.prepare('SELECT * FROM agents WHERE id = ?').get(agentId);
+  if (!agent) throw new Error('Agent not found');
+  const task = db
+    .prepare('SELECT * FROM tasks WHERE id = ? AND project_id = ?')
+    .get(taskId, agent.project_id);
   if (!task) throw new Error('Task not found');
 
   // Finish current attempt as failed
@@ -282,6 +352,13 @@ function failTask(db, taskId, agentId, reason, result) {
 }
 
 function createTaskEvent(db, taskId, agentId, data) {
+  const agent = db.prepare('SELECT project_id FROM agents WHERE id = ?').get(agentId);
+  if (!agent) throw new Error('Agent not found');
+  const task = db
+    .prepare('SELECT id FROM tasks WHERE id = ? AND project_id = ?')
+    .get(taskId, agent.project_id);
+  if (!task) throw new Error('Task not found');
+
   const id = generateId();
   db.prepare(
     `INSERT INTO task_events (id, task_id, agent_id, event_type, content_md, metadata_json)
@@ -299,6 +376,9 @@ function createTaskEvent(db, taskId, agentId, data) {
 }
 
 function updateTodo(db, taskId, todoId, data) {
+  if (data.notes !== undefined && data.notes_md === undefined) {
+    data.notes_md = data.notes;
+  }
   const todo = db
     .prepare('SELECT * FROM task_todos WHERE id = ? AND task_id = ?')
     .get(todoId, taskId);
@@ -328,7 +408,11 @@ function updateTodo(db, taskId, todoId, data) {
  * Build the full execution context bundle for Crispy Adventure worker.
  */
 function getExecutionContext(db, taskId, agentId) {
-  const task = db.prepare('SELECT * FROM tasks WHERE id = ?').get(taskId);
+  const requester = db.prepare('SELECT * FROM agents WHERE id = ?').get(agentId);
+  if (!requester) throw new Error('Agent not found');
+  const task = db
+    .prepare('SELECT * FROM tasks WHERE id = ? AND project_id = ?')
+    .get(taskId, requester.project_id);
   if (!task) throw new Error('Task not found');
 
   // Agent identity
@@ -347,71 +431,70 @@ function getExecutionContext(db, taskId, agentId) {
     )
     .get(agentId);
 
-  const role = agent
-    ? {
-        role_key: agent.role_key,
-        role_display_name: agent.role_display_name,
-        role_instance_id: agent.role_instance_id,
-        role_template_id: agent.role_template_id,
-      }
-    : null;
-
-  const project = agent
-    ? {
-        project_id: agent.project_id,
-        project_name: agent.project_name,
-        project_slug: agent.project_slug,
-      }
-    : null;
-
-  const department = agent
-    ? {
-        department_id: agent.department_id,
-        department_key: agent.department_key,
-        department_name: agent.department_name,
-      }
-    : null;
-
   // Todos
   const todos = db
     .prepare('SELECT * FROM task_todos WHERE task_id = ? ORDER BY position')
     .all(taskId);
 
-  // Linked artifacts (dynamic context)
-  const linkedIds = JSON.parse(task.linked_artifact_ids_json || '[]');
-  const dynamicContext = [];
-  const sourceArtifacts = [];
+  const allowReviewContext = taskAllowsReviewContext(task);
+  const allowedStatuses = allowReviewContext ? ['approved', 'needs_review'] : ['approved'];
+  const linkedIds = normalizeLinkedArtifactIds(task.linked_artifact_ids_json);
+  const latestByType = new Map();
 
   for (const artId of linkedIds) {
     const art = db
       .prepare(
         `SELECT id, artifact_type, title, content_md, version, lifecycle_stage, status
-         FROM context_artifacts WHERE id = ? AND is_archived = 0`,
+         FROM context_artifacts
+         WHERE id = ? AND project_id = ? AND lifecycle_stage = ? AND is_archived = 0
+           AND status IN (${allowedStatuses.map(() => '?').join(',')})
+         ORDER BY version DESC, updated_at DESC, id DESC`,
       )
-      .get(artId);
-    if (art) {
-      dynamicContext.push({
-        artifact_id: art.id,
-        artifact_type: art.artifact_type,
-        title: art.title,
-        content_md: art.content_md,
-        version: art.version,
-        lifecycle_stage: art.lifecycle_stage,
-        status: art.status,
-      });
-      sourceArtifacts.push({
-        artifact_id: art.id,
-        artifact_type: art.artifact_type,
-        version: art.version,
-        status: art.status,
-      });
+      .get(artId, task.project_id, task.lifecycle_stage, ...allowedStatuses);
+    if (!art) continue;
+
+    const current = latestByType.get(art.artifact_type);
+    if (
+      !current ||
+      art.version > current.version ||
+      (art.version === current.version && art.id > current.id)
+    ) {
+      latestByType.set(art.artifact_type, art);
     }
   }
+
+  const dynamicContextItems = Array.from(latestByType.values()).sort((a, b) => {
+    if (a.artifact_type !== b.artifact_type) return a.artifact_type.localeCompare(b.artifact_type);
+    if (a.version !== b.version) return b.version - a.version;
+    return a.id.localeCompare(b.id);
+  });
+
+  const sourceArtifacts = dynamicContextItems.map((art) => ({
+    artifactId: art.id,
+    artifactType: art.artifact_type,
+    title: art.title,
+    version: art.version,
+    status: art.status,
+    lifecycleStage: art.lifecycle_stage,
+  }));
+
+  const dynamicContext = dynamicContextItems
+    .map(
+      (art) =>
+        `## ${art.title}\n` +
+        `Source: ${art.id} v${art.version} (${art.artifact_type}, ${art.status}, ${art.lifecycle_stage})\n\n` +
+        art.content_md,
+    )
+    .join('\n\n');
 
   // Recent relevant messages
   const recentMessages = db
     .prepare(
-      `SELECT * FROM messages WHERE project_id = ? AND (source_task_id = ? OR source_task_id IS NULL)
+      `SELECT m.*, rt.key as from_role_key
+       FROM messages m
+       LEFT JOIN project_role_instances pri ON pri.id = m.from_role_instance_id
+       LEFT JOIN role_templates rt ON rt.id = pri.role_template_id
+       WHERE m.project_id = ? AND (m.source_task_id = ? OR m.source_task_id IS NULL)
        ORDER BY created_at DESC LIMIT 10`,
     )
     .all(task.project_id, taskId);
@@ -437,41 +520,79 @@ function getExecutionContext(db, taskId, agentId) {
   }));
 
   return {
-    agent: agent
-      ? {
-          agent_id: agent.agent_id,
-          agent_name: agent.agent_name,
-        }
-      : null,
-    role,
-    project,
-    department,
-    task: {
-      id: task.id,
-      title: task.title,
-      description_md: task.description_md,
-      status: task.status,
-      priority: task.priority,
-      lifecycle_stage: task.lifecycle_stage,
-      acceptance_criteria_md: task.acceptance_criteria_md,
-      linked_artifact_ids_json: task.linked_artifact_ids_json,
-    },
-    lifecycle_stage: task.lifecycle_stage,
-    todos,
-    acceptance_criteria_md: task.acceptance_criteria_md,
-    branch_info: {
-      base_branch: task.base_branch,
-      branch_name: task.branch_name,
-    },
-    static_prompt: staticPrompt,
-    dynamic_context: dynamicContext,
-    recent_messages: recentMessages,
-    local_pr: localPr || null,
-    allowed_tools: ['read', 'write', 'edit', 'search', 'bash', 'glob', 'grep'],
-    forbidden_actions: ['delete_project', 'modify_permissions', 'escalate_without_approval'],
-    dopamine_info: { placeholder: true },
-    source_artifacts: sourceArtifacts,
+    taskId: task.id,
+    title: task.title,
+    description: task.description_md,
+    status: task.status,
+    projectId: task.project_id,
+    departmentId: task.department_id || null,
+    assignedAgentId: task.assigned_agent_id || null,
+    assignedAgentName: agent ? agent.agent_name : null,
+    roleInstanceId: agent ? agent.role_instance_id : null,
+    branch: task.branch_name || null,
+    baseBranch: task.base_branch || null,
+    todoList: todos.length ? todos.map((todo) => todo.content_md) : parseMarkdownList(task.todo_md),
+    acceptanceCriteria: parseMarkdownList(task.acceptance_criteria_md),
+    staticContext: staticPrompt
+      .map((section) => `## ${section.section_key}\n${section.content_md}`)
+      .join('\n\n'),
+    dynamicContext,
+    codebaseContext: '',
+    recentMessages: recentMessages.map((message) => ({
+      role: message.from_role_key || 'unknown',
+      content: message.content_md || '',
+      timestamp: message.created_at,
+    })),
+    allowedTools: deriveAllowedTools(agent),
+    forbiddenActions: [
+      'delete_project',
+      'modify_permissions',
+      'escalate_without_approval',
+      'access_other_projects',
+      'read_silver_repo',
+    ],
+    requiredOutputFormat:
+      'Post task events, create context artifacts for important decisions, open a local PR when code changes are ready, and complete or fail the task through Silver.',
+    dopamineInfo: 'Work only inside the assigned project and report progress through Silver.',
+    sourceArtifacts,
+    localPr: localPr || null,
+    lifecycleStage: task.lifecycle_stage,
   };
+}
+
+function taskAllowsReviewContext(task) {
+  const text = `${task.title || ''}\n${task.description_md || ''}`.toLowerCase();
+  return (
+    task.status === 'review' ||
+    task.lifecycle_stage === 'discovery' ||
+    text.includes('review') ||
+    text.includes('alignment') ||
+    text.includes('research') ||
+    text.includes('document-review')
+  );
+}
+
+function deriveAllowedTools(agent) {
+  const base = [
+    'query_context',
+    'query_graphify',
+    'post_task_event',
+    'update_todo',
+    'message_role',
+  ];
+  if (!agent) return base;
+
+  const roleKey = agent.role_key;
+  if (roleKey === 'engineer') {
+    return [...base, 'read', 'write', 'edit', 'bash', 'open_local_pr', 'create_context_artifact'];
+  }
+  if (roleKey === 'reviewer' || roleKey === 'tester') {
+    return [...base, 'read', 'grep', 'bash', 'create_context_artifact', 'open_local_pr'];
+  }
+  if (roleKey === 'tech_lead' || roleKey === 'project_manager') {
+    return [...base, 'create_subtask', 'move_ticket', 'create_context_artifact'];
+  }
+  return [...base, 'create_context_artifact'];
 }
 
 module.exports = {

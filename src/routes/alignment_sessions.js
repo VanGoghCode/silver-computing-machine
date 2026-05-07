@@ -16,7 +16,7 @@ function createAlignmentSessionsRouter(db, auth) {
 
     const ps = db
       .prepare(`SELECT * FROM problem_statements WHERE id = ? AND project_id = ?`)
-      .get(problem_statement_id, req.params.projectId);
+      .get(problem_statement_id, req.agent.project_id);
     if (!ps) {
       return res.status(400).json({ error: 'Problem statement not found in this project' });
     }
@@ -27,7 +27,7 @@ function createAlignmentSessionsRouter(db, auth) {
     db.prepare(
       `INSERT INTO alignment_sessions (id, project_id, problem_statement_id, title, status, current_round)
        VALUES (?, ?, ?, ?, 'active', 1)`,
-    ).run(sessionId, req.params.projectId, problem_statement_id, title);
+    ).run(sessionId, req.agent.project_id, problem_statement_id, title);
 
     // Update problem statement status
     db.prepare(
@@ -44,7 +44,7 @@ function createAlignmentSessionsRouter(db, auth) {
          WHERE pri.project_id = ? AND pri.is_active = 1 AND rt.key IN (${LEADERSHIP_ROLES.map(() => '?').join(',')})
          ORDER BY rt.key`,
       )
-      .all(req.params.projectId, ...LEADERSHIP_ROLES);
+      .all(req.agent.project_id, ...LEADERSHIP_ROLES);
 
     for (const node of leadershipNodes) {
       const participantId = generateId();
@@ -80,13 +80,15 @@ function createAlignmentSessionsRouter(db, auth) {
   router.get('/api/projects/:projectId/alignment-sessions', (req, res) => {
     const sessions = db
       .prepare(`SELECT * FROM alignment_sessions WHERE project_id = ? ORDER BY created_at DESC`)
-      .all(req.params.projectId);
+      .all(req.agent.project_id);
     res.json({ sessions });
   });
 
   // GET /api/alignment-sessions/:id
   router.get('/api/alignment-sessions/:id', (req, res) => {
-    const session = db.prepare(`SELECT * FROM alignment_sessions WHERE id = ?`).get(req.params.id);
+    const session = db
+      .prepare(`SELECT * FROM alignment_sessions WHERE id = ? AND project_id = ?`)
+      .get(req.params.id, req.agent.project_id);
     if (!session) return res.status(404).json({ error: 'Alignment session not found' });
 
     const participants = db
@@ -104,7 +106,9 @@ function createAlignmentSessionsRouter(db, auth) {
 
   // PATCH /api/alignment-sessions/:id
   router.patch('/api/alignment-sessions/:id', (req, res) => {
-    const session = db.prepare(`SELECT * FROM alignment_sessions WHERE id = ?`).get(req.params.id);
+    const session = db
+      .prepare(`SELECT * FROM alignment_sessions WHERE id = ? AND project_id = ?`)
+      .get(req.params.id, req.agent.project_id);
     if (!session) return res.status(404).json({ error: 'Alignment session not found' });
 
     const allowed = ['title', 'status', 'current_round', 'alignment_score'];

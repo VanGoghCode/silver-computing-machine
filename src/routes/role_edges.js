@@ -9,7 +9,7 @@ function createRoleEdgesRouter(db, auth) {
   router.get('/api/projects/:projectId/role-edges', (req, res) => {
     const edges = db
       .prepare(`SELECT * FROM role_edges WHERE project_id = ? ORDER BY created_at`)
-      .all(req.params.projectId);
+      .all(req.agent.project_id);
     res.json({ edges });
   });
 
@@ -38,14 +38,14 @@ function createRoleEdgesRouter(db, auth) {
     // Validate both role instances belong to this project
     const fromInstance = db
       .prepare(`SELECT * FROM project_role_instances WHERE id = ? AND project_id = ?`)
-      .get(from_role_instance_id, req.params.projectId);
+      .get(from_role_instance_id, req.agent.project_id);
     if (!fromInstance) {
       return res.status(400).json({ error: 'from_role_instance_id not found in this project' });
     }
 
     const toInstance = db
       .prepare(`SELECT * FROM project_role_instances WHERE id = ? AND project_id = ?`)
-      .get(to_role_instance_id, req.params.projectId);
+      .get(to_role_instance_id, req.agent.project_id);
     if (!toInstance) {
       return res.status(400).json({ error: 'to_role_instance_id not found in this project' });
     }
@@ -59,7 +59,7 @@ function createRoleEdgesRouter(db, auth) {
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     ).run(
       id,
-      req.params.projectId,
+      req.agent.project_id,
       from_role_instance_id,
       to_role_instance_id,
       edge_type || 'hierarchy',
@@ -81,7 +81,7 @@ function createRoleEdgesRouter(db, auth) {
   router.patch('/api/projects/:projectId/role-edges/:edgeId', (req, res) => {
     const edge = db
       .prepare(`SELECT * FROM role_edges WHERE id = ? AND project_id = ?`)
-      .get(req.params.edgeId, req.params.projectId);
+      .get(req.params.edgeId, req.agent.project_id);
     if (!edge) return res.status(404).json({ error: 'Edge not found' });
 
     const allowed = [
@@ -127,7 +127,7 @@ function createRoleEdgesRouter(db, auth) {
   router.delete('/api/projects/:projectId/role-edges/:edgeId', (req, res) => {
     const edge = db
       .prepare(`SELECT * FROM role_edges WHERE id = ? AND project_id = ?`)
-      .get(req.params.edgeId, req.params.projectId);
+      .get(req.params.edgeId, req.agent.project_id);
     if (!edge) return res.status(404).json({ error: 'Edge not found' });
 
     db.prepare(`DELETE FROM role_edges WHERE id = ?`).run(req.params.edgeId);

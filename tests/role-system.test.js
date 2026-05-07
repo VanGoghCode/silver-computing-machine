@@ -14,8 +14,8 @@ const ROLE_LIBRARY_PATH = path.resolve(__dirname, '..', 'role-library');
  */
 function setupAuthApp(db) {
   const app = createTestApp(db);
-  const { token } = insertTestAgent(db);
-  return { app, token };
+  const { token, projectId } = insertTestAgent(db);
+  return { app, token, projectId };
 }
 
 describe('Role Library Import', () => {
@@ -188,11 +188,10 @@ describe('Project Role Node APIs', () => {
 
   beforeEach(() => {
     db = createSeededTestDb();
-    ({ app, token } = setupAuthApp(db));
-    projectId = generateId();
-    db.prepare(
-      `INSERT INTO projects (id, name, slug, root_path, status) VALUES (?, ?, ?, ?, ?)`,
-    ).run(projectId, 'Role Node Project', 'role-node-project', '/workspace/test-nodes', 'active');
+    ({ app, token, projectId } = setupAuthApp(db));
+    db.prepare(`UPDATE project_role_instances SET is_active = 0 WHERE project_id = ?`).run(
+      projectId,
+    );
   });
 
   afterEach(() => {
@@ -200,6 +199,11 @@ describe('Project Role Node APIs', () => {
   });
 
   function insertDepartment(pid, key) {
+    const existing = db
+      .prepare(`SELECT id FROM departments WHERE project_id = ? AND key = ?`)
+      .get(pid, key);
+    if (existing) return existing.id;
+
     const id = generateId();
     db.prepare(
       `INSERT INTO departments (id, project_id, key, display_name) VALUES (?, ?, ?, ?)`,
@@ -331,16 +335,22 @@ describe('Role Edge APIs', () => {
 
   beforeEach(() => {
     db = createSeededTestDb();
-    ({ app, token } = setupAuthApp(db));
-    projectId = generateId();
-    db.prepare(
-      `INSERT INTO projects (id, name, slug, root_path, status) VALUES (?, ?, ?, ?, ?)`,
-    ).run(projectId, 'Role Edge Project', 'role-edge-project', '/workspace/test-edges', 'active');
+    ({ app, token, projectId } = setupAuthApp(db));
+    db.prepare(`UPDATE project_role_instances SET is_active = 0 WHERE project_id = ?`).run(
+      projectId,
+    );
 
-    const deptId = generateId();
-    db.prepare(
-      `INSERT INTO departments (id, project_id, key, display_name) VALUES (?, ?, ?, ?)`,
-    ).run(deptId, projectId, 'backend', 'Backend');
+    let dept = db
+      .prepare(`SELECT id FROM departments WHERE project_id = ? AND key = 'backend'`)
+      .get(projectId);
+    if (!dept) {
+      const deptId = generateId();
+      db.prepare(
+        `INSERT INTO departments (id, project_id, key, display_name) VALUES (?, ?, ?, ?)`,
+      ).run(deptId, projectId, 'backend', 'Backend');
+      dept = { id: deptId };
+    }
+    const deptId = dept.id;
 
     const ceoTemplate = db.prepare(`SELECT * FROM role_templates WHERE key = 'ceo'`).get();
     const ctoTemplate = db.prepare(`SELECT * FROM role_templates WHERE key = 'cto'`).get();

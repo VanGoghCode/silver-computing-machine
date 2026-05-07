@@ -27,6 +27,7 @@ const migrations = [
   require('./src/migrations/017_runtime_status'),
   require('./src/migrations/018_graphify_runs'),
   require('./src/migrations/019_audit_runs'),
+  require('./src/migrations/020_hardening_snapshots'),
 ];
 
 // Collect all seeds

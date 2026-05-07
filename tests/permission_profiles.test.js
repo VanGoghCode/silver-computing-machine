@@ -179,8 +179,8 @@ describe('Permission Profiles API', () => {
         .get(`/api/tasks/${taskId}/execution-context`)
         .set('Authorization', `Bearer ${token}`);
       expect(res.status).toBe(200);
-      expect(res.body).toHaveProperty('allowed_tools');
-      expect(res.body).toHaveProperty('forbidden_actions');
+      expect(res.body).toHaveProperty('allowedTools');
+      expect(res.body).toHaveProperty('forbiddenActions');
     });
   });
 });

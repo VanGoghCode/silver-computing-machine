@@ -32,7 +32,6 @@ export default function Kanban() {
     e.preventDefault();
     try {
       await api.createTask({
-        project_id: selectedProject,
         title: newTitle,
         lifecycle_stage: 'mvp',
         priority: 'medium',

@@ -2,13 +2,16 @@ const request = require('supertest');
 const { createTestDb, createTestApp, insertTestAgent } = require('./helpers');
 
 describe('Agent Routes', () => {
-  let db, app, token;
+  let db, app, token, agentId, projectId, departmentId;
 
   beforeEach(() => {
     db = createTestDb();
     app = createTestApp(db);
     const result = insertTestAgent(db);
     token = result.token;
+    agentId = result.agentId;
+    projectId = result.projectId;
+    departmentId = result.departmentId;
   });
 
   afterEach(() => {
@@ -26,6 +29,11 @@ describe('Agent Routes', () => {
   });
 
   test('POST /api/agents/heartbeat updates agent status', async () => {
+    db.prepare(
+      `INSERT INTO tasks (id, project_id, department_id, assigned_agent_id, title)
+       VALUES ('task-1', ?, ?, ?, 'Heartbeat task')`,
+    ).run(projectId, departmentId, agentId);
+
     const res = await request(app)
       .post('/api/agents/heartbeat')
       .set('Authorization', `Bearer ${token}`)

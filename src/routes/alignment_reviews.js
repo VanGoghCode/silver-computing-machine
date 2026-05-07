@@ -12,7 +12,9 @@ function createAlignmentReviewsRouter(db, auth) {
       return res.status(400).json({ error: 'review_md is required' });
     }
 
-    const session = db.prepare(`SELECT * FROM alignment_sessions WHERE id = ?`).get(req.params.id);
+    const session = db
+      .prepare(`SELECT * FROM alignment_sessions WHERE id = ? AND project_id = ?`)
+      .get(req.params.id, req.agent.project_id);
     if (!session) {
       return res.status(404).json({ error: 'Alignment session not found' });
     }
@@ -25,14 +27,14 @@ function createAlignmentReviewsRouter(db, auth) {
     ).run(
       id,
       req.params.id,
-      req.body.reviewed_by_agent_id || null,
+      req.agent.id,
       review_md,
       missing_info_md || null,
       next_questions_needed !== undefined ? (next_questions_needed ? 1 : 0) : 0,
     );
 
     // If no more questions needed, mark session as ready_for_docs
-    if (next_questions_needed === 0) {
+    if (next_questions_needed === 0 || next_questions_needed === false) {
       db.prepare(
         `UPDATE alignment_sessions SET status = 'ready_for_docs', updated_at = datetime('now') WHERE id = ?`,
       ).run(req.params.id);

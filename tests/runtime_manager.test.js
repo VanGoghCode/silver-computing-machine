@@ -1,4 +1,7 @@
-const { MockRuntimeManager } = require('../src/services/runtime_manager');
+const fs = require('fs');
+const os = require('os');
+const path = require('path');
+const { MockRuntimeManager, ProcessRuntimeManager } = require('../src/services/runtime_manager');
 
 describe('Project Runtime Manager', () => {
   let manager;
@@ -100,6 +103,66 @@ describe('Project Runtime Manager', () => {
       const statusB = await manager.getProjectRuntimeStatus('project-b');
       expect(statusA.workers).toHaveLength(1);
       expect(statusB.workers).toHaveLength(0);
+    });
+  });
+
+  describe('ProcessRuntimeManager', () => {
+    let projectRoot;
+    let otherRoot;
+
+    beforeEach(() => {
+      projectRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'silver-runtime-a-'));
+      otherRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'silver-runtime-b-'));
+    });
+
+    test('creates one process runtime per project root', async () => {
+      const processManager = new ProcessRuntimeManager();
+      await processManager.createProjectRuntime('project-a', { projectRoot });
+      await processManager.createProjectRuntime('project-b', { projectRoot: otherRoot });
+
+      const statusA = await processManager.getProjectRuntimeStatus('project-a');
+      const statusB = await processManager.getProjectRuntimeStatus('project-b');
+      expect(statusA.projectRoot).toBe(projectRoot);
+      expect(statusB.projectRoot).toBe(otherRoot);
+    });
+
+    test('spawnWorker requires an agent token', async () => {
+      const processManager = new ProcessRuntimeManager();
+      await processManager.createProjectRuntime('project-a', { projectRoot });
+      await processManager.startProjectRuntime('project-a');
+
+      await expect(processManager.spawnWorker('project-a', 'agent-a')).rejects.toThrow(/token/i);
+    });
+
+    test('worker process receives isolated project root env and cwd', async () => {
+      const processManager = new ProcessRuntimeManager({
+        args: [
+          '-e',
+          'console.log(process.cwd()); console.log(process.env.CRISPY_PROJECT_ROOT); setTimeout(() => {}, 2000)',
+        ],
+      });
+      await processManager.createProjectRuntime('project-a', { projectRoot });
+      await processManager.startProjectRuntime('project-a');
+
+      const worker = await processManager.spawnWorker('project-a', 'agent-a', {
+        token: 'silver_test_token',
+      });
+      expect(worker.projectRoot).toBe(projectRoot);
+      expect(worker.tokenProvided).toBe(true);
+
+      let logs = [];
+      for (let attempt = 0; attempt < 20; attempt++) {
+        logs = await processManager.getWorkerLogs('project-a', 'agent-a');
+        if (logs.join('').includes(projectRoot)) break;
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+      const joinedLogs = logs.join('');
+      expect(joinedLogs).toContain(projectRoot);
+      expect(joinedLogs).not.toContain('silver_test_token');
+
+      await processManager.stopWorker('project-a', 'agent-a');
+      const status = await processManager.getProjectRuntimeStatus('project-a');
+      expect(status.workers[0].status).toBe('stopped');
     });
   });
 });

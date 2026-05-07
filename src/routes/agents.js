@@ -16,15 +16,20 @@ function createAgentsRouter(db) {
   // --- Admin APIs (auth required) ---
 
   router.post('/api/agents', (req, res) => {
-    const { project_id, department_id, role_instance_id, name } = req.body;
-    if (!project_id || !department_id || !role_instance_id || !name) {
+    const { department_id, role_instance_id, name } = req.body;
+    if (!department_id || !role_instance_id || !name) {
       return res.status(400).json({
-        error: 'project_id, department_id, role_instance_id, and name are required',
+        error: 'department_id, role_instance_id, and name are required',
       });
     }
 
     try {
-      const result = createAgent(db, { project_id, department_id, role_instance_id, name });
+      const result = createAgent(db, {
+        project_id: req.agent.project_id,
+        department_id,
+        role_instance_id,
+        name,
+      });
       res.status(201).json({ agent: result.agent, token: result.token });
     } catch (err) {
       if (err.code === 'INVALID_REF') {
@@ -35,7 +40,7 @@ function createAgentsRouter(db) {
   });
 
   router.get('/api/agents', (req, res) => {
-    const agents = listAgents(db, req.query.project_id);
+    const agents = listAgents(db, req.agent.project_id);
     res.json({ agents });
   });
 
@@ -65,13 +70,17 @@ function createAgentsRouter(db) {
   router.get('/api/agents/:id', (req, res) => {
     // Route conflict: "me" and prompt-preview are handled above or via specific paths
     const agent = getAgent(db, req.params.id);
-    if (!agent) {
+    if (!agent || agent.project_id !== req.agent.project_id) {
       return res.status(404).json({ error: 'Agent not found' });
     }
     res.json({ agent });
   });
 
   router.post('/api/agents/:id/token/rotate', (req, res) => {
+    const agent = getAgent(db, req.params.id);
+    if (!agent || agent.project_id !== req.agent.project_id) {
+      return res.status(404).json({ error: 'Agent not found' });
+    }
     try {
       const newToken = rotateAgentToken(db, req.params.id);
       if (!newToken) {
@@ -87,6 +96,10 @@ function createAgentsRouter(db) {
   });
 
   router.post('/api/agents/:id/revoke', (req, res) => {
+    const agent = getAgent(db, req.params.id);
+    if (!agent || agent.project_id !== req.agent.project_id) {
+      return res.status(404).json({ error: 'Agent not found' });
+    }
     const result = revokeAgent(db, req.params.id);
     if (!result) {
       return res.status(404).json({ error: 'Agent not found' });
@@ -105,6 +118,14 @@ function createAgentsRouter(db) {
       return res
         .status(400)
         .json({ error: `Invalid status. Must be one of: ${VALID_WORKER_STATUSES.join(', ')}` });
+    }
+    if (current_task_id) {
+      const task = db
+        .prepare('SELECT id FROM tasks WHERE id = ? AND project_id = ?')
+        .get(current_task_id, req.agent.project_id);
+      if (!task) {
+        return res.status(403).json({ error: 'current_task_id is outside this project' });
+      }
     }
     updateHeartbeat(
       db,

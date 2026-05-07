@@ -12,7 +12,9 @@ function createClarificationRouter(db, auth) {
       return res.status(400).json({ error: 'target_human_id and question_md are required' });
     }
 
-    const session = db.prepare(`SELECT * FROM alignment_sessions WHERE id = ?`).get(req.params.id);
+    const session = db
+      .prepare(`SELECT * FROM alignment_sessions WHERE id = ? AND project_id = ?`)
+      .get(req.params.id, req.agent.project_id);
     if (!session) {
       return res.status(404).json({ error: 'Alignment session not found' });
     }
@@ -28,8 +30,8 @@ function createClarificationRouter(db, auth) {
     ).run(
       id,
       req.params.id,
-      req.body.asked_by_agent_id || null,
-      req.body.asked_by_role_instance_id || null,
+      req.agent.id,
+      req.agent.role_instance_id,
       target_human_id,
       question_md,
       question_type || 'note',
@@ -46,9 +48,13 @@ function createClarificationRouter(db, auth) {
   router.get('/api/alignment-sessions/:id/questions', (req, res) => {
     const questions = db
       .prepare(
-        `SELECT * FROM clarification_questions WHERE alignment_session_id = ? ORDER BY round_number, created_at`,
+        `SELECT cq.*
+         FROM clarification_questions cq
+         JOIN alignment_sessions s ON s.id = cq.alignment_session_id
+         WHERE cq.alignment_session_id = ? AND s.project_id = ?
+         ORDER BY cq.round_number, cq.created_at`,
       )
-      .all(req.params.id);
+      .all(req.params.id, req.agent.project_id);
     res.json({ questions });
   });
 
@@ -60,8 +66,13 @@ function createClarificationRouter(db, auth) {
     }
 
     const question = db
-      .prepare(`SELECT * FROM clarification_questions WHERE id = ?`)
-      .get(req.params.id);
+      .prepare(
+        `SELECT cq.*
+         FROM clarification_questions cq
+         JOIN alignment_sessions s ON s.id = cq.alignment_session_id
+         WHERE cq.id = ? AND s.project_id = ?`,
+      )
+      .get(req.params.id, req.agent.project_id);
     if (!question) {
       return res.status(404).json({ error: 'Question not found' });
     }
@@ -87,10 +98,11 @@ function createClarificationRouter(db, auth) {
       .prepare(
         `SELECT ca.* FROM clarification_answers ca
          JOIN clarification_questions cq ON cq.id = ca.question_id
-         WHERE cq.alignment_session_id = ?
+         JOIN alignment_sessions s ON s.id = cq.alignment_session_id
+         WHERE cq.alignment_session_id = ? AND s.project_id = ?
          ORDER BY ca.created_at`,
       )
-      .all(req.params.id);
+      .all(req.params.id, req.agent.project_id);
     res.json({ answers });
   });
 
