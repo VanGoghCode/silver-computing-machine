@@ -1,1 +1,54 @@
-{"nodes": [{"id": "src_services_projects_js", "label": "projects.js", "file_type": "code", "source_file": "src\\services\\projects.js", "source_location": "L1"}, {"id": "projects_createproject", "label": "createProject()", "file_type": "code", "source_file": "src\\services\\projects.js", "source_location": "L14"}, {"id": "projects_createdefaultagents", "label": "createDefaultAgents()", "file_type": "code", "source_file": "src\\services\\projects.js", "source_location": "L123"}], "edges": [{"source": "src_services_projects_js", "target": "projects_createproject", "relation": "contains", "confidence": "EXTRACTED", "source_file": "src\\services\\projects.js", "source_location": "L14", "weight": 1.0}, {"source": "src_services_projects_js", "target": "projects_createdefaultagents", "relation": "contains", "confidence": "EXTRACTED", "source_file": "src\\services\\projects.js", "source_location": "L123", "weight": 1.0}, {"source": "projects_createproject", "target": "projects_createdefaultagents", "relation": "calls", "confidence": "EXTRACTED", "source_file": "src\\services\\projects.js", "source_location": "L118", "weight": 1.0}]}
+{
+  "nodes": [
+    {
+      "id": "src_services_projects_js",
+      "label": "projects.js",
+      "file_type": "code",
+      "source_file": "src\\services\\projects.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "projects_createproject",
+      "label": "createProject()",
+      "file_type": "code",
+      "source_file": "src\\services\\projects.js",
+      "source_location": "L14"
+    },
+    {
+      "id": "projects_createdefaultagents",
+      "label": "createDefaultAgents()",
+      "file_type": "code",
+      "source_file": "src\\services\\projects.js",
+      "source_location": "L123"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_services_projects_js",
+      "target": "projects_createproject",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\projects.js",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_projects_js",
+      "target": "projects_createdefaultagents",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\projects.js",
+      "source_location": "L123",
+      "weight": 1.0
+    },
+    {
+      "source": "projects_createproject",
+      "target": "projects_createdefaultagents",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\projects.js",
+      "source_location": "L118",
+      "weight": 1.0
+    }
+  ]
+}

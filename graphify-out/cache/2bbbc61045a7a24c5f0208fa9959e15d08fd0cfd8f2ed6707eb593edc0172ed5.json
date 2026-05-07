@@ -1,1 +1,54 @@
-{"nodes": [{"id": "src_services_prompt_assembler_js", "label": "prompt_assembler.js", "file_type": "code", "source_file": "src\\services\\prompt_assembler.js", "source_location": "L1"}, {"id": "prompt_assembler_assembleprompt", "label": "assemblePrompt()", "file_type": "code", "source_file": "src\\services\\prompt_assembler.js", "source_location": "L15"}, {"id": "prompt_assembler_assembledynamiccontext", "label": "assembleDynamicContext()", "file_type": "code", "source_file": "src\\services\\prompt_assembler.js", "source_location": "L114"}], "edges": [{"source": "src_services_prompt_assembler_js", "target": "prompt_assembler_assembleprompt", "relation": "contains", "confidence": "EXTRACTED", "source_file": "src\\services\\prompt_assembler.js", "source_location": "L15", "weight": 1.0}, {"source": "src_services_prompt_assembler_js", "target": "prompt_assembler_assembledynamiccontext", "relation": "contains", "confidence": "EXTRACTED", "source_file": "src\\services\\prompt_assembler.js", "source_location": "L114", "weight": 1.0}, {"source": "prompt_assembler_assembleprompt", "target": "prompt_assembler_assembledynamiccontext", "relation": "calls", "confidence": "EXTRACTED", "source_file": "src\\services\\prompt_assembler.js", "source_location": "L104", "weight": 1.0}]}
+{
+  "nodes": [
+    {
+      "id": "src_services_prompt_assembler_js",
+      "label": "prompt_assembler.js",
+      "file_type": "code",
+      "source_file": "src\\services\\prompt_assembler.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "prompt_assembler_assembleprompt",
+      "label": "assemblePrompt()",
+      "file_type": "code",
+      "source_file": "src\\services\\prompt_assembler.js",
+      "source_location": "L15"
+    },
+    {
+      "id": "prompt_assembler_assembledynamiccontext",
+      "label": "assembleDynamicContext()",
+      "file_type": "code",
+      "source_file": "src\\services\\prompt_assembler.js",
+      "source_location": "L114"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_services_prompt_assembler_js",
+      "target": "prompt_assembler_assembleprompt",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\prompt_assembler.js",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_prompt_assembler_js",
+      "target": "prompt_assembler_assembledynamiccontext",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\prompt_assembler.js",
+      "source_location": "L114",
+      "weight": 1.0
+    },
+    {
+      "source": "prompt_assembler_assembleprompt",
+      "target": "prompt_assembler_assembledynamiccontext",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\prompt_assembler.js",
+      "source_location": "L104",
+      "weight": 1.0
+    }
+  ]
+}

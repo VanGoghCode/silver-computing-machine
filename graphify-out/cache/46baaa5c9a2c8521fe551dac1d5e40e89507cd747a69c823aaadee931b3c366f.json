@@ -1,1 +1,29 @@
-{"nodes": [{"id": "src_routes_alignment_sessions_js", "label": "alignment_sessions.js", "file_type": "code", "source_file": "src\\routes\\alignment_sessions.js", "source_location": "L1"}, {"id": "alignment_sessions_createalignmentsessionsrouter", "label": "createAlignmentSessionsRouter()", "file_type": "code", "source_file": "src\\routes\\alignment_sessions.js", "source_location": "L6"}], "edges": [{"source": "src_routes_alignment_sessions_js", "target": "alignment_sessions_createalignmentsessionsrouter", "relation": "contains", "confidence": "EXTRACTED", "source_file": "src\\routes\\alignment_sessions.js", "source_location": "L6", "weight": 1.0}]}
+{
+  "nodes": [
+    {
+      "id": "src_routes_alignment_sessions_js",
+      "label": "alignment_sessions.js",
+      "file_type": "code",
+      "source_file": "src\\routes\\alignment_sessions.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "alignment_sessions_createalignmentsessionsrouter",
+      "label": "createAlignmentSessionsRouter()",
+      "file_type": "code",
+      "source_file": "src\\routes\\alignment_sessions.js",
+      "source_location": "L6"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_routes_alignment_sessions_js",
+      "target": "alignment_sessions_createalignmentsessionsrouter",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\alignment_sessions.js",
+      "source_location": "L6",
+      "weight": 1.0
+    }
+  ]
+}

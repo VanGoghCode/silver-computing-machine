@@ -1,1 +1,29 @@
-{"nodes": [{"id": "src_migrations_020_hardening_snapshots_js", "label": "020_hardening_snapshots.js", "file_type": "code", "source_file": "src\\migrations\\020_hardening_snapshots.js", "source_location": "L1"}, {"id": "020_hardening_snapshots_up", "label": "up()", "file_type": "code", "source_file": "src\\migrations\\020_hardening_snapshots.js", "source_location": "L3"}], "edges": [{"source": "src_migrations_020_hardening_snapshots_js", "target": "020_hardening_snapshots_up", "relation": "contains", "confidence": "EXTRACTED", "source_file": "src\\migrations\\020_hardening_snapshots.js", "source_location": "L3", "weight": 1.0}]}
+{
+  "nodes": [
+    {
+      "id": "src_migrations_020_hardening_snapshots_js",
+      "label": "020_hardening_snapshots.js",
+      "file_type": "code",
+      "source_file": "src\\migrations\\020_hardening_snapshots.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "020_hardening_snapshots_up",
+      "label": "up()",
+      "file_type": "code",
+      "source_file": "src\\migrations\\020_hardening_snapshots.js",
+      "source_location": "L3"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_migrations_020_hardening_snapshots_js",
+      "target": "020_hardening_snapshots_up",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\migrations\\020_hardening_snapshots.js",
+      "source_location": "L3",
+      "weight": 1.0
+    }
+  ]
+}

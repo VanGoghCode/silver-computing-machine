@@ -1,1 +1,12 @@
-{"nodes": [{"id": "tests_heartbeat_test_js", "label": "heartbeat.test.js", "file_type": "code", "source_file": "tests\\heartbeat.test.js", "source_location": "L1"}], "edges": []}
+{
+  "nodes": [
+    {
+      "id": "tests_heartbeat_test_js",
+      "label": "heartbeat.test.js",
+      "file_type": "code",
+      "source_file": "tests\\heartbeat.test.js",
+      "source_location": "L1"
+    }
+  ],
+  "edges": []
+}

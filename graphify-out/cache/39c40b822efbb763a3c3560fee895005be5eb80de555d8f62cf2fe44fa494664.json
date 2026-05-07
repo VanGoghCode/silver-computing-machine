@@ -1,1 +1,12 @@
-{"nodes": [{"id": "tests_audit_test_js", "label": "audit.test.js", "file_type": "code", "source_file": "tests\\audit.test.js", "source_location": "L1"}], "edges": []}
+{
+  "nodes": [
+    {
+      "id": "tests_audit_test_js",
+      "label": "audit.test.js",
+      "file_type": "code",
+      "source_file": "tests\\audit.test.js",
+      "source_location": "L1"
+    }
+  ],
+  "edges": []
+}

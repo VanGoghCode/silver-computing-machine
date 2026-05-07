@@ -1,1 +1,70 @@
-{"nodes": [{"id": "src_services_reports_js", "label": "reports.js", "file_type": "code", "source_file": "src\\services\\reports.js", "source_location": "L1"}, {"id": "reports_createdailyreport", "label": "createDailyReport()", "file_type": "code", "source_file": "src\\services\\reports.js", "source_location": "L3"}, {"id": "reports_generatedailyreportcontent", "label": "generateDailyReportContent()", "file_type": "code", "source_file": "src\\services\\reports.js", "source_location": "L25"}, {"id": "reports_listreports", "label": "listReports()", "file_type": "code", "source_file": "src\\services\\reports.js", "source_location": "L152"}], "edges": [{"source": "src_services_reports_js", "target": "reports_createdailyreport", "relation": "contains", "confidence": "EXTRACTED", "source_file": "src\\services\\reports.js", "source_location": "L3", "weight": 1.0}, {"source": "src_services_reports_js", "target": "reports_generatedailyreportcontent", "relation": "contains", "confidence": "EXTRACTED", "source_file": "src\\services\\reports.js", "source_location": "L25", "weight": 1.0}, {"source": "src_services_reports_js", "target": "reports_listreports", "relation": "contains", "confidence": "EXTRACTED", "source_file": "src\\services\\reports.js", "source_location": "L152", "weight": 1.0}, {"source": "reports_createdailyreport", "target": "reports_generatedailyreportcontent", "relation": "calls", "confidence": "EXTRACTED", "source_file": "src\\services\\reports.js", "source_location": "L4", "weight": 1.0}]}
+{
+  "nodes": [
+    {
+      "id": "src_services_reports_js",
+      "label": "reports.js",
+      "file_type": "code",
+      "source_file": "src\\services\\reports.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "reports_createdailyreport",
+      "label": "createDailyReport()",
+      "file_type": "code",
+      "source_file": "src\\services\\reports.js",
+      "source_location": "L3"
+    },
+    {
+      "id": "reports_generatedailyreportcontent",
+      "label": "generateDailyReportContent()",
+      "file_type": "code",
+      "source_file": "src\\services\\reports.js",
+      "source_location": "L25"
+    },
+    {
+      "id": "reports_listreports",
+      "label": "listReports()",
+      "file_type": "code",
+      "source_file": "src\\services\\reports.js",
+      "source_location": "L152"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_services_reports_js",
+      "target": "reports_createdailyreport",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\reports.js",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_reports_js",
+      "target": "reports_generatedailyreportcontent",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\reports.js",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_reports_js",
+      "target": "reports_listreports",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\reports.js",
+      "source_location": "L152",
+      "weight": 1.0
+    },
+    {
+      "source": "reports_createdailyreport",
+      "target": "reports_generatedailyreportcontent",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\reports.js",
+      "source_location": "L4",
+      "weight": 1.0
+    }
+  ]
+}

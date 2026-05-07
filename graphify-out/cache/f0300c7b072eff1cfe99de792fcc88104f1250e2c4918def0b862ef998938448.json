@@ -1,1 +1,47 @@
-{"nodes": [{"id": "client_src_pages_documentsets_jsx", "label": "DocumentSets.jsx", "file_type": "code", "source_file": "client\\src\\pages\\DocumentSets.jsx", "source_location": "L1"}, {"id": "documentsets_documentsets", "label": "DocumentSets()", "file_type": "code", "source_file": "client\\src\\pages\\DocumentSets.jsx", "source_location": "L4"}], "edges": [{"source": "client_src_pages_documentsets_jsx", "target": "react", "relation": "imports_from", "confidence": "EXTRACTED", "source_file": "client\\src\\pages\\DocumentSets.jsx", "source_location": "L1", "weight": 1.0}, {"source": "client_src_pages_documentsets_jsx", "target": "client_src_pages_api_client", "relation": "imports_from", "confidence": "EXTRACTED", "source_file": "client\\src\\pages\\DocumentSets.jsx", "source_location": "L2", "weight": 1.0}, {"source": "client_src_pages_documentsets_jsx", "target": "documentsets_documentsets", "relation": "contains", "confidence": "EXTRACTED", "source_file": "client\\src\\pages\\DocumentSets.jsx", "source_location": "L4", "weight": 1.0}]}
+{
+  "nodes": [
+    {
+      "id": "client_src_pages_documentsets_jsx",
+      "label": "DocumentSets.jsx",
+      "file_type": "code",
+      "source_file": "client\\src\\pages\\DocumentSets.jsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "documentsets_documentsets",
+      "label": "DocumentSets()",
+      "file_type": "code",
+      "source_file": "client\\src\\pages\\DocumentSets.jsx",
+      "source_location": "L4"
+    }
+  ],
+  "edges": [
+    {
+      "source": "client_src_pages_documentsets_jsx",
+      "target": "react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "client\\src\\pages\\DocumentSets.jsx",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "client_src_pages_documentsets_jsx",
+      "target": "client_src_pages_api_client",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "client\\src\\pages\\DocumentSets.jsx",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "client_src_pages_documentsets_jsx",
+      "target": "documentsets_documentsets",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "client\\src\\pages\\DocumentSets.jsx",
+      "source_location": "L4",
+      "weight": 1.0
+    }
+  ]
+}

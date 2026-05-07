@@ -1,1 +1,29 @@
-{"nodes": [{"id": "src_routes_research_notes_js", "label": "research_notes.js", "file_type": "code", "source_file": "src\\routes\\research_notes.js", "source_location": "L1"}, {"id": "research_notes_createresearchnotesrouter", "label": "createResearchNotesRouter()", "file_type": "code", "source_file": "src\\routes\\research_notes.js", "source_location": "L4"}], "edges": [{"source": "src_routes_research_notes_js", "target": "research_notes_createresearchnotesrouter", "relation": "contains", "confidence": "EXTRACTED", "source_file": "src\\routes\\research_notes.js", "source_location": "L4", "weight": 1.0}]}
+{
+  "nodes": [
+    {
+      "id": "src_routes_research_notes_js",
+      "label": "research_notes.js",
+      "file_type": "code",
+      "source_file": "src\\routes\\research_notes.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "research_notes_createresearchnotesrouter",
+      "label": "createResearchNotesRouter()",
+      "file_type": "code",
+      "source_file": "src\\routes\\research_notes.js",
+      "source_location": "L4"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_routes_research_notes_js",
+      "target": "research_notes_createresearchnotesrouter",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\research_notes.js",
+      "source_location": "L4",
+      "weight": 1.0
+    }
+  ]
+}

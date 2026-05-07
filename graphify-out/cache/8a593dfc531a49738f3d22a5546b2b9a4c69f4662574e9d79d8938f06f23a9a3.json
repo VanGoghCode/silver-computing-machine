@@ -1,1 +1,136 @@
-{"nodes": [{"id": "tests_context_engine_test_js", "label": "context-engine.test.js", "file_type": "code", "source_file": "tests\\context-engine.test.js", "source_location": "L1"}, {"id": "context_engine_test_setupauthapp", "label": "setupAuthApp()", "file_type": "code", "source_file": "tests\\context-engine.test.js", "source_location": "L5"}, {"id": "context_engine_test_inserttestproject", "label": "insertTestProject()", "file_type": "code", "source_file": "tests\\context-engine.test.js", "source_location": "L11"}, {"id": "context_engine_test_inserttesthuman", "label": "insertTestHuman()", "file_type": "code", "source_file": "tests\\context-engine.test.js", "source_location": "L27"}, {"id": "context_engine_test_inserttestalignmentsession", "label": "insertTestAlignmentSession()", "file_type": "code", "source_file": "tests\\context-engine.test.js", "source_location": "L37"}, {"id": "context_engine_test_setupfull", "label": "setupFull()", "file_type": "code", "source_file": "tests\\context-engine.test.js", "source_location": "L49"}, {"id": "context_engine_test_createartifactviaapi", "label": "createArtifactViaApi()", "file_type": "code", "source_file": "tests\\context-engine.test.js", "source_location": "L56"}], "edges": [{"source": "tests_context_engine_test_js", "target": "context_engine_test_setupauthapp", "relation": "contains", "confidence": "EXTRACTED", "source_file": "tests\\context-engine.test.js", "source_location": "L5", "weight": 1.0}, {"source": "tests_context_engine_test_js", "target": "context_engine_test_inserttestproject", "relation": "contains", "confidence": "EXTRACTED", "source_file": "tests\\context-engine.test.js", "source_location": "L11", "weight": 1.0}, {"source": "tests_context_engine_test_js", "target": "context_engine_test_inserttesthuman", "relation": "contains", "confidence": "EXTRACTED", "source_file": "tests\\context-engine.test.js", "source_location": "L27", "weight": 1.0}, {"source": "tests_context_engine_test_js", "target": "context_engine_test_inserttestalignmentsession", "relation": "contains", "confidence": "EXTRACTED", "source_file": "tests\\context-engine.test.js", "source_location": "L37", "weight": 1.0}, {"source": "tests_context_engine_test_js", "target": "context_engine_test_setupfull", "relation": "contains", "confidence": "EXTRACTED", "source_file": "tests\\context-engine.test.js", "source_location": "L49", "weight": 1.0}, {"source": "tests_context_engine_test_js", "target": "context_engine_test_createartifactviaapi", "relation": "contains", "confidence": "EXTRACTED", "source_file": "tests\\context-engine.test.js", "source_location": "L56", "weight": 1.0}, {"source": "context_engine_test_setupfull", "target": "context_engine_test_inserttestproject", "relation": "calls", "confidence": "EXTRACTED", "source_file": "tests\\context-engine.test.js", "source_location": "L50", "weight": 1.0}, {"source": "context_engine_test_setupfull", "target": "context_engine_test_inserttesthuman", "relation": "calls", "confidence": "EXTRACTED", "source_file": "tests\\context-engine.test.js", "source_location": "L51", "weight": 1.0}, {"source": "context_engine_test_setupfull", "target": "context_engine_test_inserttestalignmentsession", "relation": "calls", "confidence": "EXTRACTED", "source_file": "tests\\context-engine.test.js", "source_location": "L52", "weight": 1.0}]}
+{
+  "nodes": [
+    {
+      "id": "tests_context_engine_test_js",
+      "label": "context-engine.test.js",
+      "file_type": "code",
+      "source_file": "tests\\context-engine.test.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "context_engine_test_setupauthapp",
+      "label": "setupAuthApp()",
+      "file_type": "code",
+      "source_file": "tests\\context-engine.test.js",
+      "source_location": "L5"
+    },
+    {
+      "id": "context_engine_test_inserttestproject",
+      "label": "insertTestProject()",
+      "file_type": "code",
+      "source_file": "tests\\context-engine.test.js",
+      "source_location": "L11"
+    },
+    {
+      "id": "context_engine_test_inserttesthuman",
+      "label": "insertTestHuman()",
+      "file_type": "code",
+      "source_file": "tests\\context-engine.test.js",
+      "source_location": "L27"
+    },
+    {
+      "id": "context_engine_test_inserttestalignmentsession",
+      "label": "insertTestAlignmentSession()",
+      "file_type": "code",
+      "source_file": "tests\\context-engine.test.js",
+      "source_location": "L37"
+    },
+    {
+      "id": "context_engine_test_setupfull",
+      "label": "setupFull()",
+      "file_type": "code",
+      "source_file": "tests\\context-engine.test.js",
+      "source_location": "L49"
+    },
+    {
+      "id": "context_engine_test_createartifactviaapi",
+      "label": "createArtifactViaApi()",
+      "file_type": "code",
+      "source_file": "tests\\context-engine.test.js",
+      "source_location": "L56"
+    }
+  ],
+  "edges": [
+    {
+      "source": "tests_context_engine_test_js",
+      "target": "context_engine_test_setupauthapp",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests\\context-engine.test.js",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_context_engine_test_js",
+      "target": "context_engine_test_inserttestproject",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests\\context-engine.test.js",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_context_engine_test_js",
+      "target": "context_engine_test_inserttesthuman",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests\\context-engine.test.js",
+      "source_location": "L27",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_context_engine_test_js",
+      "target": "context_engine_test_inserttestalignmentsession",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests\\context-engine.test.js",
+      "source_location": "L37",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_context_engine_test_js",
+      "target": "context_engine_test_setupfull",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests\\context-engine.test.js",
+      "source_location": "L49",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_context_engine_test_js",
+      "target": "context_engine_test_createartifactviaapi",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests\\context-engine.test.js",
+      "source_location": "L56",
+      "weight": 1.0
+    },
+    {
+      "source": "context_engine_test_setupfull",
+      "target": "context_engine_test_inserttestproject",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "tests\\context-engine.test.js",
+      "source_location": "L50",
+      "weight": 1.0
+    },
+    {
+      "source": "context_engine_test_setupfull",
+      "target": "context_engine_test_inserttesthuman",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "tests\\context-engine.test.js",
+      "source_location": "L51",
+      "weight": 1.0
+    },
+    {
+      "source": "context_engine_test_setupfull",
+      "target": "context_engine_test_inserttestalignmentsession",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "tests\\context-engine.test.js",
+      "source_location": "L52",
+      "weight": 1.0
+    }
+  ]
+}

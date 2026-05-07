@@ -1,1 +1,29 @@
-{"nodes": [{"id": "src_routes_agents_js", "label": "agents.js", "file_type": "code", "source_file": "src\\routes\\agents.js", "source_location": "L1"}, {"id": "agents_createagentsrouter", "label": "createAgentsRouter()", "file_type": "code", "source_file": "src\\routes\\agents.js", "source_location": "L13"}], "edges": [{"source": "src_routes_agents_js", "target": "agents_createagentsrouter", "relation": "contains", "confidence": "EXTRACTED", "source_file": "src\\routes\\agents.js", "source_location": "L13", "weight": 1.0}]}
+{
+  "nodes": [
+    {
+      "id": "src_routes_agents_js",
+      "label": "agents.js",
+      "file_type": "code",
+      "source_file": "src\\routes\\agents.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "agents_createagentsrouter",
+      "label": "createAgentsRouter()",
+      "file_type": "code",
+      "source_file": "src\\routes\\agents.js",
+      "source_location": "L13"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_routes_agents_js",
+      "target": "agents_createagentsrouter",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\agents.js",
+      "source_location": "L13",
+      "weight": 1.0
+    }
+  ]
+}

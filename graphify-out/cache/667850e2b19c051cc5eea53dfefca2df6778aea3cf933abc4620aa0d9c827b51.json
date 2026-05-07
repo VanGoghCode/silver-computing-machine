@@ -1,1 +1,29 @@
-{"nodes": [{"id": "src_routes_reports_js", "label": "reports.js", "file_type": "code", "source_file": "src\\routes\\reports.js", "source_location": "L1"}, {"id": "reports_createreportsrouter", "label": "createReportsRouter()", "file_type": "code", "source_file": "src\\routes\\reports.js", "source_location": "L4"}], "edges": [{"source": "src_routes_reports_js", "target": "reports_createreportsrouter", "relation": "contains", "confidence": "EXTRACTED", "source_file": "src\\routes\\reports.js", "source_location": "L4", "weight": 1.0}]}
+{
+  "nodes": [
+    {
+      "id": "src_routes_reports_js",
+      "label": "reports.js",
+      "file_type": "code",
+      "source_file": "src\\routes\\reports.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "reports_createreportsrouter",
+      "label": "createReportsRouter()",
+      "file_type": "code",
+      "source_file": "src\\routes\\reports.js",
+      "source_location": "L4"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_routes_reports_js",
+      "target": "reports_createreportsrouter",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\reports.js",
+      "source_location": "L4",
+      "weight": 1.0
+    }
+  ]
+}
