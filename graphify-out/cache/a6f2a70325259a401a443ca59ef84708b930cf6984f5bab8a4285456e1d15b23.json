@@ -1,0 +1,29 @@
+{
+  "nodes": [
+    {
+      "id": "src_migrations_015_conversations_js",
+      "label": "015_conversations.js",
+      "file_type": "code",
+      "source_file": "src\\migrations\\015_conversations.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "015_conversations_up",
+      "label": "up()",
+      "file_type": "code",
+      "source_file": "src\\migrations\\015_conversations.js",
+      "source_location": "L3"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_migrations_015_conversations_js",
+      "target": "015_conversations_up",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\migrations\\015_conversations.js",
+      "source_location": "L3",
+      "weight": 1.0
+    }
+  ]
+}

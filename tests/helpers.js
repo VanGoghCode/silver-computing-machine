@@ -20,6 +20,9 @@ const migrations = [
   require('../src/migrations/011_agent_heartbeats'),
   require('../src/migrations/012_alignment_intake'),
   require('../src/migrations/013_context_artifacts'),
+  require('../src/migrations/014_tasks'),
+  require('../src/migrations/015_conversations'),
+  require('../src/migrations/016_local_prs'),
 ];
 
 const seeds = [

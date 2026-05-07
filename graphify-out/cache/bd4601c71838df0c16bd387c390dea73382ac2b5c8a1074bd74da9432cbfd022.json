@@ -1,0 +1,111 @@
+{
+  "nodes": [
+    {
+      "id": "src_services_messages_js",
+      "label": "messages.js",
+      "file_type": "code",
+      "source_file": "src\\services\\messages.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "messages_canmessage",
+      "label": "canMessage()",
+      "file_type": "code",
+      "source_file": "src\\services\\messages.js",
+      "source_location": "L17"
+    },
+    {
+      "id": "messages_cancommunicatewithhuman",
+      "label": "canCommunicateWithHuman()",
+      "file_type": "code",
+      "source_file": "src\\services\\messages.js",
+      "source_location": "L39"
+    },
+    {
+      "id": "messages_sendmessage",
+      "label": "sendMessage()",
+      "file_type": "code",
+      "source_file": "src\\services\\messages.js",
+      "source_location": "L53"
+    },
+    {
+      "id": "messages_listconversations",
+      "label": "listConversations()",
+      "file_type": "code",
+      "source_file": "src\\services\\messages.js",
+      "source_location": "L129"
+    },
+    {
+      "id": "messages_getconversationmessages",
+      "label": "getConversationMessages()",
+      "file_type": "code",
+      "source_file": "src\\services\\messages.js",
+      "source_location": "L135"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_services_messages_js",
+      "target": "messages_canmessage",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\messages.js",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_messages_js",
+      "target": "messages_cancommunicatewithhuman",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\messages.js",
+      "source_location": "L39",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_messages_js",
+      "target": "messages_sendmessage",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\messages.js",
+      "source_location": "L53",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_messages_js",
+      "target": "messages_listconversations",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\messages.js",
+      "source_location": "L129",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_messages_js",
+      "target": "messages_getconversationmessages",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\messages.js",
+      "source_location": "L135",
+      "weight": 1.0
+    },
+    {
+      "source": "messages_sendmessage",
+      "target": "messages_cancommunicatewithhuman",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\messages.js",
+      "source_location": "L75",
+      "weight": 1.0
+    },
+    {
+      "source": "messages_sendmessage",
+      "target": "messages_canmessage",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\messages.js",
+      "source_location": "L82",
+      "weight": 1.0
+    }
+  ]
+}

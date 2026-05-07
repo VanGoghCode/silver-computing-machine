@@ -2,13 +2,13 @@
 
 ## Corpus Check
 
-- 59 files · ~28,525 words
+- 68 files · ~36,815 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
 
-- 152 nodes · 106 edges · 60 communities detected
-- Extraction: 95% EXTRACTED · 5% INFERRED · 0% AMBIGUOUS · INFERRED: 5 edges (avg confidence: 0.81)
+- 191 nodes · 142 edges · 69 communities detected
+- Extraction: 96% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 5 edges (avg confidence: 0.81)
 - Token cost: 0 input · 0 output
 
 ## Community Hubs (Navigation)
@@ -73,19 +73,28 @@
 - [[_COMMUNITY_Community 57|Community 57]]
 - [[_COMMUNITY_Community 58|Community 58]]
 - [[_COMMUNITY_Community 59|Community 59]]
+- [[_COMMUNITY_Community 60|Community 60]]
+- [[_COMMUNITY_Community 61|Community 61]]
+- [[_COMMUNITY_Community 62|Community 62]]
+- [[_COMMUNITY_Community 63|Community 63]]
+- [[_COMMUNITY_Community 64|Community 64]]
+- [[_COMMUNITY_Community 65|Community 65]]
+- [[_COMMUNITY_Community 66|Community 66]]
+- [[_COMMUNITY_Community 67|Community 67]]
+- [[_COMMUNITY_Community 68|Community 68]]
 
 ## God Nodes (most connected - your core abstractions)
 
 1. `Silver Gatekeeper` - 11 edges
-2. `setupFullProject()` - 5 edges
-3. `setupFull()` - 4 edges
-4. `Bearer Token Auth` - 4 edges
-5. `Role Graph (Data-Driven)` - 3 edges
-6. `Database Schema (11 Tables)` - 3 edges
-7. `closeDatabase()` - 2 edges
-8. `resetForTesting()` - 2 edges
-9. `assemblePrompt()` - 2 edges
-10. `assembleDynamicContext()` - 2 edges
+2. `moveTask()` - 5 edges
+3. `setupFullProject()` - 5 edges
+4. `setupFull()` - 4 edges
+5. `Bearer Token Auth` - 4 edges
+6. `sendMessage()` - 3 edges
+7. `Role Graph (Data-Driven)` - 3 edges
+8. `Database Schema (11 Tables)` - 3 edges
+9. `closeDatabase()` - 2 edges
+10. `resetForTesting()` - 2 edges
 
 ## Surprising Connections (you probably didn't know these)
 
@@ -113,48 +122,48 @@ Nodes (18): Bearer Token Auth, Coding Conventions, Crispy Adventure Worker Runti
 
 ### Community 1 - "Community 1"
 
-Cohesion: 0.36
-Nodes (4): insertTestAlignmentSession(), insertTestHuman(), insertTestProject(), setupFull()
+Cohesion: 0.19
+Nodes (5): claimTask(), completeTask(), isPipelineIncrementingTransition(), moveTask(), validateSourceOfTruth()
 
 ### Community 2 - "Community 2"
+
+Cohesion: 0.43
+Nodes (4): insertTestAlignmentSession(), insertTestHuman(), insertTestProject(), setupFull()
+
+### Community 3 - "Community 3"
 
 Cohesion: 0.48
 Nodes (5): insertTestDepartment(), insertTestHuman(), insertTestProject(), insertTestRoleInstance(), setupFullProject()
 
-### Community 3 - "Community 3"
+### Community 4 - "Community 4"
+
+Cohesion: 0.47
+Nodes (3): canCommunicateWithHuman(), canMessage(), sendMessage()
+
+### Community 5 - "Community 5"
 
 Cohesion: 0.5
 Nodes (2): closeDatabase(), resetForTesting()
 
-### Community 4 - "Community 4"
-
-Cohesion: 0.5
-Nodes (2): createSeededTestDb(), createTestDb()
-
-### Community 5 - "Community 5"
+### Community 6 - "Community 6"
 
 Cohesion: 0.4
 Nodes (0):
 
-### Community 6 - "Community 6"
-
-Cohesion: 0.67
-Nodes (0):
-
 ### Community 7 - "Community 7"
 
-Cohesion: 0.67
-Nodes (0):
+Cohesion: 0.5
+Nodes (2): createSeededTestDb(), createTestDb()
 
 ### Community 8 - "Community 8"
 
-Cohesion: 0.67
+Cohesion: 0.4
 Nodes (0):
 
 ### Community 9 - "Community 9"
 
-Cohesion: 1.0
-Nodes (2): assembleDynamicContext(), assemblePrompt()
+Cohesion: 0.4
+Nodes (0):
 
 ### Community 10 - "Community 10"
 
@@ -163,22 +172,22 @@ Nodes (0):
 
 ### Community 11 - "Community 11"
 
-Cohesion: 1.0
+Cohesion: 0.67
 Nodes (0):
 
 ### Community 12 - "Community 12"
 
-Cohesion: 1.0
+Cohesion: 0.67
 Nodes (0):
 
 ### Community 13 - "Community 13"
 
 Cohesion: 1.0
-Nodes (0):
+Nodes (2): assembleDynamicContext(), assemblePrompt()
 
 ### Community 14 - "Community 14"
 
-Cohesion: 1.0
+Cohesion: 0.67
 Nodes (0):
 
 ### Community 15 - "Community 15"
@@ -406,107 +415,162 @@ Nodes (0):
 Cohesion: 1.0
 Nodes (0):
 
+### Community 60 - "Community 60"
+
+Cohesion: 1.0
+Nodes (0):
+
+### Community 61 - "Community 61"
+
+Cohesion: 1.0
+Nodes (0):
+
+### Community 62 - "Community 62"
+
+Cohesion: 1.0
+Nodes (0):
+
+### Community 63 - "Community 63"
+
+Cohesion: 1.0
+Nodes (0):
+
+### Community 64 - "Community 64"
+
+Cohesion: 1.0
+Nodes (0):
+
+### Community 65 - "Community 65"
+
+Cohesion: 1.0
+Nodes (0):
+
+### Community 66 - "Community 66"
+
+Cohesion: 1.0
+Nodes (0):
+
+### Community 67 - "Community 67"
+
+Cohesion: 1.0
+Nodes (0):
+
+### Community 68 - "Community 68"
+
+Cohesion: 1.0
+Nodes (0):
+
 ## Knowledge Gaps
 
 - **7 isolated node(s):** `Crispy Adventure Worker Runtime`, `No Guessing Rule`, `Coding Conventions`, `Graphify Integration`, `Silver Platform Overview` (+2 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **Thin community `Community 11`** (2 nodes): `createApp()`, `app.js`
+- **Thin community `Community 15`** (2 nodes): `createApp()`, `app.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 12`** (2 nodes): `loadConfig()`, `config.js`
+- **Thin community `Community 16`** (2 nodes): `loadConfig()`, `config.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 13`** (2 nodes): `runMigrations()`, `migrate.js`
+- **Thin community `Community 17`** (2 nodes): `runMigrations()`, `migrate.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 14`** (2 nodes): `runSeeds()`, `seed.js`
+- **Thin community `Community 18`** (2 nodes): `runSeeds()`, `seed.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 15`** (2 nodes): `bearerAuth()`, `auth.js`
+- **Thin community `Community 19`** (2 nodes): `bearerAuth()`, `auth.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 16`** (2 nodes): `up()`, `001_projects.js`
+- **Thin community `Community 20`** (2 nodes): `up()`, `001_projects.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 17`** (2 nodes): `up()`, `002_humans.js`
+- **Thin community `Community 21`** (2 nodes): `up()`, `002_humans.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 18`** (2 nodes): `up()`, `003_departments.js`
+- **Thin community `Community 22`** (2 nodes): `up()`, `003_departments.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 19`** (2 nodes): `up()`, `004_model_profiles.js`
+- **Thin community `Community 23`** (2 nodes): `up()`, `004_model_profiles.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 20`** (2 nodes): `up()`, `005_permission_profiles.js`
+- **Thin community `Community 24`** (2 nodes): `up()`, `005_permission_profiles.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 21`** (2 nodes): `up()`, `006_role_templates.js`
+- **Thin community `Community 25`** (2 nodes): `up()`, `006_role_templates.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 22`** (2 nodes): `up()`, `007_role_prompt_files.js`
+- **Thin community `Community 26`** (2 nodes): `up()`, `007_role_prompt_files.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 23`** (2 nodes): `up()`, `008_project_role_instances.js`
+- **Thin community `Community 27`** (2 nodes): `up()`, `008_project_role_instances.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 24`** (2 nodes): `up()`, `009_role_edges.js`
+- **Thin community `Community 28`** (2 nodes): `up()`, `009_role_edges.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 25`** (2 nodes): `up()`, `010_agents.js`
+- **Thin community `Community 29`** (2 nodes): `up()`, `010_agents.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 26`** (2 nodes): `up()`, `011_agent_heartbeats.js`
+- **Thin community `Community 30`** (2 nodes): `up()`, `011_agent_heartbeats.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 27`** (2 nodes): `up()`, `012_alignment_intake.js`
+- **Thin community `Community 31`** (2 nodes): `up()`, `012_alignment_intake.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 28`** (2 nodes): `up()`, `013_context_artifacts.js`
+- **Thin community `Community 32`** (2 nodes): `up()`, `013_context_artifacts.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 29`** (2 nodes): `createAgentsRouter()`, `agents.js`
+- **Thin community `Community 33`** (2 nodes): `up()`, `014_tasks.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 30`** (2 nodes): `createAlignmentReviewsRouter()`, `alignment_reviews.js`
+- **Thin community `Community 34`** (2 nodes): `up()`, `015_conversations.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 31`** (2 nodes): `createAlignmentSessionsRouter()`, `alignment_sessions.js`
+- **Thin community `Community 35`** (2 nodes): `up()`, `016_local_prs.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 32`** (2 nodes): `createClarificationRouter()`, `clarification.js`
+- **Thin community `Community 36`** (2 nodes): `createAgentsRouter()`, `agents.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 33`** (2 nodes): `createContextArtifactsRouter()`, `context_artifacts.js`
+- **Thin community `Community 37`** (2 nodes): `createAlignmentReviewsRouter()`, `alignment_reviews.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 34`** (2 nodes): `createDocumentSetsRouter()`, `document_sets.js`
+- **Thin community `Community 38`** (2 nodes): `createAlignmentSessionsRouter()`, `alignment_sessions.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 35`** (2 nodes): `createFilesRouter()`, `files.js`
+- **Thin community `Community 39`** (2 nodes): `createClarificationRouter()`, `clarification.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 36`** (2 nodes): `createHealthRouter()`, `health.js`
+- **Thin community `Community 40`** (2 nodes): `createContextArtifactsRouter()`, `context_artifacts.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 37`** (2 nodes): `createHumanApprovalsRouter()`, `human_approvals.js`
+- **Thin community `Community 41`** (2 nodes): `createDocumentSetsRouter()`, `document_sets.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 38`** (2 nodes): `createProblemStatementsRouter()`, `problem_statements.js`
+- **Thin community `Community 42`** (2 nodes): `createFilesRouter()`, `files.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 39`** (2 nodes): `createResearchNotesRouter()`, `research_notes.js`
+- **Thin community `Community 43`** (2 nodes): `createHealthRouter()`, `health.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 40`** (2 nodes): `createRoleEdgesRouter()`, `role_edges.js`
+- **Thin community `Community 44`** (2 nodes): `createHumanApprovalsRouter()`, `human_approvals.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 41`** (2 nodes): `createRoleNodesRouter()`, `role_nodes.js`
+- **Thin community `Community 45`** (2 nodes): `createLocalPrsRouter()`, `local_prs.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 42`** (2 nodes): `createRoleTemplatesRouter()`, `role_templates.js`
+- **Thin community `Community 46`** (2 nodes): `createMessagesRouter()`, `messages.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 43`** (2 nodes): `tasks.js`, `createTasksRouter()`
+- **Thin community `Community 47`** (2 nodes): `createProblemStatementsRouter()`, `problem_statements.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 44`** (2 nodes): `run()`, `default_role_edges.js`
+- **Thin community `Community 48`** (2 nodes): `createResearchNotesRouter()`, `research_notes.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 45`** (2 nodes): `run()`, `human_local_owner.js`
+- **Thin community `Community 49`** (2 nodes): `createRoleEdgesRouter()`, `role_edges.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 46`** (2 nodes): `run()`, `model_profiles.js`
+- **Thin community `Community 50`** (2 nodes): `createRoleNodesRouter()`, `role_nodes.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 47`** (2 nodes): `run()`, `permission_profiles.js`
+- **Thin community `Community 51`** (2 nodes): `createRoleTemplatesRouter()`, `role_templates.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 48`** (2 nodes): `run()`, `role_templates.js`
+- **Thin community `Community 52`** (2 nodes): `tasks.js`, `createTasksRouter()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 49`** (2 nodes): `createRoleGraphPolicy()`, `role_graph_policy.js`
+- **Thin community `Community 53`** (2 nodes): `run()`, `default_role_edges.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 50`** (2 nodes): `createApp()`, `server.test.js`
+- **Thin community `Community 54`** (2 nodes): `run()`, `human_local_owner.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 51`** (1 nodes): `jest.config.js`
+- **Thin community `Community 55`** (2 nodes): `run()`, `model_profiles.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 52`** (1 nodes): `server.js`
+- **Thin community `Community 56`** (2 nodes): `run()`, `permission_profiles.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 53`** (1 nodes): `agents.test.js`
+- **Thin community `Community 57`** (2 nodes): `run()`, `role_templates.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 54`** (1 nodes): `auth.test.js`
+- **Thin community `Community 58`** (2 nodes): `createRoleGraphPolicy()`, `role_graph_policy.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 55`** (1 nodes): `db.test.js`
+- **Thin community `Community 59`** (2 nodes): `createApp()`, `server.test.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 56`** (1 nodes): `health.test.js`
+- **Thin community `Community 60`** (1 nodes): `jest.config.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 57`** (1 nodes): `migrations.test.js`
+- **Thin community `Community 61`** (1 nodes): `server.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 58`** (1 nodes): `path_safety.test.js`
+- **Thin community `Community 62`** (1 nodes): `agents.test.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 59`** (1 nodes): `seeds.test.js`
+- **Thin community `Community 63`** (1 nodes): `auth.test.js`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 64`** (1 nodes): `db.test.js`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 65`** (1 nodes): `health.test.js`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 66`** (1 nodes): `migrations.test.js`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 67`** (1 nodes): `path_safety.test.js`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 68`** (1 nodes): `seeds.test.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 
 ## Suggested Questions

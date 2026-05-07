@@ -1,0 +1,29 @@
+{
+  "nodes": [
+    {
+      "id": "src_routes_local_prs_js",
+      "label": "local_prs.js",
+      "file_type": "code",
+      "source_file": "src\\routes\\local_prs.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "local_prs_createlocalprsrouter",
+      "label": "createLocalPrsRouter()",
+      "file_type": "code",
+      "source_file": "src\\routes\\local_prs.js",
+      "source_location": "L4"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_routes_local_prs_js",
+      "target": "local_prs_createlocalprsrouter",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\local_prs.js",
+      "source_location": "L4",
+      "weight": 1.0
+    }
+  ]
+}

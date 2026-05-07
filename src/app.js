@@ -14,6 +14,8 @@ const { createAlignmentReviewsRouter } = require('./routes/alignment_reviews');
 const { createHumanApprovalsRouter } = require('./routes/human_approvals');
 const { createContextArtifactsRouter } = require('./routes/context_artifacts');
 const { createDocumentSetsRouter } = require('./routes/document_sets');
+const { createMessagesRouter } = require('./routes/messages');
+const { createLocalPrsRouter } = require('./routes/local_prs');
 const { bearerAuth } = require('./middleware/auth');
 
 function createApp(db, config) {
@@ -27,9 +29,12 @@ function createApp(db, config) {
   // Protected routes
   const auth = bearerAuth(db);
   app.use('/api/agents', auth);
-  app.use('/api/my-tasks', auth);
   app.use(createAgentsRouter(db));
-  app.use(createTasksRouter());
+
+  // Task, messaging, and local PR routes — all authenticated
+  app.use(createTasksRouter(db, auth));
+  app.use(createMessagesRouter(db, auth));
+  app.use(createLocalPrsRouter(db, auth));
 
   // Role system routes — all authenticated
   app.use(createRoleTemplatesRouter(db, auth));

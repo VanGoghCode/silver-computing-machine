@@ -1,0 +1,29 @@
+{
+  "nodes": [
+    {
+      "id": "src_migrations_014_tasks_js",
+      "label": "014_tasks.js",
+      "file_type": "code",
+      "source_file": "src\\migrations\\014_tasks.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "014_tasks_up",
+      "label": "up()",
+      "file_type": "code",
+      "source_file": "src\\migrations\\014_tasks.js",
+      "source_location": "L3"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_migrations_014_tasks_js",
+      "target": "014_tasks_up",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\migrations\\014_tasks.js",
+      "source_location": "L3",
+      "weight": 1.0
+    }
+  ]
+}

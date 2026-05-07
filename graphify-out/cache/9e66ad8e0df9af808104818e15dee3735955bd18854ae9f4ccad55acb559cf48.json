@@ -1,0 +1,77 @@
+{
+  "nodes": [
+    {
+      "id": "tests_tasks_test_js",
+      "label": "tasks.test.js",
+      "file_type": "code",
+      "source_file": "tests\\tasks.test.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "tasks_test_insertfullhierarchy",
+      "label": "insertFullHierarchy()",
+      "file_type": "code",
+      "source_file": "tests\\tasks.test.js",
+      "source_location": "L15"
+    },
+    {
+      "id": "tasks_test_insertagentforrole",
+      "label": "insertAgentForRole()",
+      "file_type": "code",
+      "source_file": "tests\\tasks.test.js",
+      "source_location": "L91"
+    },
+    {
+      "id": "tasks_test_insertapprovedartifact",
+      "label": "insertApprovedArtifact()",
+      "file_type": "code",
+      "source_file": "tests\\tasks.test.js",
+      "source_location": "L109"
+    },
+    {
+      "id": "tasks_test_inserttask",
+      "label": "insertTask()",
+      "file_type": "code",
+      "source_file": "tests\\tasks.test.js",
+      "source_location": "L118"
+    }
+  ],
+  "edges": [
+    {
+      "source": "tests_tasks_test_js",
+      "target": "tasks_test_insertfullhierarchy",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests\\tasks.test.js",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_tasks_test_js",
+      "target": "tasks_test_insertagentforrole",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests\\tasks.test.js",
+      "source_location": "L91",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_tasks_test_js",
+      "target": "tasks_test_insertapprovedartifact",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests\\tasks.test.js",
+      "source_location": "L109",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_tasks_test_js",
+      "target": "tasks_test_inserttask",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests\\tasks.test.js",
+      "source_location": "L118",
+      "weight": 1.0
+    }
+  ]
+}

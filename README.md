@@ -76,6 +76,16 @@ Context engine tables:
 - `document_sets` — grouped sets of aligned documents per lifecycle stage
 - `document_set_items` — artifacts belonging to a document set
 
+Collaboration and execution tables:
+
+- `tasks` — Kanban tasks with lifecycle, priority, branch info, linked artifacts
+- `task_todos` — per-task checklist items with positions
+- `task_events` — audit trail for task lifecycle changes and comments
+- `task_attempts` — per-attempt tracking with start/end times and results
+- `conversations` — message threads linked to projects
+- `messages` — role-to-role and role-to-human messages with type and priority
+- `local_prs` — local PR objects for code review without GitHub integration
+
 ## Role Library
 
 Static context for every role lives in `role-library/` as markdown files. These files are imported into the database and assembled into prompts.
@@ -359,6 +369,169 @@ Weekly Audit Agent -> Tech Lead
 
 Human stakeholders communicate **only through** CEO, CTO, or Product Manager. No other role can reach the human directly. This is enforced by the edge graph — if no edge exists between a role and a human-interface role, communication is denied.
 
+## Kanban Task Lifecycle
+
+Tasks follow a structured Kanban workflow with validation gates and pipeline iteration limits.
+
+### Lifecycle States
+
+```
+backlog → ready → assigned → in_progress → review → testing → done
+                       ↑          ↑            ↓        ↓
+                       └──────────┴────────────┘        │
+                            rework allowed              │
+                       ←────────────────────────────────┘
+                          review/test can return to in_progress or assigned
+```
+
+### Transition Rules
+
+| From          | To            | Condition                             |
+| ------------- | ------------- | ------------------------------------- |
+| `backlog`     | `ready`       | All linked artifacts must be approved |
+| `ready`       | `assigned`    | Must have `assigned_agent_id`         |
+| `assigned`    | `in_progress` | Agent claims via `/claim`             |
+| `in_progress` | `review`      | Pipeline iteration increments         |
+| `review`      | `testing`     | Normal flow                           |
+| `review`      | `in_progress` | Rework — requires reason              |
+| `review`      | `assigned`    | Reassignment — requires reason        |
+| `testing`     | `done`        | Normal completion                     |
+| `testing`     | `in_progress` | Test failures found                   |
+| `testing`     | `review`      | Needs another review                  |
+| `testing`     | `assigned`    | Major rework needed                   |
+
+### Pipeline Iteration Limit
+
+The `pipeline_iteration` counter tracks how many times a task enters the review/test cycle. Default max is **2**. Once exceeded, the task cannot re-enter review. This prevents infinite review/test loops.
+
+### Task Creation
+
+Tasks are always created in `backlog` status. Moving to `ready` requires approved linked context artifacts (source-of-truth validation).
+
+| Method | Path                    | Description           |
+| ------ | ----------------------- | --------------------- |
+| POST   | `/api/tasks`            | Create task (backlog) |
+| GET    | `/api/tasks?project_id` | List project tasks    |
+| GET    | `/api/tasks/:id`        | Get task with todos   |
+
+## Worker Task APIs
+
+Crispy Adventure workers interact with tasks through these endpoints.
+
+| Method | Path                               | Description                     |
+| ------ | ---------------------------------- | ------------------------------- |
+| GET    | `/api/my-tasks`                    | Tasks assigned to current agent |
+| POST   | `/api/tasks/:id/claim`             | Claim assigned task             |
+| GET    | `/api/tasks/:id/execution-context` | Full worker context bundle      |
+| PATCH  | `/api/tasks/:id/move`              | Transition task status          |
+| POST   | `/api/tasks/:id/events`            | Log task event                  |
+| PATCH  | `/api/tasks/:id/todos/:todoId`     | Update checklist item           |
+| POST   | `/api/tasks/:id/complete`          | Mark task complete              |
+| POST   | `/api/tasks/:id/fail`              | Report task failure             |
+
+Rules:
+
+- `/api/my-tasks` returns only tasks assigned to the authenticated agent
+- `claim` moves `assigned` → `in_progress` and creates a task attempt
+- `complete` stores a structured result and moves task through the workflow
+- `fail` stores failure result without losing history, moves back to `assigned`
+
+## Execution Context Bundle
+
+`GET /api/tasks/:id/execution-context` returns everything a Crispy Adventure worker needs to execute a task.
+
+### Response Structure
+
+```json
+{
+  "agent": { "agent_id": "...", "agent_name": "..." },
+  "role": { "role_key": "engineer", "role_display_name": "Engineer", "role_instance_id": "..." },
+  "project": { "project_id": "...", "project_name": "...", "project_slug": "..." },
+  "department": { "department_id": "...", "department_key": "...", "department_name": "..." },
+  "task": { "id": "...", "title": "...", "status": "in_progress", "priority": "high" },
+  "lifecycle_stage": "mvp",
+  "todos": [...],
+  "acceptance_criteria_md": "- Criteria...",
+  "branch_info": { "base_branch": "main", "branch_name": "feature/auth" },
+  "static_prompt": [...],
+  "dynamic_context": [...],
+  "recent_messages": [...],
+  "local_pr": null,
+  "allowed_tools": ["read", "write", "edit", "search", "bash", "glob", "grep"],
+  "forbidden_actions": ["delete_project", "modify_permissions", "escalate_without_approval"],
+  "dopamine_info": { "placeholder": true },
+  "source_artifacts": [{ "artifact_id": "...", "artifact_type": "product_requirements", "version": 1, "status": "approved" }]
+}
+```
+
+### Context Assembly
+
+The execution context pulls from multiple sources:
+
+- **Static prompt**: Global and role-specific markdown from `role_prompt_files`
+- **Dynamic context**: Approved artifacts linked to the task
+- **Source artifacts**: IDs and versions of all linked approved documents
+- **Recent messages**: Last 10 messages relevant to the task's project
+- **Local PR**: If a PR exists for this task, included automatically
+
+## Messaging and Hierarchy Edges
+
+Messages flow through the role graph. Every message is validated against `role_edges` with `can_message = 1`.
+
+### Message Types
+
+`question`, `answer`, `escalation`, `blocker`, `decision`, `notification`
+
+### APIs
+
+| Method | Path                              | Description              |
+| ------ | --------------------------------- | ------------------------ |
+| POST   | `/api/messages`                   | Send a message           |
+| GET    | `/api/conversations?project_id=`  | List conversations       |
+| GET    | `/api/conversations/:id/messages` | Get conversation history |
+
+### Permission Rules
+
+- Messages between roles require a `can_message` edge (direct or bidirectional)
+- Human communication is only allowed through CEO, CTO, or Product Manager roles
+- Same-role cross-department communication requires an explicit edge
+- Messages are stored permanently and can link to tasks or alignment sessions
+
+## Question Escalation Path
+
+When an Engineer has a question that cannot be resolved locally, the escalation path follows the role hierarchy:
+
+```
+Engineer asks Tech Lead (via message, type: question)
+  → Tech Lead cannot answer
+    → Tech Lead escalates to Reviewer or Architect (type: escalation)
+      → Architect escalates to CTO (type: escalation)
+        → CTO escalates to CEO or Product Manager (type: escalation)
+          → CEO/Product Manager asks human if needed
+```
+
+Each escalation creates a message with `message_type: 'escalation'` and links to the original question. The chain is fully traceable through the `conversations` and `messages` tables.
+
+## Local PR Objects
+
+Silver tracks pull requests locally without GitHub integration. Local PRs are created by agents and go through a review/test workflow.
+
+| Method | Path                        | Description |
+| ------ | --------------------------- | ----------- |
+| POST   | `/api/local-prs`            | Create PR   |
+| GET    | `/api/local-prs?project_id` | List PRs    |
+| GET    | `/api/local-prs/:id`        | Get PR      |
+| PATCH  | `/api/local-prs/:id`        | Update PR   |
+
+### PR Fields
+
+- `title`, `summary_md` — description
+- `branch_name`, `base_branch` — git branches
+- `changed_files_json` — list of changed files
+- `self_review_md` — agent's self-review
+- `status` — `draft`, `ready`, `merged`, `closed`
+- `review_status`, `test_status`, `merge_status` — sub-statuses
+
 ## Prompt Assembler
 
 The prompt assembler builds the full static context for an agent:
@@ -425,12 +598,12 @@ The dashboard uses a simple local-owner mode for v1. A `humans` record with `rol
 
 ### Protected (requires Bearer token)
 
-| Method | Path                                  | Description                   |
-| ------ | ------------------------------------- | ----------------------------- |
-| GET    | `/api/agents/me`                      | Current agent identity        |
-| POST   | `/api/agents/heartbeat`               | Update agent status           |
-| GET    | `/api/agents/:agentId/prompt-preview` | Assembled prompt context      |
-| GET    | `/api/my-tasks`                       | Agent's assigned tasks (stub) |
+| Method | Path                                  | Description              |
+| ------ | ------------------------------------- | ------------------------ |
+| GET    | `/api/agents/me`                      | Current agent identity   |
+| POST   | `/api/agents/heartbeat`               | Update agent status      |
+| GET    | `/api/agents/:agentId/prompt-preview` | Assembled prompt context |
+| GET    | `/api/my-tasks`                       | Agent's assigned tasks   |
 
 ### Role Templates
 
@@ -477,7 +650,7 @@ Silver-Computing-Machine/
 │   │   ├── migrate.js     — Migration runner
 │   │   ├── seed.js        — Seed runner
 │   │   └── helpers.js     — generateId, withTransaction
-│   ├── migrations/        — 001 through 013 table migrations
+│   ├── migrations/        — 001 through 016 table migrations
 │   ├── seeds/             — Role templates, model profiles, default edges
 │   ├── middleware/
 │   │   └── auth.js        — Bearer token authentication
@@ -485,7 +658,9 @@ Silver-Computing-Machine/
 │   │   ├── health.js      — Public health endpoint
 │   │   ├── files.js       — Workspace file CRUD
 │   │   ├── agents.js      — Agent identity, heartbeat, prompt preview
-│   │   ├── tasks.js       — Task assignment (stub)
+│   │   ├── tasks.js       — Task CRUD, lifecycle, worker APIs, execution context
+│   │   ├── messages.js    — Messaging with role edge enforcement
+│   │   ├── local_prs.js   — Local PR object CRUD
 │   │   ├── role_templates.js — Role template CRUD + import
 │   │   ├── role_nodes.js  — Project role node CRUD
 │   │   └── role_edges.js  — Role edge CRUD
@@ -499,6 +674,9 @@ Silver-Computing-Machine/
 │   │   └── document_sets.js — Document set grouping + approval
 │   ├── services/
 │   │   ├── agents.js      — Agent lookup, heartbeat
+│   │   ├── tasks.js       — Task lifecycle, execution context, todos, events
+│   │   ├── messages.js    — Message sending, role edge checks, conversations
+│   │   ├── local_prs.js   — Local PR CRUD
 │   │   ├── path_safety.js — Path traversal protection
 │   │   ├── role_library_import.js — Import markdown to DB
 │   │   ├── role_graph_policy.js — Edge-driven permission checks

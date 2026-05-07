@@ -1,0 +1,86 @@
+{
+  "nodes": [
+    {
+      "id": "tests_helpers_js",
+      "label": "helpers.js",
+      "file_type": "code",
+      "source_file": "tests\\helpers.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "helpers_createtestdb",
+      "label": "createTestDb()",
+      "file_type": "code",
+      "source_file": "tests\\helpers.js",
+      "source_location": "L35"
+    },
+    {
+      "id": "helpers_createseededtestdb",
+      "label": "createSeededTestDb()",
+      "file_type": "code",
+      "source_file": "tests\\helpers.js",
+      "source_location": "L42"
+    },
+    {
+      "id": "helpers_createtestapp",
+      "label": "createTestApp()",
+      "file_type": "code",
+      "source_file": "tests\\helpers.js",
+      "source_location": "L48"
+    },
+    {
+      "id": "helpers_inserttestagent",
+      "label": "insertTestAgent()",
+      "file_type": "code",
+      "source_file": "tests\\helpers.js",
+      "source_location": "L57"
+    }
+  ],
+  "edges": [
+    {
+      "source": "tests_helpers_js",
+      "target": "helpers_createtestdb",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests\\helpers.js",
+      "source_location": "L35",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_helpers_js",
+      "target": "helpers_createseededtestdb",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests\\helpers.js",
+      "source_location": "L42",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_helpers_js",
+      "target": "helpers_createtestapp",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests\\helpers.js",
+      "source_location": "L48",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_helpers_js",
+      "target": "helpers_inserttestagent",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests\\helpers.js",
+      "source_location": "L57",
+      "weight": 1.0
+    },
+    {
+      "source": "helpers_createseededtestdb",
+      "target": "helpers_createtestdb",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "tests\\helpers.js",
+      "source_location": "L43",
+      "weight": 1.0
+    }
+  ]
+}
