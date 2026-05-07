@@ -23,10 +23,10 @@ function createApp(db, config) {
   app.use(createAgentsRouter(db));
   app.use(createTasksRouter());
 
-  // Role system routes (public for now - RBAC will gate these later)
-  app.use(createRoleTemplatesRouter(db));
-  app.use(createRoleNodesRouter(db));
-  app.use(createRoleEdgesRouter(db));
+  // Role system routes — all authenticated
+  app.use(createRoleTemplatesRouter(db, auth));
+  app.use(createRoleNodesRouter(db, auth));
+  app.use(createRoleEdgesRouter(db, auth));
 
   return app;
 }

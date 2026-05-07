@@ -10,7 +10,9 @@ const GLOBAL_SECTION_ORDER = [
 
 const ROLE_SECTION_ORDER = ['persona', 'instructions', 'rules', 'communication', 'output-format'];
 
-function assemblePrompt(db, agentId, roleNodeId) {
+const GLOBAL_TEMPLATE_ID = 'global';
+
+function assemblePrompt(db, agentId) {
   // Get agent info
   const agent = db
     .prepare(
@@ -32,11 +34,12 @@ function assemblePrompt(db, agentId, roleNodeId) {
   }
 
   const roleTemplateId = agent.role_template_id;
+  const roleNodeId = agent.role_instance_id;
 
   // Get global prompt files
   const globalFiles = db
-    .prepare(`SELECT * FROM role_prompt_files WHERE role_template_id = 'global' AND is_active = 1`)
-    .all();
+    .prepare(`SELECT * FROM role_prompt_files WHERE role_template_id = ? AND is_active = 1`)
+    .all(GLOBAL_TEMPLATE_ID);
 
   // Get role prompt files
   const roleFiles = db

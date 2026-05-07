@@ -9,6 +9,15 @@ const { assemblePrompt } = require('../src/services/prompt_assembler');
 
 const ROLE_LIBRARY_PATH = path.resolve(__dirname, '..', 'role-library');
 
+/**
+ * Creates a test agent and returns app + token for authenticated requests.
+ */
+function setupAuthApp(db) {
+  const app = createTestApp(db);
+  const { token } = insertTestAgent(db);
+  return { app, token };
+}
+
 describe('Role Library Import', () => {
   let db;
 
@@ -91,11 +100,11 @@ describe('Role Library Import', () => {
 });
 
 describe('Role Template APIs', () => {
-  let db, app;
+  let db, app, token;
 
   beforeEach(() => {
     db = createSeededTestDb();
-    app = createTestApp(db);
+    ({ app, token } = setupAuthApp(db));
   });
 
   afterEach(() => {
@@ -103,37 +112,48 @@ describe('Role Template APIs', () => {
   });
 
   test('GET /api/role-templates returns all templates', async () => {
-    const res = await request(app).get('/api/role-templates');
+    const res = await request(app)
+      .get('/api/role-templates')
+      .set('Authorization', `Bearer ${token}`);
     expect(res.status).toBe(200);
     expect(res.body.templates.length).toBeGreaterThanOrEqual(11);
   });
 
   test('GET /api/role-templates/:id returns single template', async () => {
     const templates = db.prepare(`SELECT * FROM role_templates`).all();
-    const res = await request(app).get(`/api/role-templates/${templates[0].id}`);
+    const res = await request(app)
+      .get(`/api/role-templates/${templates[0].id}`)
+      .set('Authorization', `Bearer ${token}`);
     expect(res.status).toBe(200);
     expect(res.body.template.key).toBe(templates[0].key);
   });
 
   test('GET /api/role-templates/:id returns 404 for missing', async () => {
-    const res = await request(app).get(`/api/role-templates/${crypto.randomUUID()}`);
+    const res = await request(app)
+      .get(`/api/role-templates/${crypto.randomUUID()}`)
+      .set('Authorization', `Bearer ${token}`);
     expect(res.status).toBe(404);
   });
 
   test('GET /api/role-templates/:id/prompt-files returns files', async () => {
     importRoleLibrary(db, ROLE_LIBRARY_PATH);
     const template = db.prepare(`SELECT * FROM role_templates WHERE key = 'ceo'`).get();
-    const res = await request(app).get(`/api/role-templates/${template.id}/prompt-files`);
+    const res = await request(app)
+      .get(`/api/role-templates/${template.id}/prompt-files`)
+      .set('Authorization', `Bearer ${token}`);
     expect(res.status).toBe(200);
     expect(res.body.files.length).toBe(5);
   });
 
   test('POST /api/role-templates creates new template', async () => {
-    const res = await request(app).post('/api/role-templates').send({
-      key: 'custom-role',
-      display_name: 'Custom Role',
-      description: 'A custom role for testing',
-    });
+    const res = await request(app)
+      .post('/api/role-templates')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        key: 'custom-role',
+        display_name: 'Custom Role',
+        description: 'A custom role for testing',
+      });
     expect(res.status).toBe(201);
     expect(res.body.template.key).toBe('custom-role');
   });
@@ -142,6 +162,7 @@ describe('Role Template APIs', () => {
     const template = db.prepare(`SELECT * FROM role_templates WHERE key = 'ceo'`).get();
     const res = await request(app)
       .patch(`/api/role-templates/${template.id}`)
+      .set('Authorization', `Bearer ${token}`)
       .send({ description: 'Updated CEO description' });
     expect(res.status).toBe(200);
     expect(res.body.template.description).toBe('Updated CEO description');
@@ -150,38 +171,46 @@ describe('Role Template APIs', () => {
   test('POST /api/role-templates/import-from-files triggers import', async () => {
     const res = await request(app)
       .post('/api/role-templates/import-from-files')
+      .set('Authorization', `Bearer ${token}`)
       .send({ path: ROLE_LIBRARY_PATH });
     expect(res.status).toBe(200);
     expect(res.body.result.filesImported).toBeGreaterThanOrEqual(55);
   });
+
+  test('role APIs reject unauthenticated requests', async () => {
+    const res = await request(app).get('/api/role-templates');
+    expect(res.status).toBe(401);
+  });
 });
 
 describe('Project Role Node APIs', () => {
-  let db, app, projectId;
+  let db, app, token, projectId;
 
   beforeEach(() => {
     db = createSeededTestDb();
-    app = createTestApp(db);
+    ({ app, token } = setupAuthApp(db));
     projectId = generateId();
     db.prepare(
       `INSERT INTO projects (id, name, slug, root_path, status) VALUES (?, ?, ?, ?, ?)`,
-    ).run(projectId, 'Test Project', 'test-project', '/workspace/test', 'active');
+    ).run(projectId, 'Role Node Project', 'role-node-project', '/workspace/test-nodes', 'active');
   });
 
   afterEach(() => {
     db.close();
   });
 
-  function insertDepartment(projectId, key) {
+  function insertDepartment(pid, key) {
     const id = generateId();
     db.prepare(
       `INSERT INTO departments (id, project_id, key, display_name) VALUES (?, ?, ?, ?)`,
-    ).run(id, projectId, key, key.charAt(0).toUpperCase() + key.slice(1));
+    ).run(id, pid, key, key.charAt(0).toUpperCase() + key.slice(1));
     return id;
   }
 
   test('GET /api/projects/:projectId/role-nodes returns empty initially', async () => {
-    const res = await request(app).get(`/api/projects/${projectId}/role-nodes`);
+    const res = await request(app)
+      .get(`/api/projects/${projectId}/role-nodes`)
+      .set('Authorization', `Bearer ${token}`);
     expect(res.status).toBe(200);
     expect(res.body.nodes).toEqual([]);
   });
@@ -190,20 +219,52 @@ describe('Project Role Node APIs', () => {
     const deptId = insertDepartment(projectId, 'backend');
     const template = db.prepare(`SELECT * FROM role_templates WHERE key = 'engineer'`).get();
 
-    const res = await request(app).post(`/api/projects/${projectId}/role-nodes`).send({
-      department_id: deptId,
-      role_template_id: template.id,
-      display_name: 'Backend Engineer',
-      canvas_x: 100,
-      canvas_y: 200,
-    });
+    const res = await request(app)
+      .post(`/api/projects/${projectId}/role-nodes`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        department_id: deptId,
+        role_template_id: template.id,
+        display_name: 'Backend Engineer',
+        canvas_x: 100,
+        canvas_y: 200,
+      });
     expect(res.status).toBe(201);
     expect(res.body.node.display_name).toBe('Backend Engineer');
     expect(res.body.node.is_active).toBe(1);
   });
 
   test('POST /api/projects/:projectId/role-nodes validates required fields', async () => {
-    const res = await request(app).post(`/api/projects/${projectId}/role-nodes`).send({});
+    const res = await request(app)
+      .post(`/api/projects/${projectId}/role-nodes`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({});
+    expect(res.status).toBe(400);
+  });
+
+  test('POST rejects invalid department_id', async () => {
+    const template = db.prepare(`SELECT * FROM role_templates WHERE key = 'engineer'`).get();
+    const res = await request(app)
+      .post(`/api/projects/${projectId}/role-nodes`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        department_id: crypto.randomUUID(),
+        role_template_id: template.id,
+        display_name: 'Engineer',
+      });
+    expect(res.status).toBe(400);
+  });
+
+  test('POST rejects invalid role_template_id', async () => {
+    const deptId = insertDepartment(projectId, 'backend');
+    const res = await request(app)
+      .post(`/api/projects/${projectId}/role-nodes`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        department_id: deptId,
+        role_template_id: crypto.randomUUID(),
+        display_name: 'Engineer',
+      });
     expect(res.status).toBe(400);
   });
 
@@ -217,6 +278,7 @@ describe('Project Role Node APIs', () => {
 
     const res = await request(app)
       .patch(`/api/projects/${projectId}/role-nodes/${nodeId}`)
+      .set('Authorization', `Bearer ${token}`)
       .send({ display_name: 'Senior Engineer', canvas_x: 150 });
     expect(res.status).toBe(200);
     expect(res.body.node.display_name).toBe('Senior Engineer');
@@ -231,7 +293,9 @@ describe('Project Role Node APIs', () => {
       `INSERT INTO project_role_instances (id, project_id, department_id, role_template_id, display_name) VALUES (?, ?, ?, ?, ?)`,
     ).run(nodeId, projectId, deptId, template.id, 'Engineer');
 
-    const res = await request(app).delete(`/api/projects/${projectId}/role-nodes/${nodeId}`);
+    const res = await request(app)
+      .delete(`/api/projects/${projectId}/role-nodes/${nodeId}`)
+      .set('Authorization', `Bearer ${token}`);
     expect(res.status).toBe(200);
 
     const activeNodes = db
@@ -251,23 +315,27 @@ describe('Project Role Node APIs', () => {
       `INSERT INTO project_role_instances (id, project_id, department_id, role_template_id, display_name) VALUES (?, ?, ?, ?, ?)`,
     ).run(nodeId, projectId, deptId, template.id, 'Engineer');
 
-    await request(app).delete(`/api/projects/${projectId}/role-nodes/${nodeId}`);
+    await request(app)
+      .delete(`/api/projects/${projectId}/role-nodes/${nodeId}`)
+      .set('Authorization', `Bearer ${token}`);
 
-    const res = await request(app).get(`/api/projects/${projectId}/role-nodes`);
+    const res = await request(app)
+      .get(`/api/projects/${projectId}/role-nodes`)
+      .set('Authorization', `Bearer ${token}`);
     expect(res.body.nodes.length).toBe(0);
   });
 });
 
 describe('Role Edge APIs', () => {
-  let db, app, projectId, nodeA, nodeB;
+  let db, app, token, projectId, nodeA, nodeB;
 
   beforeEach(() => {
     db = createSeededTestDb();
-    app = createTestApp(db);
+    ({ app, token } = setupAuthApp(db));
     projectId = generateId();
     db.prepare(
       `INSERT INTO projects (id, name, slug, root_path, status) VALUES (?, ?, ?, ?, ?)`,
-    ).run(projectId, 'Test Project', 'test-project', '/workspace/test', 'active');
+    ).run(projectId, 'Role Edge Project', 'role-edge-project', '/workspace/test-edges', 'active');
 
     const deptId = generateId();
     db.prepare(
@@ -292,22 +360,27 @@ describe('Role Edge APIs', () => {
   });
 
   test('GET /api/projects/:projectId/role-edges returns empty initially', async () => {
-    const res = await request(app).get(`/api/projects/${projectId}/role-edges`);
+    const res = await request(app)
+      .get(`/api/projects/${projectId}/role-edges`)
+      .set('Authorization', `Bearer ${token}`);
     expect(res.status).toBe(200);
     expect(res.body.edges).toEqual([]);
   });
 
   test('POST /api/projects/:projectId/role-edges creates edge', async () => {
-    const res = await request(app).post(`/api/projects/${projectId}/role-edges`).send({
-      from_role_instance_id: nodeA,
-      to_role_instance_id: nodeB,
-      edge_type: 'hierarchy',
-      direction: 'bidirectional',
-      can_message: true,
-      can_assign_task: true,
-      can_escalate: true,
-      can_share_context: true,
-    });
+    const res = await request(app)
+      .post(`/api/projects/${projectId}/role-edges`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        from_role_instance_id: nodeA,
+        to_role_instance_id: nodeB,
+        edge_type: 'hierarchy',
+        direction: 'bidirectional',
+        can_message: true,
+        can_assign_task: true,
+        can_escalate: true,
+        can_share_context: true,
+      });
     expect(res.status).toBe(201);
     expect(res.body.edge.can_message).toBe(1);
     expect(res.body.edge.can_assign_task).toBe(1);
@@ -316,7 +389,20 @@ describe('Role Edge APIs', () => {
   test('POST validates from and to are required', async () => {
     const res = await request(app)
       .post(`/api/projects/${projectId}/role-edges`)
+      .set('Authorization', `Bearer ${token}`)
       .send({ edge_type: 'hierarchy' });
+    expect(res.status).toBe(400);
+  });
+
+  test('POST rejects nodes from different project', async () => {
+    const res = await request(app)
+      .post(`/api/projects/${projectId}/role-edges`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        from_role_instance_id: crypto.randomUUID(),
+        to_role_instance_id: nodeB,
+        edge_type: 'hierarchy',
+      });
     expect(res.status).toBe(400);
   });
 
@@ -328,6 +414,7 @@ describe('Role Edge APIs', () => {
 
     const res = await request(app)
       .patch(`/api/projects/${projectId}/role-edges/${edgeId}`)
+      .set('Authorization', `Bearer ${token}`)
       .send({ can_message: true, policy_json: JSON.stringify({ priority: 'high' }) });
     expect(res.status).toBe(200);
     expect(res.body.edge.can_message).toBe(1);
@@ -339,7 +426,9 @@ describe('Role Edge APIs', () => {
       `INSERT INTO role_edges (id, project_id, from_role_instance_id, to_role_instance_id, edge_type, direction) VALUES (?, ?, ?, ?, ?, ?)`,
     ).run(edgeId, projectId, nodeA, nodeB, 'hierarchy', 'bidirectional');
 
-    const res = await request(app).delete(`/api/projects/${projectId}/role-edges/${edgeId}`);
+    const res = await request(app)
+      .delete(`/api/projects/${projectId}/role-edges/${edgeId}`)
+      .set('Authorization', `Bearer ${token}`);
     expect(res.status).toBe(200);
 
     const edges = db.prepare(`SELECT * FROM role_edges WHERE project_id = ?`).all(projectId);
@@ -482,7 +571,7 @@ describe('Prompt Assembler', () => {
   });
 
   test('prompt assembler includes files in stable order', () => {
-    const bundle = assemblePrompt(db, agentId, roleNodeId);
+    const bundle = assemblePrompt(db, agentId);
     const sectionKeys = bundle.sections.map((s) => s.section_key);
 
     expect(sectionKeys.indexOf('company-vision')).toBeLessThan(
@@ -511,7 +600,7 @@ describe('Prompt Assembler', () => {
   });
 
   test('prompt assembler does not include unrelated role files', () => {
-    const bundle = assemblePrompt(db, agentId, roleNodeId);
+    const bundle = assemblePrompt(db, agentId);
     const sectionKeys = bundle.sections.map((s) => s.section_key);
 
     expect(sectionKeys).toContain('persona');
@@ -522,26 +611,31 @@ describe('Prompt Assembler', () => {
   });
 
   test('prompt assembler includes identity block', () => {
-    const bundle = assemblePrompt(db, agentId, roleNodeId);
+    const bundle = assemblePrompt(db, agentId);
     expect(bundle.identity).toBeTruthy();
     expect(bundle.identity.agent_id).toBe(agentId);
     expect(bundle.identity.project_id).toBe(projectId);
   });
 
   test('prompt assembler includes permission summary', () => {
-    const bundle = assemblePrompt(db, agentId, roleNodeId);
+    const bundle = assemblePrompt(db, agentId);
     expect(bundle.permission_summary).toBeTruthy();
   });
 });
 
 describe('Prompt Preview API', () => {
-  let db, app, token;
+  let db, app, token, agentId;
 
   beforeEach(() => {
     db = createSeededTestDb();
-    app = createTestApp(db);
-    const result = insertTestAgent(db);
-    token = result.token;
+    ({
+      app,
+      token,
+      agentId: agentId,
+    } = (() => {
+      const result = insertTestAgent(db);
+      return { app: createTestApp(db), token: result.token, agentId: result.agentId };
+    })());
     importRoleLibrary(db, ROLE_LIBRARY_PATH);
   });
 
@@ -549,15 +643,31 @@ describe('Prompt Preview API', () => {
     db.close();
   });
 
-  test('GET /api/agents/:agentId/prompt-preview returns assembled prompt', async () => {
-    const agent = db.prepare(`SELECT * FROM agents LIMIT 1`).get();
+  test('GET /api/agents/:agentId/prompt-preview returns assembled prompt for own agent', async () => {
     const res = await request(app)
-      .get(`/api/agents/${agent.id}/prompt-preview`)
+      .get(`/api/agents/${agentId}/prompt-preview`)
       .set('Authorization', `Bearer ${token}`);
     expect(res.status).toBe(200);
     expect(res.body.bundle).toBeTruthy();
     expect(res.body.bundle.sections.length).toBeGreaterThan(0);
     expect(res.body.bundle.identity).toBeTruthy();
+  });
+
+  test('GET /api/agents/:agentId/prompt-preview rejects viewing other agent', async () => {
+    const otherResult = insertTestAgent(db, {
+      agent_name: 'Other Agent',
+      project_slug: 'other-project',
+      project_root: '/workspace/other',
+    });
+    const res = await request(app)
+      .get(`/api/agents/${otherResult.agentId}/prompt-preview`)
+      .set('Authorization', `Bearer ${token}`);
+    expect(res.status).toBe(403);
+  });
+
+  test('prompt preview requires authentication', async () => {
+    const res = await request(app).get(`/api/agents/${agentId}/prompt-preview`);
+    expect(res.status).toBe(401);
   });
 });
 

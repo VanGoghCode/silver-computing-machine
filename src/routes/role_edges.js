@@ -1,8 +1,9 @@
 const express = require('express');
 const { generateId } = require('../db/helpers');
 
-function createRoleEdgesRouter(db) {
+function createRoleEdgesRouter(db, auth) {
   const router = express.Router();
+  router.use(auth);
 
   // GET /api/projects/:projectId/role-edges
   router.get('/api/projects/:projectId/role-edges', (req, res) => {
@@ -32,6 +33,21 @@ function createRoleEdgesRouter(db) {
       return res
         .status(400)
         .json({ error: 'from_role_instance_id and to_role_instance_id are required' });
+    }
+
+    // Validate both role instances belong to this project
+    const fromInstance = db
+      .prepare(`SELECT * FROM project_role_instances WHERE id = ? AND project_id = ?`)
+      .get(from_role_instance_id, req.params.projectId);
+    if (!fromInstance) {
+      return res.status(400).json({ error: 'from_role_instance_id not found in this project' });
+    }
+
+    const toInstance = db
+      .prepare(`SELECT * FROM project_role_instances WHERE id = ? AND project_id = ?`)
+      .get(to_role_instance_id, req.params.projectId);
+    if (!toInstance) {
+      return res.status(400).json({ error: 'to_role_instance_id not found in this project' });
     }
 
     const id = generateId();

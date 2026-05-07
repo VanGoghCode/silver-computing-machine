@@ -1,9 +1,11 @@
 const express = require('express');
+const path = require('path');
 const { generateId } = require('../db/helpers');
 const { importRoleLibrary } = require('../services/role_library_import');
 
-function createRoleTemplatesRouter(db) {
+function createRoleTemplatesRouter(db, auth) {
   const router = express.Router();
+  router.use(auth);
 
   // GET /api/role-templates
   router.get('/api/role-templates', (req, res) => {
@@ -81,7 +83,19 @@ function createRoleTemplatesRouter(db) {
     if (!libraryPath) {
       return res.status(400).json({ error: 'path is required' });
     }
-    const result = importRoleLibrary(db, libraryPath);
+
+    // Validate path is within allowed roots (project dir or relative to cwd)
+    const resolved = path.resolve(libraryPath);
+    const allowedRoots = [path.resolve('.'), path.resolve('./role-library')];
+    const isAllowed = allowedRoots.some((root) => resolved.startsWith(root));
+    if (!isAllowed) {
+      return res.status(403).json({ error: 'Path is outside allowed directories' });
+    }
+
+    const result = importRoleLibrary(db, resolved);
+    if (result.error) {
+      return res.status(400).json({ error: result.error });
+    }
     res.json({ result });
   });
 

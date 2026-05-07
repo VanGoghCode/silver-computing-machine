@@ -44,11 +44,13 @@ function createAgentsRouter(db) {
   });
 
   router.get('/api/agents/:agentId/prompt-preview', (req, res) => {
-    const agent = db.prepare(`SELECT * FROM agents WHERE id = ?`).get(req.params.agentId);
-    if (!agent) return res.status(404).json({ error: 'Agent not found' });
+    // Only allow agents to preview their own prompt
+    if (req.params.agentId !== req.agent.id) {
+      return res.status(403).json({ error: 'Can only preview your own prompt' });
+    }
 
     try {
-      const bundle = assemblePrompt(db, agent.id, agent.role_instance_id);
+      const bundle = assemblePrompt(db, req.agent.id);
       res.json({ bundle });
     } catch (err) {
       res.status(500).json({ error: err.message });

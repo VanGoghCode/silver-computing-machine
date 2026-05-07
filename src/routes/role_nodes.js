@@ -1,8 +1,9 @@
 const express = require('express');
 const { generateId } = require('../db/helpers');
 
-function createRoleNodesRouter(db) {
+function createRoleNodesRouter(db, auth) {
   const router = express.Router();
+  router.use(auth);
 
   // GET /api/projects/:projectId/role-nodes
   router.get('/api/projects/:projectId/role-nodes', (req, res) => {
@@ -34,6 +35,20 @@ function createRoleNodesRouter(db) {
       return res
         .status(400)
         .json({ error: 'department_id, role_template_id, and display_name are required' });
+    }
+
+    // Validate department belongs to this project
+    const dept = db
+      .prepare(`SELECT * FROM departments WHERE id = ? AND project_id = ?`)
+      .get(department_id, req.params.projectId);
+    if (!dept) {
+      return res.status(400).json({ error: 'Department not found in this project' });
+    }
+
+    // Validate role template exists
+    const template = db.prepare(`SELECT * FROM role_templates WHERE id = ?`).get(role_template_id);
+    if (!template) {
+      return res.status(400).json({ error: 'Role template not found' });
     }
 
     const id = generateId();
