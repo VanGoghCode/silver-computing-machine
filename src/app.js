@@ -12,6 +12,8 @@ const { createClarificationRouter } = require('./routes/clarification');
 const { createResearchNotesRouter } = require('./routes/research_notes');
 const { createAlignmentReviewsRouter } = require('./routes/alignment_reviews');
 const { createHumanApprovalsRouter } = require('./routes/human_approvals');
+const { createContextArtifactsRouter } = require('./routes/context_artifacts');
+const { createDocumentSetsRouter } = require('./routes/document_sets');
 const { bearerAuth } = require('./middleware/auth');
 
 function createApp(db, config) {
@@ -41,6 +43,10 @@ function createApp(db, config) {
   app.use(createResearchNotesRouter(db, auth));
   app.use(createAlignmentReviewsRouter(db, auth));
   app.use(createHumanApprovalsRouter(db, auth));
+
+  // Context engine routes — all authenticated
+  app.use(createContextArtifactsRouter(db, auth));
+  app.use(createDocumentSetsRouter(db, auth));
 
   return app;
 }

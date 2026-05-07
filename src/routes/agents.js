@@ -50,7 +50,11 @@ function createAgentsRouter(db) {
     }
 
     try {
-      const bundle = assemblePrompt(db, req.agent.id);
+      const options = {
+        lifecycle_stage: req.query.lifecycle_stage || 'mvp',
+        include_draft: req.query.include_draft === 'true',
+      };
+      const bundle = assemblePrompt(db, req.agent.id, options);
       res.json({ bundle });
     } catch (err) {
       res.status(500).json({ error: err.message });

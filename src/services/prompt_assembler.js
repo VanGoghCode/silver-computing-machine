@@ -12,7 +12,7 @@ const ROLE_SECTION_ORDER = ['persona', 'instructions', 'rules', 'communication',
 
 const GLOBAL_TEMPLATE_ID = 'global';
 
-function assemblePrompt(db, agentId) {
+function assemblePrompt(db, agentId, options = {}) {
   // Get agent info
   const agent = db
     .prepare(
@@ -100,11 +100,55 @@ function assemblePrompt(db, agentId) {
     role_node_id: roleNodeId,
   };
 
+  // Dynamic context from context_artifacts
+  const dynamicContext = assembleDynamicContext(db, agent.project_id, options);
+
   return {
     sections,
     permission_summary,
     identity,
+    dynamic_context: dynamicContext,
   };
 }
 
-module.exports = { assemblePrompt };
+function assembleDynamicContext(db, projectId, options = {}) {
+  const lifecycleStage = options.lifecycle_stage || 'mvp';
+  const includeDraft = options.include_draft === true;
+
+  let query = `SELECT id, artifact_type, title, content_md, version, lifecycle_stage, status
+               FROM context_artifacts
+               WHERE project_id = ? AND is_archived = 0`;
+  const params = [projectId];
+
+  if (!includeDraft) {
+    query += ` AND status IN ('approved', 'needs_review')`;
+  } else {
+    query += ` AND status IN ('approved', 'needs_review', 'draft')`;
+  }
+
+  query += ` AND lifecycle_stage = ?`;
+  params.push(lifecycleStage);
+
+  const artifacts = db.prepare(query).all(...params);
+
+  // Deduplicate: keep only the latest version per artifact_type
+  const latest = new Map();
+  for (const a of artifacts) {
+    const existing = latest.get(a.artifact_type);
+    if (!existing || a.version > existing.version) {
+      latest.set(a.artifact_type, a);
+    }
+  }
+
+  return Array.from(latest.values()).map((a) => ({
+    artifact_id: a.id,
+    artifact_type: a.artifact_type,
+    title: a.title,
+    content_md: a.content_md,
+    version: a.version,
+    lifecycle_stage: a.lifecycle_stage,
+    status: a.status,
+  }));
+}
+
+module.exports = { assemblePrompt, assembleDynamicContext };

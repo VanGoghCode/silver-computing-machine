@@ -1,0 +1,29 @@
+{
+  "nodes": [
+    {
+      "id": "src_migrations_013_context_artifacts_js",
+      "label": "013_context_artifacts.js",
+      "file_type": "code",
+      "source_file": "src\\migrations\\013_context_artifacts.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "013_context_artifacts_up",
+      "label": "up()",
+      "file_type": "code",
+      "source_file": "src\\migrations\\013_context_artifacts.js",
+      "source_location": "L3"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_migrations_013_context_artifacts_js",
+      "target": "013_context_artifacts_up",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\migrations\\013_context_artifacts.js",
+      "source_location": "L3",
+      "weight": 1.0
+    }
+  ]
+}

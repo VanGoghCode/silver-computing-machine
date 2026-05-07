@@ -68,6 +68,14 @@ Intake and alignment tables:
 - `alignment_reviews` — alignment review assessments
 - `human_approvals` — artifact approval tracking
 
+Context engine tables:
+
+- `context_artifacts` — versioned context documents (requirements, specs, reports, etc.)
+- `context_revisions` — revision history for each artifact
+- `context_links` — directed links between artifacts (references, drives, etc.)
+- `document_sets` — grouped sets of aligned documents per lifecycle stage
+- `document_set_items` — artifacts belonging to a document set
+
 ## Role Library
 
 Static context for every role lives in `role-library/` as markdown files. These files are imported into the database and assembled into prompts.
@@ -222,6 +230,83 @@ Approval statuses: `pending` → `approved` | `rejected`
 
 Engineering tasks **cannot** be created from unapproved alignment documents. The `/api/projects/:projectId/alignment-status` endpoint returns `can_create_engineering_tasks: true` only when the project has approved alignment sessions or aligned problem statements.
 
+## Dynamic Context Engine
+
+All important knowledge is stored as **versioned context artifacts**. Context is never silently overwritten. Every artifact has a lifecycle stage, status, and revision history.
+
+### Context Artifacts
+
+Artifacts are versioned documents that capture important decisions, requirements, specs, and reports.
+
+**Artifact types:** `customer_brief`, `ceo_analysis`, `cto_strategy`, `product_requirements`, `acceptance_criteria`, `risk_register`, `open_questions`, `milestone_plan`, `architecture_spec`, `implementation_plan`, `task_context`, `decision_record`, `review_notes`, `test_report`, `audit_report`, `blocker_report`, `daily_report`, `research_note`
+
+**Lifecycle stages:** `discovery` → `mvp` → `v1` → `v2` → `future` → `maintenance`
+
+Each artifact belongs to a lifecycle stage. This allows MVP, v1, and v2 requirements to coexist independently.
+
+**Artifact statuses:** `draft` → `needs_review` → `approved` → `superseded` / `archived` / `rejected`
+
+Rules:
+
+- Only **approved** artifacts are used as default task source-of-truth
+- Draft artifacts can be previewed but do not drive engineering tasks
+- Superseding creates a new artifact and marks the old one `superseded`
+- Archiving soft-hides from prompts but preserves audit history
+- No hard deletes — only archive or supersede
+
+| Method | Path                                         | Description                   |
+| ------ | -------------------------------------------- | ----------------------------- |
+| POST   | `/api/context-artifacts`                     | Create artifact               |
+| GET    | `/api/context-artifacts/:id`                 | Get artifact                  |
+| PATCH  | `/api/context-artifacts/:id`                 | Update artifact               |
+| POST   | `/api/context-artifacts/:id/revise`          | Create new version (revision) |
+| POST   | `/api/context-artifacts/:id/approve`         | Approve artifact              |
+| POST   | `/api/context-artifacts/:id/reject`          | Reject artifact               |
+| POST   | `/api/context-artifacts/:id/archive`         | Archive artifact              |
+| GET    | `/api/context-artifacts/:id/revisions`       | List revision history         |
+| POST   | `/api/context-artifacts/:id/link`            | Link to another artifact      |
+| GET    | `/api/context-artifacts/:id/links`           | Get linked artifacts          |
+| GET    | `/api/projects/:projectId/context-artifacts` | List project artifacts        |
+| GET    | `/api/context?q=`                            | Search artifacts              |
+
+Query parameters for listing: `?artifact_type=product_requirements&lifecycle_stage=mvp&include_archived=true`
+
+### Document Sets
+
+Document sets group aligned artifacts for a lifecycle stage. For example, an MVP document set might include a customer brief, product requirements, acceptance criteria, and architecture spec.
+
+| Method | Path                                     | Description          |
+| ------ | ---------------------------------------- | -------------------- |
+| POST   | `/api/projects/:projectId/document-sets` | Create document set  |
+| GET    | `/api/projects/:projectId/document-sets` | List document sets   |
+| GET    | `/api/document-sets/:id`                 | Get set with items   |
+| POST   | `/api/document-sets/:id/items`           | Add artifacts to set |
+| PATCH  | `/api/document-sets/:id`                 | Update document set  |
+| POST   | `/api/document-sets/:id/approve`         | Approve document set |
+
+### Source-of-Truth Validation
+
+Before a task can move to ready, the system validates that the required approved artifacts exist for the target lifecycle stage.
+
+| Method | Path                                                | Description                  |
+| ------ | --------------------------------------------------- | ---------------------------- |
+| POST   | `/api/projects/:projectId/validate-source-of-truth` | Validate approved docs exist |
+
+Required artifacts: `product_requirements`, `acceptance_criteria` (both must be approved for the given lifecycle stage).
+
+### Prompt Assembler Dynamic Context
+
+The prompt assembler now includes dynamic context from approved artifacts alongside static role context. Query parameters control what is included:
+
+- `lifecycle_stage` — which stage to pull artifacts from (default: `mvp`)
+- `include_draft` — include draft artifacts (default: false, only for review/alignment tasks)
+
+Rules:
+
+- Excludes archived and superseded artifacts
+- Selects the latest approved artifact per type
+- Includes artifact IDs so workers know their exact source of truth
+
 ## Role Graph and Canvas
 
 Each project has a **role graph** — a network of role instances connected by edges that define communication permissions, task assignment authority, and escalation paths.
@@ -298,6 +383,7 @@ The prompt assembler builds the full static context for an agent:
 12. Role: Output Format
 13. Permission Summary
 14. Agent Identity Block
+15. Dynamic Context (approved artifacts for lifecycle stage)
 
 ### Preview
 
@@ -391,7 +477,7 @@ Silver-Computing-Machine/
 │   │   ├── migrate.js     — Migration runner
 │   │   ├── seed.js        — Seed runner
 │   │   └── helpers.js     — generateId, withTransaction
-│   ├── migrations/        — 001 through 011 table migrations
+│   ├── migrations/        — 001 through 013 table migrations
 │   ├── seeds/             — Role templates, model profiles, default edges
 │   ├── middleware/
 │   │   └── auth.js        — Bearer token authentication
@@ -408,13 +494,15 @@ Silver-Computing-Machine/
 │   │   ├── clarification.js — Clarification Q&A cycle
 │   │   ├── research_notes.js — Research note CRUD
 │   │   ├── alignment_reviews.js — Alignment review submission
-│   │   └── human_approvals.js — Approval CRUD + engineering gate
+│   │   ├── human_approvals.js — Approval CRUD + engineering gate
+│   │   ├── context_artifacts.js — Context artifact CRUD + lifecycle + search
+│   │   └── document_sets.js — Document set grouping + approval
 │   ├── services/
 │   │   ├── agents.js      — Agent lookup, heartbeat
 │   │   ├── path_safety.js — Path traversal protection
 │   │   ├── role_library_import.js — Import markdown to DB
 │   │   ├── role_graph_policy.js — Edge-driven permission checks
-│   │   └── prompt_assembler.js — Static prompt assembly
+│   │   └── prompt_assembler.js — Static + dynamic prompt assembly
 │   └── utils/
 │       └── tokens.js      — Token generation and hashing
 ├── tests/                 — Jest + Supertest tests

@@ -47,10 +47,11 @@ describe('Migrations', () => {
 
   test('_migrations table tracks applied migrations', () => {
     const applied = db.prepare('SELECT name FROM _migrations ORDER BY name').all();
-    expect(applied.length).toBe(12);
+    expect(applied.length).toBe(13);
     expect(applied[0].name).toBe('001_projects');
     expect(applied[10].name).toBe('011_agent_heartbeats');
     expect(applied[11].name).toBe('012_alignment_intake');
+    expect(applied[12].name).toBe('013_context_artifacts');
   });
 
   test('projects table has correct columns', () => {
