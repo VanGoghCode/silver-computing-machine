@@ -6,7 +6,11 @@
       {
         "id": "security_stack",
         "label": "Security Stack (Auth + RBAC + Path Safety)",
-        "nodes": ["claude_bearer_auth", "claude_rbac", "claude_path_safety"],
+        "nodes": [
+          "claude_bearer_auth",
+          "claude_rbac",
+          "claude_path_safety"
+        ],
         "relation": "participate_in",
         "confidence": "EXTRACTED",
         "confidence_score": 1.0,
@@ -443,7 +447,7 @@
       "label": "createRoleTemplatesRouter()",
       "file_type": "code",
       "source_file": "src\\routes\\role_templates.js",
-      "source_location": "L5",
+      "source_location": "L6",
       "id": "role_templates_createroletemplatesrouter",
       "community": 29
     },
@@ -603,7 +607,7 @@
       "label": "assemblePrompt()",
       "file_type": "code",
       "source_file": "src\\services\\prompt_assembler.js",
-      "source_location": "L19",
+      "source_location": "L15",
       "id": "prompt_assembler_assembleprompt",
       "community": 36
     },
@@ -744,10 +748,18 @@
       "community": 3
     },
     {
+      "label": "setupAuthApp()",
+      "file_type": "code",
+      "source_file": "tests\\role-system.test.js",
+      "source_location": "L15",
+      "id": "role_system_test_setupauthapp",
+      "community": 3
+    },
+    {
       "label": "insertDepartment()",
       "file_type": "code",
       "source_file": "tests\\role-system.test.js",
-      "source_location": "L197",
+      "source_location": "L202",
       "id": "role_system_test_insertdepartment",
       "community": 3
     },
@@ -755,7 +767,7 @@
       "label": "addEdge()",
       "file_type": "code",
       "source_file": "tests\\role-system.test.js",
-      "source_location": "L451",
+      "source_location": "L476",
       "id": "role_system_test_addedge",
       "community": 3
     },
@@ -763,7 +775,7 @@
       "label": "edge()",
       "file_type": "code",
       "source_file": "tests\\role-system.test.js",
-      "source_location": "L724",
+      "source_location": "L742",
       "id": "role_system_test_edge",
       "community": 3
     },
@@ -1349,7 +1361,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src\\routes\\role_templates.js",
-      "source_location": "L5",
+      "source_location": "L6",
       "weight": 1.0,
       "_src": "src_routes_role_templates_js",
       "_tgt": "role_templates_createroletemplatesrouter",
@@ -1481,7 +1493,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src\\services\\prompt_assembler.js",
-      "source_location": "L19",
+      "source_location": "L15",
       "weight": 1.0,
       "_src": "src_services_prompt_assembler_js",
       "_tgt": "prompt_assembler_assembleprompt",
@@ -1522,18 +1534,6 @@
       "_src": "src_services_role_library_import_js",
       "_tgt": "role_library_import_importrolelibrary",
       "source": "src_services_role_library_import_js",
-      "target": "role_library_import_importrolelibrary",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "source_file": "src\\services\\role_library_import.js",
-      "source_location": "L78",
-      "weight": 1.0,
-      "_src": "role_library_import_importrolelibrary",
-      "_tgt": "role_library_import_computehash",
-      "source": "role_library_import_computehash",
       "target": "role_library_import_importrolelibrary",
       "confidence_score": 1.0
     },
@@ -1601,7 +1601,19 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests\\role-system.test.js",
-      "source_location": "L197",
+      "source_location": "L15",
+      "weight": 1.0,
+      "_src": "tests_role_system_test_js",
+      "_tgt": "role_system_test_setupauthapp",
+      "source": "tests_role_system_test_js",
+      "target": "role_system_test_setupauthapp",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests\\role-system.test.js",
+      "source_location": "L202",
       "weight": 1.0,
       "_src": "tests_role_system_test_js",
       "_tgt": "role_system_test_insertdepartment",
@@ -1613,7 +1625,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests\\role-system.test.js",
-      "source_location": "L451",
+      "source_location": "L476",
       "weight": 1.0,
       "_src": "tests_role_system_test_js",
       "_tgt": "role_system_test_addedge",
@@ -1625,7 +1637,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests\\role-system.test.js",
-      "source_location": "L724",
+      "source_location": "L742",
       "weight": 1.0,
       "_src": "tests_role_system_test_js",
       "_tgt": "role_system_test_edge",
@@ -1902,7 +1914,11 @@
     {
       "id": "security_stack",
       "label": "Security Stack (Auth + RBAC + Path Safety)",
-      "nodes": ["claude_bearer_auth", "claude_rbac", "claude_path_safety"],
+      "nodes": [
+        "claude_bearer_auth",
+        "claude_rbac",
+        "claude_path_safety"
+      ],
       "relation": "participate_in",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
