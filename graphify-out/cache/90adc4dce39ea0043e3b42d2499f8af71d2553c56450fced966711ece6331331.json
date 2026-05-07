@@ -1,0 +1,29 @@
+{
+  "nodes": [
+    {
+      "id": "src_services_role_graph_policy_js",
+      "label": "role_graph_policy.js",
+      "file_type": "code",
+      "source_file": "src\\services\\role_graph_policy.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "role_graph_policy_createrolegraphpolicy",
+      "label": "createRoleGraphPolicy()",
+      "file_type": "code",
+      "source_file": "src\\services\\role_graph_policy.js",
+      "source_location": "L1"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_services_role_graph_policy_js",
+      "target": "role_graph_policy_createrolegraphpolicy",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\role_graph_policy.js",
+      "source_location": "L1",
+      "weight": 1.0
+    }
+  ]
+}

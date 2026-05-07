@@ -1,0 +1,29 @@
+{
+  "nodes": [
+    {
+      "id": "src_seeds_default_role_edges_js",
+      "label": "default_role_edges.js",
+      "file_type": "code",
+      "source_file": "src\\seeds\\default_role_edges.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "default_role_edges_run",
+      "label": "run()",
+      "file_type": "code",
+      "source_file": "src\\seeds\\default_role_edges.js",
+      "source_location": "L25"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_seeds_default_role_edges_js",
+      "target": "default_role_edges_run",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\seeds\\default_role_edges.js",
+      "source_location": "L25",
+      "weight": 1.0
+    }
+  ]
+}

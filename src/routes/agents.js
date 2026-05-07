@@ -1,5 +1,6 @@
 const express = require('express');
 const { updateHeartbeat } = require('../services/agents');
+const { assemblePrompt } = require('../services/prompt_assembler');
 
 function createAgentsRouter(db) {
   const router = express.Router();
@@ -40,6 +41,18 @@ function createAgentsRouter(db) {
       payload ? JSON.stringify(payload) : '{}',
     );
     res.json({ ok: true });
+  });
+
+  router.get('/api/agents/:agentId/prompt-preview', (req, res) => {
+    const agent = db.prepare(`SELECT * FROM agents WHERE id = ?`).get(req.params.agentId);
+    if (!agent) return res.status(404).json({ error: 'Agent not found' });
+
+    try {
+      const bundle = assemblePrompt(db, agent.id, agent.role_instance_id);
+      res.json({ bundle });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
   });
 
   return router;

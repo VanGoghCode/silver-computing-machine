@@ -3,6 +3,9 @@ const { createHealthRouter } = require('./routes/health');
 const { createFilesRouter } = require('./routes/files');
 const { createAgentsRouter } = require('./routes/agents');
 const { createTasksRouter } = require('./routes/tasks');
+const { createRoleTemplatesRouter } = require('./routes/role_templates');
+const { createRoleNodesRouter } = require('./routes/role_nodes');
+const { createRoleEdgesRouter } = require('./routes/role_edges');
 const { bearerAuth } = require('./middleware/auth');
 
 function createApp(db, config) {
@@ -19,6 +22,11 @@ function createApp(db, config) {
   app.use('/api/my-tasks', auth);
   app.use(createAgentsRouter(db));
   app.use(createTasksRouter());
+
+  // Role system routes (public for now - RBAC will gate these later)
+  app.use(createRoleTemplatesRouter(db));
+  app.use(createRoleNodesRouter(db));
+  app.use(createRoleEdgesRouter(db));
 
   return app;
 }

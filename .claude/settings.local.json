@@ -11,7 +11,11 @@
       "Bash(graphify claude:*)",
       "Bash(npx prettier:*)",
       "Bash(git add:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(npx jest:*)",
+      "Bash(ls:*)",
+      "Bash(python3:*)",
+      "Bash(npx eslint:*)"
     ]
   }
 }
