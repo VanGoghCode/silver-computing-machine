@@ -1,1 +1,45 @@
-{"nodes": [{"id": "src_services_role_library_import_js", "label": "role_library_import.js", "file_type": "code", "source_file": "src\\services\\role_library_import.js", "source_location": "L1"}, {"id": "role_library_import_computehash", "label": "computeHash()", "file_type": "code", "source_file": "src\\services\\role_library_import.js", "source_location": "L6"}, {"id": "role_library_import_importrolelibrary", "label": "importRoleLibrary()", "file_type": "code", "source_file": "src\\services\\role_library_import.js", "source_location": "L10"}], "edges": [{"source": "src_services_role_library_import_js", "target": "role_library_import_computehash", "relation": "contains", "confidence": "EXTRACTED", "source_file": "src\\services\\role_library_import.js", "source_location": "L6", "weight": 1.0}, {"source": "src_services_role_library_import_js", "target": "role_library_import_importrolelibrary", "relation": "contains", "confidence": "EXTRACTED", "source_file": "src\\services\\role_library_import.js", "source_location": "L10", "weight": 1.0}]}
+{
+  "nodes": [
+    {
+      "id": "src_services_role_library_import_js",
+      "label": "role_library_import.js",
+      "file_type": "code",
+      "source_file": "src\\services\\role_library_import.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "role_library_import_computehash",
+      "label": "computeHash()",
+      "file_type": "code",
+      "source_file": "src\\services\\role_library_import.js",
+      "source_location": "L6"
+    },
+    {
+      "id": "role_library_import_importrolelibrary",
+      "label": "importRoleLibrary()",
+      "file_type": "code",
+      "source_file": "src\\services\\role_library_import.js",
+      "source_location": "L10"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_services_role_library_import_js",
+      "target": "role_library_import_computehash",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\role_library_import.js",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_role_library_import_js",
+      "target": "role_library_import_importrolelibrary",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\role_library_import.js",
+      "source_location": "L10",
+      "weight": 1.0
+    }
+  ]
+}
