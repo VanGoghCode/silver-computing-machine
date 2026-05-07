@@ -1,0 +1,29 @@
+{
+  "nodes": [
+    {
+      "id": "src_routes_alignment_reviews_js",
+      "label": "alignment_reviews.js",
+      "file_type": "code",
+      "source_file": "src\\routes\\alignment_reviews.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "alignment_reviews_createalignmentreviewsrouter",
+      "label": "createAlignmentReviewsRouter()",
+      "file_type": "code",
+      "source_file": "src\\routes\\alignment_reviews.js",
+      "source_location": "L4"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_routes_alignment_reviews_js",
+      "target": "alignment_reviews_createalignmentreviewsrouter",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\alignment_reviews.js",
+      "source_location": "L4",
+      "weight": 1.0
+    }
+  ]
+}

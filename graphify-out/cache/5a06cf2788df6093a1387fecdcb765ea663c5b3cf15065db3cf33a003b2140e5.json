@@ -1,0 +1,29 @@
+{
+  "nodes": [
+    {
+      "id": "src_migrations_012_alignment_intake_js",
+      "label": "012_alignment_intake.js",
+      "file_type": "code",
+      "source_file": "src\\migrations\\012_alignment_intake.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "012_alignment_intake_up",
+      "label": "up()",
+      "file_type": "code",
+      "source_file": "src\\migrations\\012_alignment_intake.js",
+      "source_location": "L3"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_migrations_012_alignment_intake_js",
+      "target": "012_alignment_intake_up",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\migrations\\012_alignment_intake.js",
+      "source_location": "L3",
+      "weight": 1.0
+    }
+  ]
+}

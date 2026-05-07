@@ -6,6 +6,12 @@ const { createTasksRouter } = require('./routes/tasks');
 const { createRoleTemplatesRouter } = require('./routes/role_templates');
 const { createRoleNodesRouter } = require('./routes/role_nodes');
 const { createRoleEdgesRouter } = require('./routes/role_edges');
+const { createProblemStatementsRouter } = require('./routes/problem_statements');
+const { createAlignmentSessionsRouter } = require('./routes/alignment_sessions');
+const { createClarificationRouter } = require('./routes/clarification');
+const { createResearchNotesRouter } = require('./routes/research_notes');
+const { createAlignmentReviewsRouter } = require('./routes/alignment_reviews');
+const { createHumanApprovalsRouter } = require('./routes/human_approvals');
 const { bearerAuth } = require('./middleware/auth');
 
 function createApp(db, config) {
@@ -27,6 +33,14 @@ function createApp(db, config) {
   app.use(createRoleTemplatesRouter(db, auth));
   app.use(createRoleNodesRouter(db, auth));
   app.use(createRoleEdgesRouter(db, auth));
+
+  // Intake and alignment routes — all authenticated
+  app.use(createProblemStatementsRouter(db, auth));
+  app.use(createAlignmentSessionsRouter(db, auth));
+  app.use(createClarificationRouter(db, auth));
+  app.use(createResearchNotesRouter(db, auth));
+  app.use(createAlignmentReviewsRouter(db, auth));
+  app.use(createHumanApprovalsRouter(db, auth));
 
   return app;
 }

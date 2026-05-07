@@ -57,6 +57,17 @@ Core tables:
 - `agents` — worker identities with token hashes
 - `agent_heartbeats` — worker status updates
 
+Intake and alignment tables:
+
+- `problem_statements` — human problem descriptions
+- `alignment_sessions` — alignment brainstorming sessions
+- `alignment_participants` — session participants (AI roles + humans)
+- `clarification_questions` — structured AI-to-human questions
+- `clarification_answers` — human answers to questions
+- `research_notes` — agent research findings
+- `alignment_reviews` — alignment review assessments
+- `human_approvals` — artifact approval tracking
+
 ## Role Library
 
 Static context for every role lives in `role-library/` as markdown files. These files are imported into the database and assembled into prompts.
@@ -112,6 +123,104 @@ The import service:
 ### Editing Context
 
 Edit markdown files in `role-library/`, then re-import. Changed files get new versions; unchanged files are skipped. Old versions are preserved in the database with `is_active = 0`.
+
+## Human Intake and Alignment Workflow
+
+The system supports a structured human-AI brainstorming loop before any engineering work begins. No engineering tasks can be created until the alignment workflow produces approved, versioned documents.
+
+### Flow
+
+```
+Human submits problem statement
+→ AI leadership team (CEO, CTO, Product Manager) joins alignment session
+→ AI asks structured clarification questions
+→ Human answers
+→ AI researches and documents findings
+→ AI reviews alignment (may loop back to more questions)
+→ Repeat until ready_for_docs
+→ Draft context artifacts generated
+→ Human approves artifacts
+→ Engineering tasks may begin
+```
+
+### Problem Statement
+
+A human creates a problem statement describing what they need.
+
+Statuses: `draft` → `submitted` → `in_alignment` → `aligned` → `archived`
+
+| Method | Path                                          | Description              |
+| ------ | --------------------------------------------- | ------------------------ |
+| POST   | `/api/projects/:projectId/problem-statements` | Create problem statement |
+| GET    | `/api/projects/:projectId/problem-statements` | List for project         |
+| GET    | `/api/problem-statements/:id`                 | Get by ID                |
+| PATCH  | `/api/problem-statements/:id`                 | Update                   |
+
+### Alignment Sessions
+
+An alignment session is created from a problem statement. It auto-selects CEO, CTO, and Product Manager participants from the project's role instances.
+
+Statuses: `active` → `waiting_for_human` → `reviewing` → `ready_for_docs` → `approved` → `closed`
+
+| Method | Path                                          | Description                |
+| ------ | --------------------------------------------- | -------------------------- |
+| POST   | `/api/projects/:projectId/alignment-sessions` | Create session             |
+| GET    | `/api/projects/:projectId/alignment-sessions` | List for project           |
+| GET    | `/api/alignment-sessions/:id`                 | Get session + participants |
+| PATCH  | `/api/alignment-sessions/:id`                 | Update session             |
+
+### Clarification Questions
+
+AI roles ask the human structured questions during alignment.
+
+Question types: `note`, `mcq_single`, `mcq_multi`, `yes_no`, `priority_rank`, `numeric`, `date`, `file_reference`
+
+Question statuses: `open` → `answered` → `superseded` → `archived`
+
+| Method | Path                                    | Description       |
+| ------ | --------------------------------------- | ----------------- |
+| POST   | `/api/alignment-sessions/:id/questions` | Ask a question    |
+| GET    | `/api/alignment-sessions/:id/questions` | List questions    |
+| POST   | `/api/questions/:id/answer`             | Answer a question |
+| GET    | `/api/alignment-sessions/:id/answers`   | List answers      |
+
+### Research Notes
+
+AI agents document research findings during alignment.
+
+| Method | Path                                         | Description          |
+| ------ | -------------------------------------------- | -------------------- |
+| POST   | `/api/alignment-sessions/:id/research-notes` | Create research note |
+| GET    | `/api/alignment-sessions/:id/research-notes` | List notes           |
+| PATCH  | `/api/research-notes/:id`                    | Update note          |
+
+### Alignment Reviews
+
+AI roles review the current state of alignment and decide if more questions are needed.
+
+| Method | Path                                 | Description   |
+| ------ | ------------------------------------ | ------------- |
+| POST   | `/api/alignment-sessions/:id/review` | Submit review |
+
+When `next_questions_needed` is 0, the session moves to `ready_for_docs`.
+
+### Human Approvals
+
+When alignment is complete, draft context artifacts are created and sent for human approval.
+
+Artifact types: `customer_brief`, `ceo_analysis`, `cto_strategy`, `product_requirements`, `acceptance_criteria`, `risk_register`, `open_questions`, `milestone_plan`
+
+Approval statuses: `pending` → `approved` | `rejected`
+
+| Method | Path                                        | Description                    |
+| ------ | ------------------------------------------- | ------------------------------ |
+| POST   | `/api/projects/:projectId/approvals`        | Create approval                |
+| PATCH  | `/api/approvals/:id`                        | Approve or reject              |
+| GET    | `/api/projects/:projectId/alignment-status` | Check if engineering can start |
+
+### Engineering Gate
+
+Engineering tasks **cannot** be created from unapproved alignment documents. The `/api/projects/:projectId/alignment-status` endpoint returns `can_create_engineering_tasks: true` only when the project has approved alignment sessions or aligned problem statements.
 
 ## Role Graph and Canvas
 
@@ -294,6 +403,12 @@ Silver-Computing-Machine/
 │   │   ├── role_templates.js — Role template CRUD + import
 │   │   ├── role_nodes.js  — Project role node CRUD
 │   │   └── role_edges.js  — Role edge CRUD
+│   │   ├── problem_statements.js — Problem statement CRUD
+│   │   ├── alignment_sessions.js — Alignment session CRUD + participant auto-select
+│   │   ├── clarification.js — Clarification Q&A cycle
+│   │   ├── research_notes.js — Research note CRUD
+│   │   ├── alignment_reviews.js — Alignment review submission
+│   │   └── human_approvals.js — Approval CRUD + engineering gate
 │   ├── services/
 │   │   ├── agents.js      — Agent lookup, heartbeat
 │   │   ├── path_safety.js — Path traversal protection

@@ -78,7 +78,7 @@ describe('DB Foundation', () => {
     const migrations = [require('../src/migrations/001_projects')];
     runMigrations(db, migrations);
     const count = db.prepare('SELECT COUNT(*) as c FROM _migrations').get();
-    expect(count.c).toBe(11); // original 11, not 12
+    expect(count.c).toBe(12); // 12 migrations
     db.close();
   });
 });

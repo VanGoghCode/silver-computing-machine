@@ -15,7 +15,8 @@
       "Bash(npx jest:*)",
       "Bash(ls:*)",
       "Bash(python3:*)",
-      "Bash(npx eslint:*)"
+      "Bash(npx eslint:*)",
+      "Bash(node -e ':*)"
     ]
   }
 }

@@ -19,6 +19,7 @@ const migrations = [
   require('./src/migrations/009_role_edges'),
   require('./src/migrations/010_agents'),
   require('./src/migrations/011_agent_heartbeats'),
+  require('./src/migrations/012_alignment_intake'),
 ];
 
 // Collect all seeds
