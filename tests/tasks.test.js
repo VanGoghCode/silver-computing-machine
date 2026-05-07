@@ -461,6 +461,62 @@ describe('Worker task APIs', () => {
     expect(res.body.task.status).toBe('done');
   });
 
+  test('POST /api/tasks/:id/complete from in_progress moves to review', async () => {
+    const taskId = insertTask(db, agent.projectId, {
+      status: 'in_progress',
+      pipeline_iteration: 0,
+      assigned_agent_id: agent.agentId,
+    });
+    db.prepare(
+      `INSERT INTO task_attempts (id, task_id, agent_id, attempt_number, status)
+       VALUES (?, ?, ?, 1, 'in_progress')`,
+    ).run(generateId(), taskId, agent.agentId);
+
+    const res = await request(app)
+      .post(`/api/tasks/${taskId}/complete`)
+      .set('Authorization', `Bearer ${agent.token}`)
+      .send({
+        taskId,
+        status: 'completed',
+        summary: 'Implementation finished',
+      });
+
+    expect(res.status).toBe(200);
+    expect(res.body.task.status).toBe('review');
+    expect(res.body.task.pipeline_iteration).toBe(1);
+
+    const attempts = db.prepare('SELECT * FROM task_attempts WHERE task_id = ?').all(taskId);
+    expect(attempts).toHaveLength(1);
+    expect(attempts[0].status).toBe('completed');
+    expect(JSON.parse(attempts[0].result_json).summary).toBe('Implementation finished');
+
+    const event = db
+      .prepare(
+        `SELECT * FROM task_events
+         WHERE task_id = ? AND event_type = 'status_change'
+         ORDER BY created_at DESC`,
+      )
+      .get(taskId);
+    expect(event.content_md).toMatch(/Implementation completed by worker/);
+  });
+
+  test('POST /api/tasks/:id/complete from assigned still fails', async () => {
+    const taskId = insertTask(db, agent.projectId, {
+      status: 'assigned',
+      assigned_agent_id: agent.agentId,
+    });
+
+    const res = await request(app)
+      .post(`/api/tasks/${taskId}/complete`)
+      .set('Authorization', `Bearer ${agent.token}`)
+      .send({ summary: 'Should not complete' });
+
+    expect(res.status).toBe(400);
+    expect(res.body.error).toMatch(/Cannot complete task in status: assigned/);
+    const task = db.prepare('SELECT * FROM tasks WHERE id = ?').get(taskId);
+    expect(task.status).toBe('assigned');
+  });
+
   test('POST /api/tasks/:id/fail stores failure', async () => {
     const taskId = insertTask(db, agent.projectId, {
       status: 'in_progress',

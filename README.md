@@ -439,7 +439,8 @@ Rules:
 
 - `/api/my-tasks` returns only tasks assigned to the authenticated agent
 - `claim` moves `assigned` → `in_progress` and creates a task attempt
-- `complete` stores a structured result and moves task through the workflow
+- `complete` stores a structured result and completes the current worker phase:
+  `in_progress` moves to `review`, while `testing` moves to `done`
 - `fail` stores failure result without losing history, moves back to `assigned`
 
 ## Execution Context Bundle

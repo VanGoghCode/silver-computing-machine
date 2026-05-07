@@ -290,11 +290,15 @@ function completeTask(db, taskId, agentId, result) {
     ).run(JSON.stringify(result || {}), attempt.id);
   }
 
-  if (task.status !== 'testing') {
-    throw new Error(`Cannot complete task in status: ${task.status}`);
+  if (task.status === 'in_progress') {
+    return moveTask(db, taskId, 'review', agentId, 'Implementation completed by worker');
   }
 
-  return moveTask(db, taskId, 'done', agentId, 'Task completed');
+  if (task.status === 'testing') {
+    return moveTask(db, taskId, 'done', agentId, 'Testing completed');
+  }
+
+  throw new Error(`Cannot complete task in status: ${task.status}`);
 }
 
 function failTask(db, taskId, agentId, reason, result) {
