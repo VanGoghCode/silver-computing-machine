@@ -29,14 +29,14 @@ describe('Agent Routes', () => {
     const res = await request(app)
       .post('/api/agents/heartbeat')
       .set('Authorization', `Bearer ${token}`)
-      .send({ status: 'working', current_task_id: 'task-1' });
+      .send({ status: 'busy', current_task_id: 'task-1' });
     expect(res.status).toBe(200);
     expect(res.body.ok).toBe(true);
 
     // Verify heartbeat was recorded
     const heartbeats = db.prepare('SELECT * FROM agent_heartbeats').all();
     expect(heartbeats.length).toBe(1);
-    expect(heartbeats[0].status).toBe('working');
+    expect(heartbeats[0].status).toBe('busy');
     expect(heartbeats[0].current_task_id).toBe('task-1');
   });
 

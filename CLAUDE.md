@@ -412,12 +412,13 @@ docker run -it --rm -p 4000:4000 -v $(pwd):/workspace silver-computing-machine
 
 ## Environment
 
-| Variable         | Default                   | Description          |
-| ---------------- | ------------------------- | -------------------- |
-| `PORT`           | `4000`                    | Server port          |
-| `WORKSPACE_DIR`  | `/workspace`              | Workspace root       |
-| `PROJECTS_DIR`   | `$WORKSPACE_DIR/Projects` | Project directories  |
-| `SQLITE_DB_PATH` | `./data/silver.db`        | SQLite database path |
+| Variable                   | Default                   | Description                    |
+| -------------------------- | ------------------------- | ------------------------------ |
+| `PORT`                     | `4000`                    | Server port                    |
+| `WORKSPACE_DIR`            | `/workspace`              | Workspace root                 |
+| `PROJECTS_DIR`             | `$WORKSPACE_DIR/Projects` | Project directories            |
+| `SQLITE_DB_PATH`           | `./data/silver.db`        | SQLite database path           |
+| `AGENT_HEARTBEAT_STALE_MS` | `60000`                   | Stale heartbeat threshold (ms) |
 
 ## Graphify
 

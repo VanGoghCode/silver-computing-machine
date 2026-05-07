@@ -7,12 +7,15 @@ function loadConfig() {
   const dbPath =
     process.env.SQLITE_DB_PATH || process.env.DATABASE_URL || path.join('data', 'silver.db');
 
+  const agentHeartbeatStaleMs = parseInt(process.env.AGENT_HEARTBEAT_STALE_MS || '60000', 10);
+
   return {
     port,
     workspaceDir,
     projectsDir,
     dbPath,
     nodeEnv: process.env.NODE_ENV || 'development',
+    agentHeartbeatStaleMs,
   };
 }
 

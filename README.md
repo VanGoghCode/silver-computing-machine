@@ -580,6 +580,121 @@ All worker API endpoints require `Authorization: Bearer <token>`.
 
 The dashboard uses a simple local-owner mode for v1. A `humans` record with `role: 'local_owner'` is seeded by default. Real authentication (OAuth, JWT, etc.) can be added later without schema changes.
 
+### Worker Status Lifecycle
+
+Valid worker statuses: `idle`, `busy`, `error`, `offline`, `starting`, `stopped`
+
+Heartbeats update `worker_status` on the agent record. Stale heartbeat detection marks agents as `offline` when no heartbeat arrives within the configured threshold (`AGENT_HEARTBEAT_STALE_MS`, default 60000ms).
+
+## Agent Token Lifecycle
+
+Tokens are generated on agent creation and shown **only once**. The system stores only the SHA-256 hash.
+
+- **Create**: `POST /api/agents` returns `{ agent, token }` — save the token immediately
+- **Rotate**: `POST /api/agents/:id/token/rotate` invalidates the old token, returns a new one
+- **Revoke**: `POST /api/agents/:id/revoke` permanently disables the agent
+- Revoked agents cannot authenticate (401)
+
+## Model Profiles
+
+Model profiles define which LLM each role uses. Profiles store a provider, model name, purpose, and an `api_key_ref` pointing to an environment variable (never a raw key).
+
+Default seeded profiles:
+
+| Key                | Provider  | Model             | Purpose                     |
+| ------------------ | --------- | ----------------- | --------------------------- |
+| `strong_reasoning` | anthropic | claude-sonnet-4-6 | Complex reasoning, strategy |
+| `coding`           | anthropic | claude-sonnet-4-6 | Code implementation         |
+| `economy`          | anthropic | claude-haiku-4-5  | Lightweight tasks           |
+| `audit_strong`     | anthropic | claude-opus-4-6   | Audits, security reviews    |
+
+API key refs map to env vars: `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GOOGLE_API_KEY`. Raw keys are never stored in logs or API responses.
+
+## Permission Profiles
+
+Permission profiles control what each role can do. They attach to role nodes and agents.
+
+Supported fields in `permissions_json`:
+
+- `allowed_tools` / `forbidden_tools` — tool access control
+- `allowed_commands` / `blocked_commands` — command execution control
+- `git_permissions` — commit, push, branch management
+- `file_permissions` — read, write, delete
+- `task_permissions` — create, claim, complete
+- `message_permissions` — send, escalate
+- `context_permissions` — view approved/draft artifacts
+- `human_contact_permissions` — contact human directly
+
+## Project Runtime Model
+
+Each project runs in its own isolated runtime container. Many worker processes run inside a single project runtime.
+
+```
+Silver (control plane)
+├── Project-A runtime (container/process)
+│   ├── Engineer-1 worker
+│   ├── Reviewer worker
+│   └── Tester worker
+├── Project-B runtime (container/process)
+│   ├── Engineer-1 worker
+│   └── Tech Lead worker
+```
+
+### Runtime Rules
+
+- One runtime container per project
+- Many worker processes inside each runtime
+- Project runtime mounts only that project folder
+- Project runtime must **not** mount the Silver repo
+- Agents receive only their own token and model env config
+- Project-A agents cannot access Project-B data
+
+### Runtime Manager Interface
+
+The `ProjectRuntimeManager` interface supports:
+
+- `createProjectRuntime(projectId)` — initialize runtime
+- `startProjectRuntime(projectId)` — start the container/process
+- `stopProjectRuntime(projectId)` — stop runtime and all workers
+- `getProjectRuntimeStatus(projectId)` — check status + worker list
+- `spawnWorker(projectId, agentId)` — start a worker process
+- `stopWorker(projectId, agentId)` — stop a specific worker
+- `getWorkerLogs(projectId, agentId)` — retrieve worker logs
+
+Two adapters:
+
+- `MockRuntimeManager` — for tests
+- `ProcessRuntimeManager` — for MVP local development (future)
+
+## Project Creation Workflow
+
+Creating a project via `POST /api/projects` performs:
+
+1. Create project row with slug, name, and root path
+2. Create project folder under `Projects/<slug>` (path traversal blocked)
+3. Create default department (`core`)
+4. Create role nodes from all 11 role templates
+5. Create default role edges (communication graph)
+6. Create initial discovery document set
+7. Optionally create agents with tokens (`create_agents: true`)
+
+Workers are not started automatically. Use the runtime management APIs:
+
+| Method | Path                              | Description              |
+| ------ | --------------------------------- | ------------------------ |
+| POST   | `/api/projects/:id/start-runtime` | Start project runtime    |
+| POST   | `/api/projects/:id/stop-runtime`  | Stop project runtime     |
+| POST   | `/api/projects/:id/spawn-workers` | Spawn workers for agents |
+
+### Project Isolation
+
+Path safety ensures:
+
+- Slugs must match `^[a-zA-Z0-9_-]+$`
+- Paths are resolved and verified to stay within `Projects/<slug>`
+- Path traversal (`../`, null bytes, absolute paths) is blocked
+- `safePath()` and `isWithinProject()` enforce boundaries at the service layer
+
 ## API Endpoints
 
 ### Public
@@ -604,6 +719,41 @@ The dashboard uses a simple local-owner mode for v1. A `humans` record with `rol
 | POST   | `/api/agents/heartbeat`               | Update agent status      |
 | GET    | `/api/agents/:agentId/prompt-preview` | Assembled prompt context |
 | GET    | `/api/my-tasks`                       | Agent's assigned tasks   |
+
+### Agent Management
+
+| Method | Path                           | Description          |
+| ------ | ------------------------------ | -------------------- |
+| POST   | `/api/agents`                  | Create agent + token |
+| GET    | `/api/agents`                  | List agents          |
+| GET    | `/api/agents/:id`              | Get agent by ID      |
+| POST   | `/api/agents/:id/token/rotate` | Rotate agent token   |
+| POST   | `/api/agents/:id/revoke`       | Revoke agent         |
+
+### Model Profiles
+
+| Method | Path                      | Description    |
+| ------ | ------------------------- | -------------- |
+| GET    | `/api/model-profiles`     | List profiles  |
+| POST   | `/api/model-profiles`     | Create profile |
+| PATCH  | `/api/model-profiles/:id` | Update profile |
+
+### Permission Profiles
+
+| Method | Path                           | Description    |
+| ------ | ------------------------------ | -------------- |
+| GET    | `/api/permission-profiles`     | List profiles  |
+| POST   | `/api/permission-profiles`     | Create profile |
+| PATCH  | `/api/permission-profiles/:id` | Update profile |
+
+### Project Management
+
+| Method | Path                              | Description    |
+| ------ | --------------------------------- | -------------- |
+| POST   | `/api/projects`                   | Create project |
+| POST   | `/api/projects/:id/start-runtime` | Start runtime  |
+| POST   | `/api/projects/:id/stop-runtime`  | Stop runtime   |
+| POST   | `/api/projects/:id/spawn-workers` | Spawn workers  |
 
 ### Role Templates
 
@@ -650,17 +800,20 @@ Silver-Computing-Machine/
 │   │   ├── migrate.js     — Migration runner
 │   │   ├── seed.js        — Seed runner
 │   │   └── helpers.js     — generateId, withTransaction
-│   ├── migrations/        — 001 through 016 table migrations
-│   ├── seeds/             — Role templates, model profiles, default edges
+│   ├── migrations/        — 001 through 017 table migrations
+│   ├── seeds/             — Role templates, model profiles, permission profiles, default edges
 │   ├── middleware/
-│   │   └── auth.js        — Bearer token authentication
+│   │   └── auth.js        — Bearer token authentication (rejects revoked agents)
 │   ├── routes/
 │   │   ├── health.js      — Public health endpoint
 │   │   ├── files.js       — Workspace file CRUD
-│   │   ├── agents.js      — Agent identity, heartbeat, prompt preview
+│   │   ├── agents.js      — Agent identity, heartbeat, token management, prompt preview
 │   │   ├── tasks.js       — Task CRUD, lifecycle, worker APIs, execution context
 │   │   ├── messages.js    — Messaging with role edge enforcement
 │   │   ├── local_prs.js   — Local PR object CRUD
+│   │   ├── model_profiles.js — Model profile CRUD
+│   │   ├── permission_profiles.js — Permission profile CRUD
+│   │   ├── projects.js    — Project creation, runtime management
 │   │   ├── role_templates.js — Role template CRUD + import
 │   │   ├── role_nodes.js  — Project role node CRUD
 │   │   └── role_edges.js  — Role edge CRUD
@@ -674,6 +827,10 @@ Silver-Computing-Machine/
 │   │   └── document_sets.js — Document set grouping + approval
 │   ├── services/
 │   │   ├── agents.js      — Agent lookup, heartbeat
+│   │   ├── agent_tokens.js — Agent token CRUD (generate, rotate, revoke)
+│   │   ├── heartbeat.js   — Valid statuses, stale detection
+│   │   ├── projects.js    — Project creation workflow
+│   │   ├── runtime_manager.js — Runtime manager interface + MockRuntimeManager
 │   │   ├── tasks.js       — Task lifecycle, execution context, todos, events
 │   │   ├── messages.js    — Message sending, role edge checks, conversations
 │   │   ├── local_prs.js   — Local PR CRUD
@@ -690,12 +847,13 @@ Silver-Computing-Machine/
 
 ## Environment Variables
 
-| Variable         | Default                   | Description          |
-| ---------------- | ------------------------- | -------------------- |
-| `PORT`           | `4000`                    | Server port          |
-| `WORKSPACE_DIR`  | `/workspace`              | Workspace root       |
-| `PROJECTS_DIR`   | `$WORKSPACE_DIR/Projects` | Project directories  |
-| `SQLITE_DB_PATH` | `./data/silver.db`        | SQLite database path |
+| Variable                   | Default                   | Description                    |
+| -------------------------- | ------------------------- | ------------------------------ |
+| `PORT`                     | `4000`                    | Server port                    |
+| `WORKSPACE_DIR`            | `/workspace`              | Workspace root                 |
+| `PROJECTS_DIR`             | `$WORKSPACE_DIR/Projects` | Project directories            |
+| `SQLITE_DB_PATH`           | `./data/silver.db`        | SQLite database path           |
+| `AGENT_HEARTBEAT_STALE_MS` | `60000`                   | Stale heartbeat threshold (ms) |
 
 ## Commands
 

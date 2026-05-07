@@ -23,6 +23,7 @@ const migrations = [
   require('../src/migrations/014_tasks'),
   require('../src/migrations/015_conversations'),
   require('../src/migrations/016_local_prs'),
+  require('../src/migrations/017_runtime_status'),
 ];
 
 const seeds = [
@@ -45,8 +46,8 @@ function createSeededTestDb() {
   return db;
 }
 
-function createTestApp(db) {
-  const config = loadConfig();
+function createTestApp(db, overrides = {}) {
+  const config = { ...loadConfig(), ...overrides };
   return createApp(db, config);
 }
 

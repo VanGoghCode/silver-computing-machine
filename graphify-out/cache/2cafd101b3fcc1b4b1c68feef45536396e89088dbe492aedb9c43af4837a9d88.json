@@ -1,0 +1,257 @@
+{
+  "nodes": [
+    {
+      "id": "src_services_tasks_js",
+      "label": "tasks.js",
+      "file_type": "code",
+      "source_file": "src\\services\\tasks.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "tasks_ispipelineincrementingtransition",
+      "label": "isPipelineIncrementingTransition()",
+      "file_type": "code",
+      "source_file": "src\\services\\tasks.js",
+      "source_location": "L24"
+    },
+    {
+      "id": "tasks_validatesourceoftruth",
+      "label": "validateSourceOfTruth()",
+      "file_type": "code",
+      "source_file": "src\\services\\tasks.js",
+      "source_location": "L36"
+    },
+    {
+      "id": "tasks_createtask",
+      "label": "createTask()",
+      "file_type": "code",
+      "source_file": "src\\services\\tasks.js",
+      "source_location": "L56"
+    },
+    {
+      "id": "tasks_gettask",
+      "label": "getTask()",
+      "file_type": "code",
+      "source_file": "src\\services\\tasks.js",
+      "source_location": "L93"
+    },
+    {
+      "id": "tasks_listtasks",
+      "label": "listTasks()",
+      "file_type": "code",
+      "source_file": "src\\services\\tasks.js",
+      "source_location": "L104"
+    },
+    {
+      "id": "tasks_getmytasks",
+      "label": "getMyTasks()",
+      "file_type": "code",
+      "source_file": "src\\services\\tasks.js",
+      "source_location": "L110"
+    },
+    {
+      "id": "tasks_movetask",
+      "label": "moveTask()",
+      "file_type": "code",
+      "source_file": "src\\services\\tasks.js",
+      "source_location": "L116"
+    },
+    {
+      "id": "tasks_claimtask",
+      "label": "claimTask()",
+      "file_type": "code",
+      "source_file": "src\\services\\tasks.js",
+      "source_location": "L172"
+    },
+    {
+      "id": "tasks_completetask",
+      "label": "completeTask()",
+      "file_type": "code",
+      "source_file": "src\\services\\tasks.js",
+      "source_location": "L197"
+    },
+    {
+      "id": "tasks_failtask",
+      "label": "failTask()",
+      "file_type": "code",
+      "source_file": "src\\services\\tasks.js",
+      "source_location": "L234"
+    },
+    {
+      "id": "tasks_createtaskevent",
+      "label": "createTaskEvent()",
+      "file_type": "code",
+      "source_file": "src\\services\\tasks.js",
+      "source_location": "L284"
+    },
+    {
+      "id": "tasks_updatetodo",
+      "label": "updateTodo()",
+      "file_type": "code",
+      "source_file": "src\\services\\tasks.js",
+      "source_location": "L301"
+    },
+    {
+      "id": "tasks_getexecutioncontext",
+      "label": "getExecutionContext()",
+      "file_type": "code",
+      "source_file": "src\\services\\tasks.js",
+      "source_location": "L330"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_services_tasks_js",
+      "target": "tasks_ispipelineincrementingtransition",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\tasks.js",
+      "source_location": "L24",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_tasks_js",
+      "target": "tasks_validatesourceoftruth",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\tasks.js",
+      "source_location": "L36",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_tasks_js",
+      "target": "tasks_createtask",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\tasks.js",
+      "source_location": "L56",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_tasks_js",
+      "target": "tasks_gettask",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\tasks.js",
+      "source_location": "L93",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_tasks_js",
+      "target": "tasks_listtasks",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\tasks.js",
+      "source_location": "L104",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_tasks_js",
+      "target": "tasks_getmytasks",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\tasks.js",
+      "source_location": "L110",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_tasks_js",
+      "target": "tasks_movetask",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\tasks.js",
+      "source_location": "L116",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_tasks_js",
+      "target": "tasks_claimtask",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\tasks.js",
+      "source_location": "L172",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_tasks_js",
+      "target": "tasks_completetask",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\tasks.js",
+      "source_location": "L197",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_tasks_js",
+      "target": "tasks_failtask",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\tasks.js",
+      "source_location": "L234",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_tasks_js",
+      "target": "tasks_createtaskevent",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\tasks.js",
+      "source_location": "L284",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_tasks_js",
+      "target": "tasks_updatetodo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\tasks.js",
+      "source_location": "L301",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_tasks_js",
+      "target": "tasks_getexecutioncontext",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\tasks.js",
+      "source_location": "L330",
+      "weight": 1.0
+    },
+    {
+      "source": "tasks_movetask",
+      "target": "tasks_validatesourceoftruth",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\tasks.js",
+      "source_location": "L131",
+      "weight": 1.0
+    },
+    {
+      "source": "tasks_movetask",
+      "target": "tasks_ispipelineincrementingtransition",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\tasks.js",
+      "source_location": "L139",
+      "weight": 1.0
+    },
+    {
+      "source": "tasks_claimtask",
+      "target": "tasks_movetask",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\tasks.js",
+      "source_location": "L194",
+      "weight": 1.0
+    },
+    {
+      "source": "tasks_completetask",
+      "target": "tasks_movetask",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\tasks.js",
+      "source_location": "L217",
+      "weight": 1.0
+    }
+  ]
+}

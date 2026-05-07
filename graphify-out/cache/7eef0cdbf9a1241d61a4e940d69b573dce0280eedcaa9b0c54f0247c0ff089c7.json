@@ -1,0 +1,157 @@
+{
+  "nodes": [
+    {
+      "id": "src_services_runtime_manager_js",
+      "label": "runtime_manager.js",
+      "file_type": "code",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "runtime_manager_mockruntimemanager",
+      "label": "MockRuntimeManager",
+      "file_type": "code",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L8"
+    },
+    {
+      "id": "runtime_manager_mockruntimemanager_constructor",
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L9"
+    },
+    {
+      "id": "runtime_manager_mockruntimemanager_createprojectruntime",
+      "label": ".createProjectRuntime()",
+      "file_type": "code",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L14"
+    },
+    {
+      "id": "runtime_manager_mockruntimemanager_startprojectruntime",
+      "label": ".startProjectRuntime()",
+      "file_type": "code",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L22"
+    },
+    {
+      "id": "runtime_manager_mockruntimemanager_stopprojectruntime",
+      "label": ".stopProjectRuntime()",
+      "file_type": "code",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L31"
+    },
+    {
+      "id": "runtime_manager_mockruntimemanager_getprojectruntimestatus",
+      "label": ".getProjectRuntimeStatus()",
+      "file_type": "code",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L45"
+    },
+    {
+      "id": "runtime_manager_mockruntimemanager_spawnworker",
+      "label": ".spawnWorker()",
+      "file_type": "code",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L58"
+    },
+    {
+      "id": "runtime_manager_mockruntimemanager_stopworker",
+      "label": ".stopWorker()",
+      "file_type": "code",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L77"
+    },
+    {
+      "id": "runtime_manager_mockruntimemanager_getworkerlogs",
+      "label": ".getWorkerLogs()",
+      "file_type": "code",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L91"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_services_runtime_manager_js",
+      "target": "runtime_manager_mockruntimemanager",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "runtime_manager_mockruntimemanager",
+      "target": "runtime_manager_mockruntimemanager_constructor",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "runtime_manager_mockruntimemanager",
+      "target": "runtime_manager_mockruntimemanager_createprojectruntime",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "runtime_manager_mockruntimemanager",
+      "target": "runtime_manager_mockruntimemanager_startprojectruntime",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L22",
+      "weight": 1.0
+    },
+    {
+      "source": "runtime_manager_mockruntimemanager",
+      "target": "runtime_manager_mockruntimemanager_stopprojectruntime",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L31",
+      "weight": 1.0
+    },
+    {
+      "source": "runtime_manager_mockruntimemanager",
+      "target": "runtime_manager_mockruntimemanager_getprojectruntimestatus",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L45",
+      "weight": 1.0
+    },
+    {
+      "source": "runtime_manager_mockruntimemanager",
+      "target": "runtime_manager_mockruntimemanager_spawnworker",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L58",
+      "weight": 1.0
+    },
+    {
+      "source": "runtime_manager_mockruntimemanager",
+      "target": "runtime_manager_mockruntimemanager_stopworker",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L77",
+      "weight": 1.0
+    },
+    {
+      "source": "runtime_manager_mockruntimemanager",
+      "target": "runtime_manager_mockruntimemanager_getworkerlogs",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L91",
+      "weight": 1.0
+    }
+  ]
+}

@@ -16,6 +16,9 @@ const { createContextArtifactsRouter } = require('./routes/context_artifacts');
 const { createDocumentSetsRouter } = require('./routes/document_sets');
 const { createMessagesRouter } = require('./routes/messages');
 const { createLocalPrsRouter } = require('./routes/local_prs');
+const { createModelProfilesRouter } = require('./routes/model_profiles');
+const { createPermissionProfilesRouter } = require('./routes/permission_profiles');
+const { createProjectsRouter } = require('./routes/projects');
 const { bearerAuth } = require('./middleware/auth');
 
 function createApp(db, config) {
@@ -52,6 +55,17 @@ function createApp(db, config) {
   // Context engine routes — all authenticated
   app.use(createContextArtifactsRouter(db, auth));
   app.use(createDocumentSetsRouter(db, auth));
+
+  // Model profiles — all authenticated
+  app.use('/api/model-profiles', auth);
+  app.use(createModelProfilesRouter(db));
+
+  // Permission profiles — all authenticated
+  app.use('/api/permission-profiles', auth);
+  app.use(createPermissionProfilesRouter(db));
+
+  // Project management routes — all authenticated
+  app.use(createProjectsRouter(db, config, auth));
 
   return app;
 }

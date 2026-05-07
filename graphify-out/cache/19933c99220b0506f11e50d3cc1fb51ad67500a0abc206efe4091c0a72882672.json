@@ -1,0 +1,29 @@
+{
+  "nodes": [
+    {
+      "id": "src_routes_permission_profiles_js",
+      "label": "permission_profiles.js",
+      "file_type": "code",
+      "source_file": "src\\routes\\permission_profiles.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "permission_profiles_createpermissionprofilesrouter",
+      "label": "createPermissionProfilesRouter()",
+      "file_type": "code",
+      "source_file": "src\\routes\\permission_profiles.js",
+      "source_location": "L4"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_routes_permission_profiles_js",
+      "target": "permission_profiles_createpermissionprofilesrouter",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\permission_profiles.js",
+      "source_location": "L4",
+      "weight": 1.0
+    }
+  ]
+}

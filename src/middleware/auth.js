@@ -20,6 +20,10 @@ function bearerAuth(db) {
       return res.status(401).json({ error: 'Invalid token' });
     }
 
+    if (agent.status === 'revoked') {
+      return res.status(401).json({ error: 'Agent token has been revoked' });
+    }
+
     req.agent = agent;
     next();
   };

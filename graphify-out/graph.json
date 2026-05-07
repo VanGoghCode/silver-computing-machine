@@ -21,7 +21,7 @@
       "source_file": "jest.config.js",
       "source_location": "L1",
       "id": "jest_config_js",
-      "community": 60
+      "community": 67
     },
     {
       "label": "server.js",
@@ -29,7 +29,7 @@
       "source_file": "server.js",
       "source_location": "L1",
       "id": "server_js",
-      "community": 61
+      "community": 68
     },
     {
       "label": "app.js",
@@ -37,15 +37,15 @@
       "source_file": "src\\app.js",
       "source_location": "L1",
       "id": "src_app_js",
-      "community": 15
+      "community": 17
     },
     {
       "label": "createApp()",
       "file_type": "code",
       "source_file": "src\\app.js",
-      "source_location": "L21",
+      "source_location": "L24",
       "id": "app_createapp",
-      "community": 15
+      "community": 17
     },
     {
       "label": "config.js",
@@ -53,7 +53,7 @@
       "source_file": "src\\config.js",
       "source_location": "L1",
       "id": "src_config_js",
-      "community": 16
+      "community": 18
     },
     {
       "label": "loadConfig()",
@@ -61,7 +61,7 @@
       "source_file": "src\\config.js",
       "source_location": "L3",
       "id": "config_loadconfig",
-      "community": 16
+      "community": 18
     },
     {
       "label": "helpers.js",
@@ -69,7 +69,7 @@
       "source_file": "src\\db\\helpers.js",
       "source_location": "L1",
       "id": "src_db_helpers_js",
-      "community": 10
+      "community": 11
     },
     {
       "label": "generateId()",
@@ -77,7 +77,7 @@
       "source_file": "src\\db\\helpers.js",
       "source_location": "L3",
       "id": "helpers_generateid",
-      "community": 10
+      "community": 11
     },
     {
       "label": "withTransaction()",
@@ -85,7 +85,7 @@
       "source_file": "src\\db\\helpers.js",
       "source_location": "L7",
       "id": "helpers_withtransaction",
-      "community": 10
+      "community": 11
     },
     {
       "label": "index.js",
@@ -93,7 +93,7 @@
       "source_file": "src\\db\\index.js",
       "source_location": "L1",
       "id": "src_db_index_js",
-      "community": 5
+      "community": 6
     },
     {
       "label": "createDatabase()",
@@ -101,7 +101,7 @@
       "source_file": "src\\db\\index.js",
       "source_location": "L7",
       "id": "index_createdatabase",
-      "community": 5
+      "community": 6
     },
     {
       "label": "getDatabase()",
@@ -109,7 +109,7 @@
       "source_file": "src\\db\\index.js",
       "source_location": "L32",
       "id": "index_getdatabase",
-      "community": 5
+      "community": 6
     },
     {
       "label": "closeDatabase()",
@@ -117,7 +117,7 @@
       "source_file": "src\\db\\index.js",
       "source_location": "L37",
       "id": "index_closedatabase",
-      "community": 5
+      "community": 6
     },
     {
       "label": "resetForTesting()",
@@ -125,7 +125,7 @@
       "source_file": "src\\db\\index.js",
       "source_location": "L44",
       "id": "index_resetfortesting",
-      "community": 5
+      "community": 6
     },
     {
       "label": "migrate.js",
@@ -133,7 +133,7 @@
       "source_file": "src\\db\\migrate.js",
       "source_location": "L1",
       "id": "src_db_migrate_js",
-      "community": 17
+      "community": 19
     },
     {
       "label": "runMigrations()",
@@ -141,7 +141,7 @@
       "source_file": "src\\db\\migrate.js",
       "source_location": "L1",
       "id": "migrate_runmigrations",
-      "community": 17
+      "community": 19
     },
     {
       "label": "seed.js",
@@ -149,7 +149,7 @@
       "source_file": "src\\db\\seed.js",
       "source_location": "L1",
       "id": "src_db_seed_js",
-      "community": 18
+      "community": 20
     },
     {
       "label": "runSeeds()",
@@ -157,7 +157,7 @@
       "source_file": "src\\db\\seed.js",
       "source_location": "L1",
       "id": "seed_runseeds",
-      "community": 18
+      "community": 20
     },
     {
       "label": "auth.js",
@@ -165,7 +165,7 @@
       "source_file": "src\\middleware\\auth.js",
       "source_location": "L1",
       "id": "src_middleware_auth_js",
-      "community": 19
+      "community": 21
     },
     {
       "label": "bearerAuth()",
@@ -173,7 +173,7 @@
       "source_file": "src\\middleware\\auth.js",
       "source_location": "L4",
       "id": "auth_bearerauth",
-      "community": 19
+      "community": 21
     },
     {
       "label": "001_projects.js",
@@ -181,7 +181,7 @@
       "source_file": "src\\migrations\\001_projects.js",
       "source_location": "L1",
       "id": "src_migrations_001_projects_js",
-      "community": 20
+      "community": 22
     },
     {
       "label": "up()",
@@ -189,7 +189,7 @@
       "source_file": "src\\migrations\\001_projects.js",
       "source_location": "L3",
       "id": "001_projects_up",
-      "community": 20
+      "community": 22
     },
     {
       "label": "002_humans.js",
@@ -197,7 +197,7 @@
       "source_file": "src\\migrations\\002_humans.js",
       "source_location": "L1",
       "id": "src_migrations_002_humans_js",
-      "community": 21
+      "community": 23
     },
     {
       "label": "up()",
@@ -205,7 +205,7 @@
       "source_file": "src\\migrations\\002_humans.js",
       "source_location": "L3",
       "id": "002_humans_up",
-      "community": 21
+      "community": 23
     },
     {
       "label": "003_departments.js",
@@ -213,7 +213,7 @@
       "source_file": "src\\migrations\\003_departments.js",
       "source_location": "L1",
       "id": "src_migrations_003_departments_js",
-      "community": 22
+      "community": 24
     },
     {
       "label": "up()",
@@ -221,7 +221,7 @@
       "source_file": "src\\migrations\\003_departments.js",
       "source_location": "L3",
       "id": "003_departments_up",
-      "community": 22
+      "community": 24
     },
     {
       "label": "004_model_profiles.js",
@@ -229,7 +229,7 @@
       "source_file": "src\\migrations\\004_model_profiles.js",
       "source_location": "L1",
       "id": "src_migrations_004_model_profiles_js",
-      "community": 23
+      "community": 25
     },
     {
       "label": "up()",
@@ -237,7 +237,7 @@
       "source_file": "src\\migrations\\004_model_profiles.js",
       "source_location": "L3",
       "id": "004_model_profiles_up",
-      "community": 23
+      "community": 25
     },
     {
       "label": "005_permission_profiles.js",
@@ -245,7 +245,7 @@
       "source_file": "src\\migrations\\005_permission_profiles.js",
       "source_location": "L1",
       "id": "src_migrations_005_permission_profiles_js",
-      "community": 24
+      "community": 26
     },
     {
       "label": "up()",
@@ -253,7 +253,7 @@
       "source_file": "src\\migrations\\005_permission_profiles.js",
       "source_location": "L3",
       "id": "005_permission_profiles_up",
-      "community": 24
+      "community": 26
     },
     {
       "label": "006_role_templates.js",
@@ -261,7 +261,7 @@
       "source_file": "src\\migrations\\006_role_templates.js",
       "source_location": "L1",
       "id": "src_migrations_006_role_templates_js",
-      "community": 25
+      "community": 27
     },
     {
       "label": "up()",
@@ -269,7 +269,7 @@
       "source_file": "src\\migrations\\006_role_templates.js",
       "source_location": "L3",
       "id": "006_role_templates_up",
-      "community": 25
+      "community": 27
     },
     {
       "label": "007_role_prompt_files.js",
@@ -277,7 +277,7 @@
       "source_file": "src\\migrations\\007_role_prompt_files.js",
       "source_location": "L1",
       "id": "src_migrations_007_role_prompt_files_js",
-      "community": 26
+      "community": 28
     },
     {
       "label": "up()",
@@ -285,7 +285,7 @@
       "source_file": "src\\migrations\\007_role_prompt_files.js",
       "source_location": "L3",
       "id": "007_role_prompt_files_up",
-      "community": 26
+      "community": 28
     },
     {
       "label": "008_project_role_instances.js",
@@ -293,7 +293,7 @@
       "source_file": "src\\migrations\\008_project_role_instances.js",
       "source_location": "L1",
       "id": "src_migrations_008_project_role_instances_js",
-      "community": 27
+      "community": 29
     },
     {
       "label": "up()",
@@ -301,7 +301,7 @@
       "source_file": "src\\migrations\\008_project_role_instances.js",
       "source_location": "L3",
       "id": "008_project_role_instances_up",
-      "community": 27
+      "community": 29
     },
     {
       "label": "009_role_edges.js",
@@ -309,7 +309,7 @@
       "source_file": "src\\migrations\\009_role_edges.js",
       "source_location": "L1",
       "id": "src_migrations_009_role_edges_js",
-      "community": 28
+      "community": 30
     },
     {
       "label": "up()",
@@ -317,7 +317,7 @@
       "source_file": "src\\migrations\\009_role_edges.js",
       "source_location": "L3",
       "id": "009_role_edges_up",
-      "community": 28
+      "community": 30
     },
     {
       "label": "010_agents.js",
@@ -325,7 +325,7 @@
       "source_file": "src\\migrations\\010_agents.js",
       "source_location": "L1",
       "id": "src_migrations_010_agents_js",
-      "community": 29
+      "community": 31
     },
     {
       "label": "up()",
@@ -333,7 +333,7 @@
       "source_file": "src\\migrations\\010_agents.js",
       "source_location": "L3",
       "id": "010_agents_up",
-      "community": 29
+      "community": 31
     },
     {
       "label": "011_agent_heartbeats.js",
@@ -341,7 +341,7 @@
       "source_file": "src\\migrations\\011_agent_heartbeats.js",
       "source_location": "L1",
       "id": "src_migrations_011_agent_heartbeats_js",
-      "community": 30
+      "community": 32
     },
     {
       "label": "up()",
@@ -349,7 +349,7 @@
       "source_file": "src\\migrations\\011_agent_heartbeats.js",
       "source_location": "L3",
       "id": "011_agent_heartbeats_up",
-      "community": 30
+      "community": 32
     },
     {
       "label": "012_alignment_intake.js",
@@ -357,7 +357,7 @@
       "source_file": "src\\migrations\\012_alignment_intake.js",
       "source_location": "L1",
       "id": "src_migrations_012_alignment_intake_js",
-      "community": 31
+      "community": 33
     },
     {
       "label": "up()",
@@ -365,7 +365,7 @@
       "source_file": "src\\migrations\\012_alignment_intake.js",
       "source_location": "L3",
       "id": "012_alignment_intake_up",
-      "community": 31
+      "community": 33
     },
     {
       "label": "013_context_artifacts.js",
@@ -373,7 +373,7 @@
       "source_file": "src\\migrations\\013_context_artifacts.js",
       "source_location": "L1",
       "id": "src_migrations_013_context_artifacts_js",
-      "community": 32
+      "community": 34
     },
     {
       "label": "up()",
@@ -381,7 +381,7 @@
       "source_file": "src\\migrations\\013_context_artifacts.js",
       "source_location": "L3",
       "id": "013_context_artifacts_up",
-      "community": 32
+      "community": 34
     },
     {
       "label": "014_tasks.js",
@@ -389,7 +389,7 @@
       "source_file": "src\\migrations\\014_tasks.js",
       "source_location": "L1",
       "id": "src_migrations_014_tasks_js",
-      "community": 33
+      "community": 35
     },
     {
       "label": "up()",
@@ -397,7 +397,7 @@
       "source_file": "src\\migrations\\014_tasks.js",
       "source_location": "L3",
       "id": "014_tasks_up",
-      "community": 33
+      "community": 35
     },
     {
       "label": "015_conversations.js",
@@ -405,7 +405,7 @@
       "source_file": "src\\migrations\\015_conversations.js",
       "source_location": "L1",
       "id": "src_migrations_015_conversations_js",
-      "community": 34
+      "community": 36
     },
     {
       "label": "up()",
@@ -413,7 +413,7 @@
       "source_file": "src\\migrations\\015_conversations.js",
       "source_location": "L3",
       "id": "015_conversations_up",
-      "community": 34
+      "community": 36
     },
     {
       "label": "016_local_prs.js",
@@ -421,7 +421,7 @@
       "source_file": "src\\migrations\\016_local_prs.js",
       "source_location": "L1",
       "id": "src_migrations_016_local_prs_js",
-      "community": 35
+      "community": 37
     },
     {
       "label": "up()",
@@ -429,7 +429,23 @@
       "source_file": "src\\migrations\\016_local_prs.js",
       "source_location": "L3",
       "id": "016_local_prs_up",
-      "community": 35
+      "community": 37
+    },
+    {
+      "label": "017_runtime_status.js",
+      "file_type": "code",
+      "source_file": "src\\migrations\\017_runtime_status.js",
+      "source_location": "L1",
+      "id": "src_migrations_017_runtime_status_js",
+      "community": 38
+    },
+    {
+      "label": "up()",
+      "file_type": "code",
+      "source_file": "src\\migrations\\017_runtime_status.js",
+      "source_location": "L3",
+      "id": "017_runtime_status_up",
+      "community": 38
     },
     {
       "label": "agents.js",
@@ -437,15 +453,15 @@
       "source_file": "src\\routes\\agents.js",
       "source_location": "L1",
       "id": "src_routes_agents_js",
-      "community": 36
+      "community": 39
     },
     {
       "label": "createAgentsRouter()",
       "file_type": "code",
       "source_file": "src\\routes\\agents.js",
-      "source_location": "L5",
+      "source_location": "L13",
       "id": "agents_createagentsrouter",
-      "community": 36
+      "community": 39
     },
     {
       "label": "alignment_reviews.js",
@@ -453,7 +469,7 @@
       "source_file": "src\\routes\\alignment_reviews.js",
       "source_location": "L1",
       "id": "src_routes_alignment_reviews_js",
-      "community": 37
+      "community": 40
     },
     {
       "label": "createAlignmentReviewsRouter()",
@@ -461,7 +477,7 @@
       "source_file": "src\\routes\\alignment_reviews.js",
       "source_location": "L4",
       "id": "alignment_reviews_createalignmentreviewsrouter",
-      "community": 37
+      "community": 40
     },
     {
       "label": "alignment_sessions.js",
@@ -469,7 +485,7 @@
       "source_file": "src\\routes\\alignment_sessions.js",
       "source_location": "L1",
       "id": "src_routes_alignment_sessions_js",
-      "community": 38
+      "community": 41
     },
     {
       "label": "createAlignmentSessionsRouter()",
@@ -477,7 +493,7 @@
       "source_file": "src\\routes\\alignment_sessions.js",
       "source_location": "L6",
       "id": "alignment_sessions_createalignmentsessionsrouter",
-      "community": 38
+      "community": 41
     },
     {
       "label": "clarification.js",
@@ -485,7 +501,7 @@
       "source_file": "src\\routes\\clarification.js",
       "source_location": "L1",
       "id": "src_routes_clarification_js",
-      "community": 39
+      "community": 42
     },
     {
       "label": "createClarificationRouter()",
@@ -493,7 +509,7 @@
       "source_file": "src\\routes\\clarification.js",
       "source_location": "L4",
       "id": "clarification_createclarificationrouter",
-      "community": 39
+      "community": 42
     },
     {
       "label": "context_artifacts.js",
@@ -501,7 +517,7 @@
       "source_file": "src\\routes\\context_artifacts.js",
       "source_location": "L1",
       "id": "src_routes_context_artifacts_js",
-      "community": 40
+      "community": 43
     },
     {
       "label": "createContextArtifactsRouter()",
@@ -509,7 +525,7 @@
       "source_file": "src\\routes\\context_artifacts.js",
       "source_location": "L27",
       "id": "context_artifacts_createcontextartifactsrouter",
-      "community": 40
+      "community": 43
     },
     {
       "label": "document_sets.js",
@@ -517,7 +533,7 @@
       "source_file": "src\\routes\\document_sets.js",
       "source_location": "L1",
       "id": "src_routes_document_sets_js",
-      "community": 41
+      "community": 44
     },
     {
       "label": "createDocumentSetsRouter()",
@@ -525,7 +541,7 @@
       "source_file": "src\\routes\\document_sets.js",
       "source_location": "L4",
       "id": "document_sets_createdocumentsetsrouter",
-      "community": 41
+      "community": 44
     },
     {
       "label": "files.js",
@@ -533,7 +549,7 @@
       "source_file": "src\\routes\\files.js",
       "source_location": "L1",
       "id": "src_routes_files_js",
-      "community": 42
+      "community": 45
     },
     {
       "label": "createFilesRouter()",
@@ -541,7 +557,7 @@
       "source_file": "src\\routes\\files.js",
       "source_location": "L6",
       "id": "files_createfilesrouter",
-      "community": 42
+      "community": 45
     },
     {
       "label": "health.js",
@@ -549,7 +565,7 @@
       "source_file": "src\\routes\\health.js",
       "source_location": "L1",
       "id": "src_routes_health_js",
-      "community": 43
+      "community": 46
     },
     {
       "label": "createHealthRouter()",
@@ -557,7 +573,7 @@
       "source_file": "src\\routes\\health.js",
       "source_location": "L3",
       "id": "health_createhealthrouter",
-      "community": 43
+      "community": 46
     },
     {
       "label": "human_approvals.js",
@@ -565,7 +581,7 @@
       "source_file": "src\\routes\\human_approvals.js",
       "source_location": "L1",
       "id": "src_routes_human_approvals_js",
-      "community": 44
+      "community": 47
     },
     {
       "label": "createHumanApprovalsRouter()",
@@ -573,7 +589,7 @@
       "source_file": "src\\routes\\human_approvals.js",
       "source_location": "L4",
       "id": "human_approvals_createhumanapprovalsrouter",
-      "community": 44
+      "community": 47
     },
     {
       "label": "local_prs.js",
@@ -581,7 +597,7 @@
       "source_file": "src\\routes\\local_prs.js",
       "source_location": "L1",
       "id": "src_routes_local_prs_js",
-      "community": 45
+      "community": 48
     },
     {
       "label": "createLocalPrsRouter()",
@@ -589,7 +605,7 @@
       "source_file": "src\\routes\\local_prs.js",
       "source_location": "L4",
       "id": "local_prs_createlocalprsrouter",
-      "community": 45
+      "community": 48
     },
     {
       "label": "messages.js",
@@ -597,7 +613,7 @@
       "source_file": "src\\routes\\messages.js",
       "source_location": "L1",
       "id": "src_routes_messages_js",
-      "community": 46
+      "community": 49
     },
     {
       "label": "createMessagesRouter()",
@@ -605,7 +621,39 @@
       "source_file": "src\\routes\\messages.js",
       "source_location": "L4",
       "id": "messages_createmessagesrouter",
-      "community": 46
+      "community": 49
+    },
+    {
+      "label": "model_profiles.js",
+      "file_type": "code",
+      "source_file": "src\\routes\\model_profiles.js",
+      "source_location": "L1",
+      "id": "src_routes_model_profiles_js",
+      "community": 50
+    },
+    {
+      "label": "createModelProfilesRouter()",
+      "file_type": "code",
+      "source_file": "src\\routes\\model_profiles.js",
+      "source_location": "L4",
+      "id": "model_profiles_createmodelprofilesrouter",
+      "community": 50
+    },
+    {
+      "label": "permission_profiles.js",
+      "file_type": "code",
+      "source_file": "src\\routes\\permission_profiles.js",
+      "source_location": "L1",
+      "id": "src_routes_permission_profiles_js",
+      "community": 51
+    },
+    {
+      "label": "createPermissionProfilesRouter()",
+      "file_type": "code",
+      "source_file": "src\\routes\\permission_profiles.js",
+      "source_location": "L4",
+      "id": "permission_profiles_createpermissionprofilesrouter",
+      "community": 51
     },
     {
       "label": "problem_statements.js",
@@ -613,7 +661,7 @@
       "source_file": "src\\routes\\problem_statements.js",
       "source_location": "L1",
       "id": "src_routes_problem_statements_js",
-      "community": 47
+      "community": 52
     },
     {
       "label": "createProblemStatementsRouter()",
@@ -621,7 +669,23 @@
       "source_file": "src\\routes\\problem_statements.js",
       "source_location": "L4",
       "id": "problem_statements_createproblemstatementsrouter",
-      "community": 47
+      "community": 52
+    },
+    {
+      "label": "projects.js",
+      "file_type": "code",
+      "source_file": "src\\routes\\projects.js",
+      "source_location": "L1",
+      "id": "src_routes_projects_js",
+      "community": 53
+    },
+    {
+      "label": "createProjectsRouter()",
+      "file_type": "code",
+      "source_file": "src\\routes\\projects.js",
+      "source_location": "L5",
+      "id": "projects_createprojectsrouter",
+      "community": 53
     },
     {
       "label": "research_notes.js",
@@ -629,7 +693,7 @@
       "source_file": "src\\routes\\research_notes.js",
       "source_location": "L1",
       "id": "src_routes_research_notes_js",
-      "community": 48
+      "community": 54
     },
     {
       "label": "createResearchNotesRouter()",
@@ -637,7 +701,7 @@
       "source_file": "src\\routes\\research_notes.js",
       "source_location": "L4",
       "id": "research_notes_createresearchnotesrouter",
-      "community": 48
+      "community": 54
     },
     {
       "label": "role_edges.js",
@@ -645,7 +709,7 @@
       "source_file": "src\\routes\\role_edges.js",
       "source_location": "L1",
       "id": "src_routes_role_edges_js",
-      "community": 49
+      "community": 55
     },
     {
       "label": "createRoleEdgesRouter()",
@@ -653,7 +717,7 @@
       "source_file": "src\\routes\\role_edges.js",
       "source_location": "L4",
       "id": "role_edges_createroleedgesrouter",
-      "community": 49
+      "community": 55
     },
     {
       "label": "role_nodes.js",
@@ -661,7 +725,7 @@
       "source_file": "src\\routes\\role_nodes.js",
       "source_location": "L1",
       "id": "src_routes_role_nodes_js",
-      "community": 50
+      "community": 56
     },
     {
       "label": "createRoleNodesRouter()",
@@ -669,7 +733,7 @@
       "source_file": "src\\routes\\role_nodes.js",
       "source_location": "L4",
       "id": "role_nodes_createrolenodesrouter",
-      "community": 50
+      "community": 56
     },
     {
       "label": "role_templates.js",
@@ -677,7 +741,7 @@
       "source_file": "src\\routes\\role_templates.js",
       "source_location": "L1",
       "id": "src_routes_role_templates_js",
-      "community": 51
+      "community": 57
     },
     {
       "label": "createRoleTemplatesRouter()",
@@ -685,7 +749,7 @@
       "source_file": "src\\routes\\role_templates.js",
       "source_location": "L6",
       "id": "role_templates_createroletemplatesrouter",
-      "community": 51
+      "community": 57
     },
     {
       "label": "tasks.js",
@@ -693,7 +757,7 @@
       "source_file": "src\\routes\\tasks.js",
       "source_location": "L1",
       "id": "src_routes_tasks_js",
-      "community": 52
+      "community": 58
     },
     {
       "label": "createTasksRouter()",
@@ -701,7 +765,7 @@
       "source_file": "src\\routes\\tasks.js",
       "source_location": "L4",
       "id": "tasks_createtasksrouter",
-      "community": 52
+      "community": 58
     },
     {
       "label": "default_role_edges.js",
@@ -709,7 +773,7 @@
       "source_file": "src\\seeds\\default_role_edges.js",
       "source_location": "L1",
       "id": "src_seeds_default_role_edges_js",
-      "community": 53
+      "community": 59
     },
     {
       "label": "run()",
@@ -717,7 +781,7 @@
       "source_file": "src\\seeds\\default_role_edges.js",
       "source_location": "L25",
       "id": "default_role_edges_run",
-      "community": 53
+      "community": 59
     },
     {
       "label": "human_local_owner.js",
@@ -725,7 +789,7 @@
       "source_file": "src\\seeds\\human_local_owner.js",
       "source_location": "L1",
       "id": "src_seeds_human_local_owner_js",
-      "community": 54
+      "community": 60
     },
     {
       "label": "run()",
@@ -733,7 +797,7 @@
       "source_file": "src\\seeds\\human_local_owner.js",
       "source_location": "L3",
       "id": "human_local_owner_run",
-      "community": 54
+      "community": 60
     },
     {
       "label": "model_profiles.js",
@@ -741,7 +805,7 @@
       "source_file": "src\\seeds\\model_profiles.js",
       "source_location": "L1",
       "id": "src_seeds_model_profiles_js",
-      "community": 55
+      "community": 61
     },
     {
       "label": "run()",
@@ -749,7 +813,7 @@
       "source_file": "src\\seeds\\model_profiles.js",
       "source_location": "L36",
       "id": "model_profiles_run",
-      "community": 55
+      "community": 61
     },
     {
       "label": "permission_profiles.js",
@@ -757,7 +821,7 @@
       "source_file": "src\\seeds\\permission_profiles.js",
       "source_location": "L1",
       "id": "src_seeds_permission_profiles_js",
-      "community": 56
+      "community": 62
     },
     {
       "label": "run()",
@@ -765,7 +829,7 @@
       "source_file": "src\\seeds\\permission_profiles.js",
       "source_location": "L63",
       "id": "permission_profiles_run",
-      "community": 56
+      "community": 62
     },
     {
       "label": "role_templates.js",
@@ -773,7 +837,7 @@
       "source_file": "src\\seeds\\role_templates.js",
       "source_location": "L1",
       "id": "src_seeds_role_templates_js",
-      "community": 57
+      "community": 63
     },
     {
       "label": "run()",
@@ -781,7 +845,7 @@
       "source_file": "src\\seeds\\role_templates.js",
       "source_location": "L69",
       "id": "role_templates_run",
-      "community": 57
+      "community": 63
     },
     {
       "label": "agents.js",
@@ -789,7 +853,7 @@
       "source_file": "src\\services\\agents.js",
       "source_location": "L1",
       "id": "src_services_agents_js",
-      "community": 11
+      "community": 12
     },
     {
       "label": "findAgentByTokenHash()",
@@ -797,7 +861,7 @@
       "source_file": "src\\services\\agents.js",
       "source_location": "L3",
       "id": "agents_findagentbytokenhash",
-      "community": 11
+      "community": 12
     },
     {
       "label": "updateHeartbeat()",
@@ -805,7 +869,23 @@
       "source_file": "src\\services\\agents.js",
       "source_location": "L20",
       "id": "agents_updateheartbeat",
-      "community": 11
+      "community": 12
+    },
+    {
+      "label": "heartbeat.js",
+      "file_type": "code",
+      "source_file": "src\\services\\heartbeat.js",
+      "source_location": "L1",
+      "id": "src_services_heartbeat_js",
+      "community": 64
+    },
+    {
+      "label": "detectStaleAgents()",
+      "file_type": "code",
+      "source_file": "src\\services\\heartbeat.js",
+      "source_location": "L7",
+      "id": "heartbeat_detectstaleagents",
+      "community": 64
     },
     {
       "label": "local_prs.js",
@@ -813,7 +893,7 @@
       "source_file": "src\\services\\local_prs.js",
       "source_location": "L1",
       "id": "src_services_local_prs_js",
-      "community": 6
+      "community": 7
     },
     {
       "label": "createLocalPr()",
@@ -821,7 +901,7 @@
       "source_file": "src\\services\\local_prs.js",
       "source_location": "L3",
       "id": "local_prs_createlocalpr",
-      "community": 6
+      "community": 7
     },
     {
       "label": "listLocalPrs()",
@@ -829,7 +909,7 @@
       "source_file": "src\\services\\local_prs.js",
       "source_location": "L27",
       "id": "local_prs_listlocalprs",
-      "community": 6
+      "community": 7
     },
     {
       "label": "getLocalPr()",
@@ -837,7 +917,7 @@
       "source_file": "src\\services\\local_prs.js",
       "source_location": "L33",
       "id": "local_prs_getlocalpr",
-      "community": 6
+      "community": 7
     },
     {
       "label": "updateLocalPr()",
@@ -845,7 +925,7 @@
       "source_file": "src\\services\\local_prs.js",
       "source_location": "L37",
       "id": "local_prs_updatelocalpr",
-      "community": 6
+      "community": 7
     },
     {
       "label": "messages.js",
@@ -853,7 +933,7 @@
       "source_file": "src\\services\\messages.js",
       "source_location": "L1",
       "id": "src_services_messages_js",
-      "community": 4
+      "community": 5
     },
     {
       "label": "canMessage()",
@@ -861,7 +941,7 @@
       "source_file": "src\\services\\messages.js",
       "source_location": "L17",
       "id": "messages_canmessage",
-      "community": 4
+      "community": 5
     },
     {
       "label": "canCommunicateWithHuman()",
@@ -869,7 +949,7 @@
       "source_file": "src\\services\\messages.js",
       "source_location": "L39",
       "id": "messages_cancommunicatewithhuman",
-      "community": 4
+      "community": 5
     },
     {
       "label": "sendMessage()",
@@ -877,23 +957,23 @@
       "source_file": "src\\services\\messages.js",
       "source_location": "L53",
       "id": "messages_sendmessage",
-      "community": 4
+      "community": 5
     },
     {
       "label": "listConversations()",
       "file_type": "code",
       "source_file": "src\\services\\messages.js",
-      "source_location": "L129",
+      "source_location": "L128",
       "id": "messages_listconversations",
-      "community": 4
+      "community": 5
     },
     {
       "label": "getConversationMessages()",
       "file_type": "code",
       "source_file": "src\\services\\messages.js",
-      "source_location": "L135",
+      "source_location": "L134",
       "id": "messages_getconversationmessages",
-      "community": 4
+      "community": 5
     },
     {
       "label": "path_safety.js",
@@ -901,7 +981,7 @@
       "source_file": "src\\services\\path_safety.js",
       "source_location": "L1",
       "id": "src_services_path_safety_js",
-      "community": 12
+      "community": 13
     },
     {
       "label": "safePath()",
@@ -909,7 +989,7 @@
       "source_file": "src\\services\\path_safety.js",
       "source_location": "L6",
       "id": "path_safety_safepath",
-      "community": 12
+      "community": 13
     },
     {
       "label": "isWithinProject()",
@@ -917,7 +997,31 @@
       "source_file": "src\\services\\path_safety.js",
       "source_location": "L21",
       "id": "path_safety_iswithinproject",
-      "community": 12
+      "community": 13
+    },
+    {
+      "label": "projects.js",
+      "file_type": "code",
+      "source_file": "src\\services\\projects.js",
+      "source_location": "L1",
+      "id": "src_services_projects_js",
+      "community": 14
+    },
+    {
+      "label": "createProject()",
+      "file_type": "code",
+      "source_file": "src\\services\\projects.js",
+      "source_location": "L14",
+      "id": "projects_createproject",
+      "community": 14
+    },
+    {
+      "label": "createDefaultAgents()",
+      "file_type": "code",
+      "source_file": "src\\services\\projects.js",
+      "source_location": "L114",
+      "id": "projects_createdefaultagents",
+      "community": 14
     },
     {
       "label": "prompt_assembler.js",
@@ -925,7 +1029,7 @@
       "source_file": "src\\services\\prompt_assembler.js",
       "source_location": "L1",
       "id": "src_services_prompt_assembler_js",
-      "community": 13
+      "community": 15
     },
     {
       "label": "assemblePrompt()",
@@ -933,7 +1037,7 @@
       "source_file": "src\\services\\prompt_assembler.js",
       "source_location": "L15",
       "id": "prompt_assembler_assembleprompt",
-      "community": 13
+      "community": 15
     },
     {
       "label": "assembleDynamicContext()",
@@ -941,7 +1045,7 @@
       "source_file": "src\\services\\prompt_assembler.js",
       "source_location": "L114",
       "id": "prompt_assembler_assembledynamiccontext",
-      "community": 13
+      "community": 15
     },
     {
       "label": "role_graph_policy.js",
@@ -949,7 +1053,7 @@
       "source_file": "src\\services\\role_graph_policy.js",
       "source_location": "L1",
       "id": "src_services_role_graph_policy_js",
-      "community": 58
+      "community": 65
     },
     {
       "label": "createRoleGraphPolicy()",
@@ -957,7 +1061,7 @@
       "source_file": "src\\services\\role_graph_policy.js",
       "source_location": "L1",
       "id": "role_graph_policy_createrolegraphpolicy",
-      "community": 58
+      "community": 65
     },
     {
       "label": "role_library_import.js",
@@ -965,7 +1069,7 @@
       "source_file": "src\\services\\role_library_import.js",
       "source_location": "L1",
       "id": "src_services_role_library_import_js",
-      "community": 14
+      "community": 16
     },
     {
       "label": "computeHash()",
@@ -973,7 +1077,7 @@
       "source_file": "src\\services\\role_library_import.js",
       "source_location": "L6",
       "id": "role_library_import_computehash",
-      "community": 14
+      "community": 16
     },
     {
       "label": "importRoleLibrary()",
@@ -981,7 +1085,87 @@
       "source_file": "src\\services\\role_library_import.js",
       "source_location": "L10",
       "id": "role_library_import_importrolelibrary",
-      "community": 14
+      "community": 16
+    },
+    {
+      "label": "runtime_manager.js",
+      "file_type": "code",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L1",
+      "id": "src_services_runtime_manager_js",
+      "community": 2
+    },
+    {
+      "label": "MockRuntimeManager",
+      "file_type": "code",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L8",
+      "id": "runtime_manager_mockruntimemanager",
+      "community": 2
+    },
+    {
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L9",
+      "id": "runtime_manager_mockruntimemanager_constructor",
+      "community": 2
+    },
+    {
+      "label": ".createProjectRuntime()",
+      "file_type": "code",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L14",
+      "id": "runtime_manager_mockruntimemanager_createprojectruntime",
+      "community": 2
+    },
+    {
+      "label": ".startProjectRuntime()",
+      "file_type": "code",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L22",
+      "id": "runtime_manager_mockruntimemanager_startprojectruntime",
+      "community": 2
+    },
+    {
+      "label": ".stopProjectRuntime()",
+      "file_type": "code",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L31",
+      "id": "runtime_manager_mockruntimemanager_stopprojectruntime",
+      "community": 2
+    },
+    {
+      "label": ".getProjectRuntimeStatus()",
+      "file_type": "code",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L45",
+      "id": "runtime_manager_mockruntimemanager_getprojectruntimestatus",
+      "community": 2
+    },
+    {
+      "label": ".spawnWorker()",
+      "file_type": "code",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L58",
+      "id": "runtime_manager_mockruntimemanager_spawnworker",
+      "community": 2
+    },
+    {
+      "label": ".stopWorker()",
+      "file_type": "code",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L77",
+      "id": "runtime_manager_mockruntimemanager_stopworker",
+      "community": 2
+    },
+    {
+      "label": ".getWorkerLogs()",
+      "file_type": "code",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L91",
+      "id": "runtime_manager_mockruntimemanager_getworkerlogs",
+      "community": 2
     },
     {
       "label": "tasks.js",
@@ -995,7 +1179,7 @@
       "label": "isPipelineIncrementingTransition()",
       "file_type": "code",
       "source_file": "src\\services\\tasks.js",
-      "source_location": "L32",
+      "source_location": "L24",
       "id": "tasks_ispipelineincrementingtransition",
       "community": 1
     },
@@ -1003,7 +1187,7 @@
       "label": "validateSourceOfTruth()",
       "file_type": "code",
       "source_file": "src\\services\\tasks.js",
-      "source_location": "L44",
+      "source_location": "L36",
       "id": "tasks_validatesourceoftruth",
       "community": 1
     },
@@ -1011,7 +1195,7 @@
       "label": "createTask()",
       "file_type": "code",
       "source_file": "src\\services\\tasks.js",
-      "source_location": "L64",
+      "source_location": "L56",
       "id": "tasks_createtask",
       "community": 1
     },
@@ -1019,7 +1203,7 @@
       "label": "getTask()",
       "file_type": "code",
       "source_file": "src\\services\\tasks.js",
-      "source_location": "L101",
+      "source_location": "L93",
       "id": "tasks_gettask",
       "community": 1
     },
@@ -1027,7 +1211,7 @@
       "label": "listTasks()",
       "file_type": "code",
       "source_file": "src\\services\\tasks.js",
-      "source_location": "L112",
+      "source_location": "L104",
       "id": "tasks_listtasks",
       "community": 1
     },
@@ -1035,7 +1219,7 @@
       "label": "getMyTasks()",
       "file_type": "code",
       "source_file": "src\\services\\tasks.js",
-      "source_location": "L118",
+      "source_location": "L110",
       "id": "tasks_getmytasks",
       "community": 1
     },
@@ -1043,7 +1227,7 @@
       "label": "moveTask()",
       "file_type": "code",
       "source_file": "src\\services\\tasks.js",
-      "source_location": "L126",
+      "source_location": "L116",
       "id": "tasks_movetask",
       "community": 1
     },
@@ -1051,7 +1235,7 @@
       "label": "claimTask()",
       "file_type": "code",
       "source_file": "src\\services\\tasks.js",
-      "source_location": "L182",
+      "source_location": "L172",
       "id": "tasks_claimtask",
       "community": 1
     },
@@ -1059,7 +1243,7 @@
       "label": "completeTask()",
       "file_type": "code",
       "source_file": "src\\services\\tasks.js",
-      "source_location": "L207",
+      "source_location": "L197",
       "id": "tasks_completetask",
       "community": 1
     },
@@ -1067,7 +1251,7 @@
       "label": "failTask()",
       "file_type": "code",
       "source_file": "src\\services\\tasks.js",
-      "source_location": "L244",
+      "source_location": "L234",
       "id": "tasks_failtask",
       "community": 1
     },
@@ -1075,7 +1259,7 @@
       "label": "createTaskEvent()",
       "file_type": "code",
       "source_file": "src\\services\\tasks.js",
-      "source_location": "L288",
+      "source_location": "L284",
       "id": "tasks_createtaskevent",
       "community": 1
     },
@@ -1083,7 +1267,7 @@
       "label": "updateTodo()",
       "file_type": "code",
       "source_file": "src\\services\\tasks.js",
-      "source_location": "L298",
+      "source_location": "L301",
       "id": "tasks_updatetodo",
       "community": 1
     },
@@ -1091,7 +1275,7 @@
       "label": "getExecutionContext()",
       "file_type": "code",
       "source_file": "src\\services\\tasks.js",
-      "source_location": "L327",
+      "source_location": "L330",
       "id": "tasks_getexecutioncontext",
       "community": 1
     },
@@ -1101,7 +1285,7 @@
       "source_file": "tests\\agents.test.js",
       "source_location": "L1",
       "id": "tests_agents_test_js",
-      "community": 62
+      "community": 69
     },
     {
       "label": "auth.test.js",
@@ -1109,7 +1293,7 @@
       "source_file": "tests\\auth.test.js",
       "source_location": "L1",
       "id": "tests_auth_test_js",
-      "community": 63
+      "community": 70
     },
     {
       "label": "context-engine.test.js",
@@ -1117,7 +1301,7 @@
       "source_file": "tests\\context-engine.test.js",
       "source_location": "L1",
       "id": "tests_context_engine_test_js",
-      "community": 2
+      "community": 3
     },
     {
       "label": "setupAuthApp()",
@@ -1125,7 +1309,7 @@
       "source_file": "tests\\context-engine.test.js",
       "source_location": "L5",
       "id": "context_engine_test_setupauthapp",
-      "community": 2
+      "community": 3
     },
     {
       "label": "insertTestProject()",
@@ -1133,7 +1317,7 @@
       "source_file": "tests\\context-engine.test.js",
       "source_location": "L11",
       "id": "context_engine_test_inserttestproject",
-      "community": 2
+      "community": 3
     },
     {
       "label": "insertTestHuman()",
@@ -1141,7 +1325,7 @@
       "source_file": "tests\\context-engine.test.js",
       "source_location": "L23",
       "id": "context_engine_test_inserttesthuman",
-      "community": 2
+      "community": 3
     },
     {
       "label": "insertTestAlignmentSession()",
@@ -1149,7 +1333,7 @@
       "source_file": "tests\\context-engine.test.js",
       "source_location": "L33",
       "id": "context_engine_test_inserttestalignmentsession",
-      "community": 2
+      "community": 3
     },
     {
       "label": "setupFull()",
@@ -1157,7 +1341,7 @@
       "source_file": "tests\\context-engine.test.js",
       "source_location": "L45",
       "id": "context_engine_test_setupfull",
-      "community": 2
+      "community": 3
     },
     {
       "label": "createArtifactViaApi()",
@@ -1165,7 +1349,7 @@
       "source_file": "tests\\context-engine.test.js",
       "source_location": "L52",
       "id": "context_engine_test_createartifactviaapi",
-      "community": 2
+      "community": 3
     },
     {
       "label": "db.test.js",
@@ -1173,7 +1357,7 @@
       "source_file": "tests\\db.test.js",
       "source_location": "L1",
       "id": "tests_db_test_js",
-      "community": 64
+      "community": 71
     },
     {
       "label": "health.test.js",
@@ -1181,7 +1365,15 @@
       "source_file": "tests\\health.test.js",
       "source_location": "L1",
       "id": "tests_health_test_js",
-      "community": 65
+      "community": 72
+    },
+    {
+      "label": "heartbeat.test.js",
+      "file_type": "code",
+      "source_file": "tests\\heartbeat.test.js",
+      "source_location": "L1",
+      "id": "tests_heartbeat_test_js",
+      "community": 73
     },
     {
       "label": "helpers.js",
@@ -1189,39 +1381,39 @@
       "source_file": "tests\\helpers.js",
       "source_location": "L1",
       "id": "tests_helpers_js",
-      "community": 7
+      "community": 8
     },
     {
       "label": "createTestDb()",
       "file_type": "code",
       "source_file": "tests\\helpers.js",
-      "source_location": "L35",
+      "source_location": "L36",
       "id": "helpers_createtestdb",
-      "community": 7
+      "community": 8
     },
     {
       "label": "createSeededTestDb()",
       "file_type": "code",
       "source_file": "tests\\helpers.js",
-      "source_location": "L42",
+      "source_location": "L43",
       "id": "helpers_createseededtestdb",
-      "community": 7
+      "community": 8
     },
     {
       "label": "createTestApp()",
       "file_type": "code",
       "source_file": "tests\\helpers.js",
-      "source_location": "L48",
+      "source_location": "L49",
       "id": "helpers_createtestapp",
-      "community": 7
+      "community": 8
     },
     {
       "label": "insertTestAgent()",
       "file_type": "code",
       "source_file": "tests\\helpers.js",
-      "source_location": "L57",
+      "source_location": "L58",
       "id": "helpers_inserttestagent",
-      "community": 7
+      "community": 8
     },
     {
       "label": "intake-alignment.test.js",
@@ -1229,7 +1421,7 @@
       "source_file": "tests\\intake-alignment.test.js",
       "source_location": "L1",
       "id": "tests_intake_alignment_test_js",
-      "community": 3
+      "community": 4
     },
     {
       "label": "setupAuthApp()",
@@ -1237,7 +1429,7 @@
       "source_file": "tests\\intake-alignment.test.js",
       "source_location": "L5",
       "id": "intake_alignment_test_setupauthapp",
-      "community": 3
+      "community": 4
     },
     {
       "label": "insertTestProject()",
@@ -1245,7 +1437,7 @@
       "source_file": "tests\\intake-alignment.test.js",
       "source_location": "L11",
       "id": "intake_alignment_test_inserttestproject",
-      "community": 3
+      "community": 4
     },
     {
       "label": "insertTestDepartment()",
@@ -1253,7 +1445,7 @@
       "source_file": "tests\\intake-alignment.test.js",
       "source_location": "L23",
       "id": "intake_alignment_test_inserttestdepartment",
-      "community": 3
+      "community": 4
     },
     {
       "label": "insertTestRoleInstance()",
@@ -1261,7 +1453,7 @@
       "source_file": "tests\\intake-alignment.test.js",
       "source_location": "L34",
       "id": "intake_alignment_test_inserttestroleinstance",
-      "community": 3
+      "community": 4
     },
     {
       "label": "insertTestHuman()",
@@ -1269,7 +1461,7 @@
       "source_file": "tests\\intake-alignment.test.js",
       "source_location": "L43",
       "id": "intake_alignment_test_inserttesthuman",
-      "community": 3
+      "community": 4
     },
     {
       "label": "setupFullProject()",
@@ -1277,7 +1469,7 @@
       "source_file": "tests\\intake-alignment.test.js",
       "source_location": "L53",
       "id": "intake_alignment_test_setupfullproject",
-      "community": 3
+      "community": 4
     },
     {
       "label": "migrations.test.js",
@@ -1285,7 +1477,15 @@
       "source_file": "tests\\migrations.test.js",
       "source_location": "L1",
       "id": "tests_migrations_test_js",
-      "community": 66
+      "community": 74
+    },
+    {
+      "label": "model_profiles.test.js",
+      "file_type": "code",
+      "source_file": "tests\\model_profiles.test.js",
+      "source_location": "L1",
+      "id": "tests_model_profiles_test_js",
+      "community": 75
     },
     {
       "label": "path_safety.test.js",
@@ -1293,7 +1493,23 @@
       "source_file": "tests\\path_safety.test.js",
       "source_location": "L1",
       "id": "tests_path_safety_test_js",
-      "community": 67
+      "community": 76
+    },
+    {
+      "label": "permission_profiles.test.js",
+      "file_type": "code",
+      "source_file": "tests\\permission_profiles.test.js",
+      "source_location": "L1",
+      "id": "tests_permission_profiles_test_js",
+      "community": 77
+    },
+    {
+      "label": "project_creation.test.js",
+      "file_type": "code",
+      "source_file": "tests\\project_creation.test.js",
+      "source_location": "L1",
+      "id": "tests_project_creation_test_js",
+      "community": 78
     },
     {
       "label": "role-system.test.js",
@@ -1301,7 +1517,7 @@
       "source_file": "tests\\role-system.test.js",
       "source_location": "L1",
       "id": "tests_role_system_test_js",
-      "community": 8
+      "community": 9
     },
     {
       "label": "setupAuthApp()",
@@ -1309,7 +1525,7 @@
       "source_file": "tests\\role-system.test.js",
       "source_location": "L15",
       "id": "role_system_test_setupauthapp",
-      "community": 8
+      "community": 9
     },
     {
       "label": "insertDepartment()",
@@ -1317,7 +1533,7 @@
       "source_file": "tests\\role-system.test.js",
       "source_location": "L202",
       "id": "role_system_test_insertdepartment",
-      "community": 8
+      "community": 9
     },
     {
       "label": "addEdge()",
@@ -1325,7 +1541,7 @@
       "source_file": "tests\\role-system.test.js",
       "source_location": "L476",
       "id": "role_system_test_addedge",
-      "community": 8
+      "community": 9
     },
     {
       "label": "edge()",
@@ -1333,7 +1549,15 @@
       "source_file": "tests\\role-system.test.js",
       "source_location": "L742",
       "id": "role_system_test_edge",
-      "community": 8
+      "community": 9
+    },
+    {
+      "label": "runtime_manager.test.js",
+      "file_type": "code",
+      "source_file": "tests\\runtime_manager.test.js",
+      "source_location": "L1",
+      "id": "tests_runtime_manager_test_js",
+      "community": 79
     },
     {
       "label": "seeds.test.js",
@@ -1341,7 +1565,7 @@
       "source_file": "tests\\seeds.test.js",
       "source_location": "L1",
       "id": "tests_seeds_test_js",
-      "community": 68
+      "community": 80
     },
     {
       "label": "server.test.js",
@@ -1349,7 +1573,7 @@
       "source_file": "tests\\server.test.js",
       "source_location": "L1",
       "id": "tests_server_test_js",
-      "community": 59
+      "community": 66
     },
     {
       "label": "createApp()",
@@ -1357,7 +1581,7 @@
       "source_file": "tests\\server.test.js",
       "source_location": "L5",
       "id": "server_test_createapp",
-      "community": 59
+      "community": 66
     },
     {
       "label": "tasks.test.js",
@@ -1365,39 +1589,39 @@
       "source_file": "tests\\tasks.test.js",
       "source_location": "L1",
       "id": "tests_tasks_test_js",
-      "community": 9
+      "community": 10
     },
     {
       "label": "insertFullHierarchy()",
       "file_type": "code",
       "source_file": "tests\\tasks.test.js",
-      "source_location": "L15",
+      "source_location": "L10",
       "id": "tasks_test_insertfullhierarchy",
-      "community": 9
+      "community": 10
     },
     {
       "label": "insertAgentForRole()",
       "file_type": "code",
       "source_file": "tests\\tasks.test.js",
-      "source_location": "L91",
+      "source_location": "L149",
       "id": "tasks_test_insertagentforrole",
-      "community": 9
+      "community": 10
     },
     {
       "label": "insertApprovedArtifact()",
       "file_type": "code",
       "source_file": "tests\\tasks.test.js",
-      "source_location": "L109",
+      "source_location": "L167",
       "id": "tasks_test_insertapprovedartifact",
-      "community": 9
+      "community": 10
     },
     {
       "label": "insertTask()",
       "file_type": "code",
       "source_file": "tests\\tasks.test.js",
-      "source_location": "L118",
+      "source_location": "L183",
       "id": "tasks_test_inserttask",
-      "community": 9
+      "community": 10
     },
     {
       "label": "Silver Gatekeeper",
@@ -1621,7 +1845,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src\\app.js",
-      "source_location": "L21",
+      "source_location": "L24",
       "weight": 1.0,
       "_src": "src_app_js",
       "_tgt": "app_createapp",
@@ -1956,8 +2180,20 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "src\\migrations\\017_runtime_status.js",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_src": "src_migrations_017_runtime_status_js",
+      "_tgt": "017_runtime_status_up",
+      "source": "src_migrations_017_runtime_status_js",
+      "target": "017_runtime_status_up",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "src\\routes\\agents.js",
-      "source_location": "L5",
+      "source_location": "L13",
       "weight": 1.0,
       "_src": "src_routes_agents_js",
       "_tgt": "agents_createagentsrouter",
@@ -2088,6 +2324,30 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\model_profiles.js",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_src": "src_routes_model_profiles_js",
+      "_tgt": "model_profiles_createmodelprofilesrouter",
+      "source": "src_routes_model_profiles_js",
+      "target": "model_profiles_createmodelprofilesrouter",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\permission_profiles.js",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_src": "src_routes_permission_profiles_js",
+      "_tgt": "permission_profiles_createpermissionprofilesrouter",
+      "source": "src_routes_permission_profiles_js",
+      "target": "permission_profiles_createpermissionprofilesrouter",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "src\\routes\\problem_statements.js",
       "source_location": "L4",
       "weight": 1.0,
@@ -2095,6 +2355,18 @@
       "_tgt": "problem_statements_createproblemstatementsrouter",
       "source": "src_routes_problem_statements_js",
       "target": "problem_statements_createproblemstatementsrouter",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\projects.js",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_src": "src_routes_projects_js",
+      "_tgt": "projects_createprojectsrouter",
+      "source": "src_routes_projects_js",
+      "target": "projects_createprojectsrouter",
       "confidence_score": 1.0
     },
     {
@@ -2244,6 +2516,18 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "src\\services\\heartbeat.js",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_src": "src_services_heartbeat_js",
+      "_tgt": "heartbeat_detectstaleagents",
+      "source": "src_services_heartbeat_js",
+      "target": "heartbeat_detectstaleagents",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "src\\services\\local_prs.js",
       "source_location": "L3",
       "weight": 1.0,
@@ -2329,7 +2613,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src\\services\\messages.js",
-      "source_location": "L129",
+      "source_location": "L128",
       "weight": 1.0,
       "_src": "src_services_messages_js",
       "_tgt": "messages_listconversations",
@@ -2341,7 +2625,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src\\services\\messages.js",
-      "source_location": "L135",
+      "source_location": "L134",
       "weight": 1.0,
       "_src": "src_services_messages_js",
       "_tgt": "messages_getconversationmessages",
@@ -2353,7 +2637,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "src\\services\\messages.js",
-      "source_location": "L82",
+      "source_location": "L86",
       "weight": 1.0,
       "_src": "messages_sendmessage",
       "_tgt": "messages_canmessage",
@@ -2395,6 +2679,42 @@
       "_tgt": "path_safety_iswithinproject",
       "source": "src_services_path_safety_js",
       "target": "path_safety_iswithinproject",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\projects.js",
+      "source_location": "L14",
+      "weight": 1.0,
+      "_src": "src_services_projects_js",
+      "_tgt": "projects_createproject",
+      "source": "src_services_projects_js",
+      "target": "projects_createproject",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\projects.js",
+      "source_location": "L114",
+      "weight": 1.0,
+      "_src": "src_services_projects_js",
+      "_tgt": "projects_createdefaultagents",
+      "source": "src_services_projects_js",
+      "target": "projects_createdefaultagents",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\projects.js",
+      "source_location": "L107",
+      "weight": 1.0,
+      "_src": "projects_createproject",
+      "_tgt": "projects_createdefaultagents",
+      "source": "projects_createproject",
+      "target": "projects_createdefaultagents",
       "confidence_score": 1.0
     },
     {
@@ -2472,8 +2792,116 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L8",
+      "weight": 1.0,
+      "_src": "src_services_runtime_manager_js",
+      "_tgt": "runtime_manager_mockruntimemanager",
+      "source": "src_services_runtime_manager_js",
+      "target": "runtime_manager_mockruntimemanager",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L9",
+      "weight": 1.0,
+      "_src": "runtime_manager_mockruntimemanager",
+      "_tgt": "runtime_manager_mockruntimemanager_constructor",
+      "source": "runtime_manager_mockruntimemanager",
+      "target": "runtime_manager_mockruntimemanager_constructor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L14",
+      "weight": 1.0,
+      "_src": "runtime_manager_mockruntimemanager",
+      "_tgt": "runtime_manager_mockruntimemanager_createprojectruntime",
+      "source": "runtime_manager_mockruntimemanager",
+      "target": "runtime_manager_mockruntimemanager_createprojectruntime",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L22",
+      "weight": 1.0,
+      "_src": "runtime_manager_mockruntimemanager",
+      "_tgt": "runtime_manager_mockruntimemanager_startprojectruntime",
+      "source": "runtime_manager_mockruntimemanager",
+      "target": "runtime_manager_mockruntimemanager_startprojectruntime",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L31",
+      "weight": 1.0,
+      "_src": "runtime_manager_mockruntimemanager",
+      "_tgt": "runtime_manager_mockruntimemanager_stopprojectruntime",
+      "source": "runtime_manager_mockruntimemanager",
+      "target": "runtime_manager_mockruntimemanager_stopprojectruntime",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L45",
+      "weight": 1.0,
+      "_src": "runtime_manager_mockruntimemanager",
+      "_tgt": "runtime_manager_mockruntimemanager_getprojectruntimestatus",
+      "source": "runtime_manager_mockruntimemanager",
+      "target": "runtime_manager_mockruntimemanager_getprojectruntimestatus",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L58",
+      "weight": 1.0,
+      "_src": "runtime_manager_mockruntimemanager",
+      "_tgt": "runtime_manager_mockruntimemanager_spawnworker",
+      "source": "runtime_manager_mockruntimemanager",
+      "target": "runtime_manager_mockruntimemanager_spawnworker",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L77",
+      "weight": 1.0,
+      "_src": "runtime_manager_mockruntimemanager",
+      "_tgt": "runtime_manager_mockruntimemanager_stopworker",
+      "source": "runtime_manager_mockruntimemanager",
+      "target": "runtime_manager_mockruntimemanager_stopworker",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\services\\runtime_manager.js",
+      "source_location": "L91",
+      "weight": 1.0,
+      "_src": "runtime_manager_mockruntimemanager",
+      "_tgt": "runtime_manager_mockruntimemanager_getworkerlogs",
+      "source": "runtime_manager_mockruntimemanager",
+      "target": "runtime_manager_mockruntimemanager_getworkerlogs",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "src\\services\\tasks.js",
-      "source_location": "L32",
+      "source_location": "L24",
       "weight": 1.0,
       "_src": "src_services_tasks_js",
       "_tgt": "tasks_ispipelineincrementingtransition",
@@ -2485,7 +2913,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src\\services\\tasks.js",
-      "source_location": "L44",
+      "source_location": "L36",
       "weight": 1.0,
       "_src": "src_services_tasks_js",
       "_tgt": "tasks_validatesourceoftruth",
@@ -2497,7 +2925,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src\\services\\tasks.js",
-      "source_location": "L64",
+      "source_location": "L56",
       "weight": 1.0,
       "_src": "src_services_tasks_js",
       "_tgt": "tasks_createtask",
@@ -2509,7 +2937,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src\\services\\tasks.js",
-      "source_location": "L101",
+      "source_location": "L93",
       "weight": 1.0,
       "_src": "src_services_tasks_js",
       "_tgt": "tasks_gettask",
@@ -2521,7 +2949,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src\\services\\tasks.js",
-      "source_location": "L112",
+      "source_location": "L104",
       "weight": 1.0,
       "_src": "src_services_tasks_js",
       "_tgt": "tasks_listtasks",
@@ -2533,7 +2961,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src\\services\\tasks.js",
-      "source_location": "L118",
+      "source_location": "L110",
       "weight": 1.0,
       "_src": "src_services_tasks_js",
       "_tgt": "tasks_getmytasks",
@@ -2545,7 +2973,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src\\services\\tasks.js",
-      "source_location": "L126",
+      "source_location": "L116",
       "weight": 1.0,
       "_src": "src_services_tasks_js",
       "_tgt": "tasks_movetask",
@@ -2557,7 +2985,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src\\services\\tasks.js",
-      "source_location": "L182",
+      "source_location": "L172",
       "weight": 1.0,
       "_src": "src_services_tasks_js",
       "_tgt": "tasks_claimtask",
@@ -2569,7 +2997,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src\\services\\tasks.js",
-      "source_location": "L207",
+      "source_location": "L197",
       "weight": 1.0,
       "_src": "src_services_tasks_js",
       "_tgt": "tasks_completetask",
@@ -2581,7 +3009,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src\\services\\tasks.js",
-      "source_location": "L244",
+      "source_location": "L234",
       "weight": 1.0,
       "_src": "src_services_tasks_js",
       "_tgt": "tasks_failtask",
@@ -2593,7 +3021,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src\\services\\tasks.js",
-      "source_location": "L288",
+      "source_location": "L284",
       "weight": 1.0,
       "_src": "src_services_tasks_js",
       "_tgt": "tasks_createtaskevent",
@@ -2605,7 +3033,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src\\services\\tasks.js",
-      "source_location": "L298",
+      "source_location": "L301",
       "weight": 1.0,
       "_src": "src_services_tasks_js",
       "_tgt": "tasks_updatetodo",
@@ -2617,7 +3045,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src\\services\\tasks.js",
-      "source_location": "L327",
+      "source_location": "L330",
       "weight": 1.0,
       "_src": "src_services_tasks_js",
       "_tgt": "tasks_getexecutioncontext",
@@ -2629,7 +3057,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "src\\services\\tasks.js",
-      "source_location": "L149",
+      "source_location": "L139",
       "weight": 1.0,
       "_src": "tasks_movetask",
       "_tgt": "tasks_ispipelineincrementingtransition",
@@ -2641,7 +3069,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "src\\services\\tasks.js",
-      "source_location": "L141",
+      "source_location": "L131",
       "weight": 1.0,
       "_src": "tasks_movetask",
       "_tgt": "tasks_validatesourceoftruth",
@@ -2653,7 +3081,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "src\\services\\tasks.js",
-      "source_location": "L204",
+      "source_location": "L194",
       "weight": 1.0,
       "_src": "tasks_claimtask",
       "_tgt": "tasks_movetask",
@@ -2665,7 +3093,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "src\\services\\tasks.js",
-      "source_location": "L227",
+      "source_location": "L217",
       "weight": 1.0,
       "_src": "tasks_completetask",
       "_tgt": "tasks_movetask",
@@ -2785,7 +3213,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests\\helpers.js",
-      "source_location": "L35",
+      "source_location": "L36",
       "weight": 1.0,
       "_src": "tests_helpers_js",
       "_tgt": "helpers_createtestdb",
@@ -2797,7 +3225,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests\\helpers.js",
-      "source_location": "L42",
+      "source_location": "L43",
       "weight": 1.0,
       "_src": "tests_helpers_js",
       "_tgt": "helpers_createseededtestdb",
@@ -2809,7 +3237,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests\\helpers.js",
-      "source_location": "L48",
+      "source_location": "L49",
       "weight": 1.0,
       "_src": "tests_helpers_js",
       "_tgt": "helpers_createtestapp",
@@ -2821,7 +3249,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests\\helpers.js",
-      "source_location": "L57",
+      "source_location": "L58",
       "weight": 1.0,
       "_src": "tests_helpers_js",
       "_tgt": "helpers_inserttestagent",
@@ -2833,7 +3261,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "tests\\helpers.js",
-      "source_location": "L43",
+      "source_location": "L44",
       "weight": 1.0,
       "_src": "helpers_createseededtestdb",
       "_tgt": "helpers_createtestdb",
@@ -3025,7 +3453,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests\\tasks.test.js",
-      "source_location": "L15",
+      "source_location": "L10",
       "weight": 1.0,
       "_src": "tests_tasks_test_js",
       "_tgt": "tasks_test_insertfullhierarchy",
@@ -3037,7 +3465,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests\\tasks.test.js",
-      "source_location": "L91",
+      "source_location": "L149",
       "weight": 1.0,
       "_src": "tests_tasks_test_js",
       "_tgt": "tasks_test_insertagentforrole",
@@ -3049,7 +3477,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests\\tasks.test.js",
-      "source_location": "L109",
+      "source_location": "L167",
       "weight": 1.0,
       "_src": "tests_tasks_test_js",
       "_tgt": "tasks_test_insertapprovedartifact",
@@ -3061,7 +3489,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests\\tasks.test.js",
-      "source_location": "L118",
+      "source_location": "L183",
       "weight": 1.0,
       "_src": "tests_tasks_test_js",
       "_tgt": "tasks_test_inserttask",

@@ -1,0 +1,29 @@
+{
+  "nodes": [
+    {
+      "id": "src_migrations_017_runtime_status_js",
+      "label": "017_runtime_status.js",
+      "file_type": "code",
+      "source_file": "src\\migrations\\017_runtime_status.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "017_runtime_status_up",
+      "label": "up()",
+      "file_type": "code",
+      "source_file": "src\\migrations\\017_runtime_status.js",
+      "source_location": "L3"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_migrations_017_runtime_status_js",
+      "target": "017_runtime_status_up",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\migrations\\017_runtime_status.js",
+      "source_location": "L3",
+      "weight": 1.0
+    }
+  ]
+}

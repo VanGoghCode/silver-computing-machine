@@ -1,0 +1,29 @@
+{
+  "nodes": [
+    {
+      "id": "src_routes_model_profiles_js",
+      "label": "model_profiles.js",
+      "file_type": "code",
+      "source_file": "src\\routes\\model_profiles.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "model_profiles_createmodelprofilesrouter",
+      "label": "createModelProfilesRouter()",
+      "file_type": "code",
+      "source_file": "src\\routes\\model_profiles.js",
+      "source_location": "L4"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_routes_model_profiles_js",
+      "target": "model_profiles_createmodelprofilesrouter",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\routes\\model_profiles.js",
+      "source_location": "L4",
+      "weight": 1.0
+    }
+  ]
+}
